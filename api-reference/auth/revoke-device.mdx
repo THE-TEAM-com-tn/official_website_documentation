@@ -1,0 +1,56 @@
+---
+title: "Revoke a device"
+sidebarTitle: "Revoke a device"
+description: "Sign one device out by deleting its token."
+api: "DELETE /devices/{id}"
+authMethod: "bearer"
+playground: "simple"
+---
+
+Deletes one of the account's tokens. Revoking the token that makes the request signs this client out.
+A token that belongs to another account is treated as unknown.
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer <token>`.
+</ParamField>
+
+<ParamField path="id" type="integer" required>
+  Token id from [List devices](/api-reference/auth/list-devices).
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Device signed out.`</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X DELETE "https://admin.theteam.com.tn/api/devices/9" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+await fetch(`https://admin.theteam.com.tn/api/devices/${deviceId}`, {
+  method: "DELETE",
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Device signed out."
+}
+```
+
+```json 404
+{
+  "message": "Device not found."
+}
+```
+
+</ResponseExample>

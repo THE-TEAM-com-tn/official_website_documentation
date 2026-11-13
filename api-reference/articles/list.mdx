@@ -1,0 +1,179 @@
+---
+title: "List articles"
+sidebarTitle: "List articles"
+description: "Paginated published Knowledge Corner articles with search, category and type filters, optionally pinned first."
+api: "GET /articles"
+---
+
+Knowledge Corner articles are long-form SEO pages that the public site serves **at its root**
+(`https://theteam.com.tn/{slug}`, English `/en/{slug}`) and lists on its `/articles` tab.
+
+Only articles that are **published and whose `published_at` has been reached** are returned: a future
+date schedules an article. Newest first. List items carry **no `content`**; fetch
+[a single article](/api-reference/articles/get) for the body.
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="12">
+  Page size, clamped between `1` and `50`.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Matches the title, excerpt and content in both languages. `%` and `_` are matched literally.
+</ParamField>
+
+<ParamField query="categories" type="string">
+  Comma-separated category slugs (OR). The values come from [Article filters](/api-reference/articles/filters).
+</ParamField>
+
+<ParamField query="types" type="string">
+  Comma-separated resource types (OR): `article`, `guide`, `tutorial`, `case_study`, `glossary`. Unknown
+  values are ignored.
+</ParamField>
+
+<ParamField query="pinned_first" type="boolean">
+  `1` puts pinned articles first, then the newest. The site uses it for the unfiltered view, so
+  pagination never repeats the pinned items.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+## Response
+
+A Laravel API Resource collection (`data`, `links`, `meta`). The pagination links keep your query
+parameters. See [Pagination](/concepts/pagination).
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="article" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required>Translated.</ResponseField>
+    <ResponseField name="slug" type="string" required>
+      Root-level path on the site. Never equal to a top-level route of the site (reserved slugs are refused).
+    </ResponseField>
+    <ResponseField name="type" type="string" required>`article`, `guide`, `tutorial`, `case_study` or `glossary`.</ResponseField>
+    <ResponseField name="type_label" type="string" required>
+      Type label in the request language (`Glossaire` / `Glossary`, `Étude de cas` / `Case study`…).
+    </ResponseField>
+    <ResponseField name="excerpt" type="string" required>Plain-text summary, at most 220 characters.</ResponseField>
+    <ResponseField name="reading_minutes" type="integer" required />
+    <ResponseField name="image_url" type="string" required>
+      Cover URL, or the shared placeholder `https://admin.theteam.com.tn/images/blog-placeholder.jpg`.
+    </ResponseField>
+    <ResponseField name="has_image" type="boolean" required>`false` when `image_url` is the placeholder.</ResponseField>
+    <ResponseField name="image_alt" type="string" required>Alt text, falling back to the title.</ResponseField>
+    <ResponseField name="is_pinned" type="boolean" required>At most 10 articles are pinned at once.</ResponseField>
+    <ResponseField name="published_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="updated_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="meta_title" type="string" required>Resolved SEO title (falls back to the title).</ResponseField>
+    <ResponseField name="meta_description" type="string" required>
+      Resolved SEO description (falls back to the excerpt, at most 160 characters).
+    </ResponseField>
+    <ResponseField name="meta_keywords" type="string | null">Comma-separated keywords.</ResponseField>
+    <ResponseField name="category" type="object | null">`{ id, name, slug }`.</ResponseField>
+    <ResponseField name="tags" type="object[]" required>`{ id, name, color }`.</ResponseField>
+    <ResponseField name="author" type="object | null">
+      `{ name, avatar_url }`. `null` means the article is signed "The Team".
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="links" type="object" required />
+<ResponseField name="meta" type="object" required />
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/articles?types=guide,glossary&categories=pmp&pinned_first=1" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({ types: "guide,glossary", categories: "pmp", pinned_first: "1" });
+const res = await fetch(`https://admin.theteam.com.tn/api/articles?${params}`, {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+const { data: articles, meta } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Certification PMP version 8 : PMBOK 8 et nouvel examen 2026, le guide complet",
+      "slug": "certification-pmp-version-8",
+      "type": "guide",
+      "type_label": "Guide",
+      "excerpt": "PMBOK® Guide 8e édition, nouvel examen PMP depuis le 9 juillet 2026, domaines repondérés, nouveaux types de questions : tout ce qui change et comment vous préparer efficacement.",
+      "reading_minutes": 4,
+      "image_url": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1600&q=80",
+      "has_image": true,
+      "image_alt": "Chef de projet organisant un tableau de planification au mur",
+      "is_pinned": true,
+      "published_at": "2026-11-13T18:10:14.000000Z",
+      "updated_at": "2026-11-13T18:10:14.000000Z",
+      "meta_title": "PMP version 8 : PMBOK 8 et nouvel examen PMP 2026",
+      "meta_description": "Nouvel examen PMP 2026 aligné sur le PMBOK 8 : domaines, format, types de questions, éligibilité et plan de préparation pour réussir du premier coup.",
+      "meta_keywords": "PMP version 8, PMBOK 8, nouvel examen PMP 2026, certification PMP Tunisie, formation PMP, PMI",
+      "category": { "id": 2, "name": "PMP", "slug": "pmp" },
+      "tags": [
+        { "id": 1, "name": "Project Management", "color": "#6366F1" },
+        { "id": 2, "name": "PMP", "color": "#8B5CF6" }
+      ],
+      "author": { "name": "Admin", "avatar_url": null }
+    },
+    {
+      "id": 2,
+      "title": "Glossaire PMP : 40 termes à connaître",
+      "slug": "glossaire-pmp-40-termes-a-connaitre",
+      "type": "glossary",
+      "type_label": "Glossaire",
+      "excerpt": "Les définitions essentielles du PMBOK pour réviser l’examen PMP.",
+      "reading_minutes": 1,
+      "image_url": "https://admin.theteam.com.tn/images/blog-placeholder.jpg",
+      "has_image": false,
+      "image_alt": "Glossaire PMP : 40 termes à connaître",
+      "is_pinned": false,
+      "published_at": "2026-11-12T18:24:42.000000Z",
+      "updated_at": "2026-11-13T18:24:42.000000Z",
+      "meta_title": "Glossaire PMP : 40 termes à connaître",
+      "meta_description": "Les définitions essentielles du PMBOK pour réviser l’examen PMP.",
+      "meta_keywords": null,
+      "category": { "id": 2, "name": "PMP", "slug": "pmp" },
+      "tags": [{ "id": 2, "name": "PMP", "color": "#8B5CF6" }],
+      "author": null
+    }
+  ],
+  "links": {
+    "first": "https://admin.theteam.com.tn/api/articles?types=guide%2Cglossary&categories=pmp&pinned_first=1&page=1",
+    "last": "https://admin.theteam.com.tn/api/articles?types=guide%2Cglossary&categories=pmp&pinned_first=1&page=1",
+    "prev": null,
+    "next": null
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 1,
+    "links": [
+      { "url": null, "label": "&laquo; Précédent", "page": null, "active": false },
+      { "url": "https://admin.theteam.com.tn/api/articles?types=guide%2Cglossary&categories=pmp&pinned_first=1&page=1", "label": "1", "page": 1, "active": true },
+      { "url": null, "label": "Suivant &raquo;", "page": null, "active": false }
+    ],
+    "path": "https://admin.theteam.com.tn/api/articles",
+    "per_page": 12,
+    "to": 2,
+    "total": 2
+  }
+}
+```
+
+</ResponseExample>

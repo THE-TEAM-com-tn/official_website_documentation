@@ -1,0 +1,66 @@
+---
+title: "Resend the email-change links"
+sidebarTitle: "Resend links"
+description: "Issue fresh confirmation and cancel links for the pending email change."
+api: "POST /email/change/resend"
+authMethod: "bearer"
+playground: "simple"
+---
+
+Generates new tokens (the previous links stop working), resets the 30-minute expiry and sends both emails
+again. Only works for a request that has not expired.
+
+Rate limit: **3 requests per 10 minutes**.
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer <token>`.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Un nouveau lien de confirmation a été envoyé.`</ResponseField>
+<ResponseField name="pending" type="object" required>`{ new_email, expires_at, expired }`.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/email/change/resend" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+await fetch("https://admin.theteam.com.tn/api/email/change/resend", {
+  method: "POST",
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Un nouveau lien de confirmation a été envoyé.",
+  "pending": {
+    "new_email": "new.address@example.com",
+    "expires_at": "2026-11-13T19:02:00+00:00",
+    "expired": false
+  }
+}
+```
+
+```json 404
+{
+  "message": "Aucun changement d’adresse e-mail en attente."
+}
+```
+
+```json 410
+{
+  "message": "Cette demande a expiré. Recommencez le changement."
+}
+```
+
+</ResponseExample>

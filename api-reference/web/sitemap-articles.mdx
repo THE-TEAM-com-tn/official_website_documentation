@@ -1,0 +1,47 @@
+---
+title: "Articles sitemap"
+sidebarTitle: "Articles sitemap"
+description: "XML sitemap of every published Knowledge Corner article, with hreflang pairs and cover images."
+api: "GET https://admin.theteam.com.tn/sitemap-articles.xml"
+playground: "simple"
+---
+
+Lists every **published** Knowledge Corner article at `https://theteam.com.tn/{slug}`, plus its
+`/en/{slug}` URL **only when the article is translated**, with `hreflang` pairs (`fr`, `en`, `x-default`),
+`lastmod` and the cover in `image:image`. Pinned articles get priority `1.0`, others `0.8`.
+
+Like the trainings sitemap, it is published under the public domain through the nginx proxy:
+`https://theteam.com.tn/sitemap-articles.xml`.
+
+The XML is cached for **10 minutes** and the cache is cleared on every article write. Served with
+`Cache-Control: public, max-age=600`.
+
+<RequestExample>
+
+```bash cURL
+curl "https://theteam.com.tn/sitemap-articles.xml"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```xml 200
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://theteam.com.tn/certification-pmp-version-8</loc>
+    <lastmod>2026-11-13T18:10:14+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://theteam.com.tn/certification-pmp-version-8"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://theteam.com.tn/en/certification-pmp-version-8"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://theteam.com.tn/certification-pmp-version-8"/>
+    <image:image>
+      <image:loc>https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&amp;fit=crop&amp;w=1600&amp;q=80</image:loc>
+    </image:image>
+  </url>
+</urlset>
+```
+
+</ResponseExample>

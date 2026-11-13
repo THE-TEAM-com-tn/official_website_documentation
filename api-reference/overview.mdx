@@ -1,0 +1,122 @@
+---
+title: "API reference"
+sidebarTitle: "All endpoints"
+description: "Every endpoint of the TheTeam backend in one table, with its authentication and rate limit."
+---
+
+Base URL: `https://admin.theteam.com.tn/api`. Send `Accept: application/json` on every request.
+"Bearer" marks the endpoints that need a [staff token](/concepts/authentication); limits are per IP or per
+account (see [Rate limits](/concepts/rate-limits)).
+
+<Info>
+  The interactive playground is enabled on read endpoints only. Write endpoints show a copyable request
+  instead, because the server is production: test them against a
+  [local backend](/quickstart#run-the-backend-locally).
+</Info>
+
+## Authentication
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `POST` | [`/login`](/api-reference/auth/login) | — | — | Exchange credentials for a token |
+| `GET` | [`/user`](/api-reference/auth/get-user) | Bearer | — | Current account |
+| `POST` | [`/logout`](/api-reference/auth/logout) | Bearer | — | Revoke the current token |
+| `GET` | [`/devices`](/api-reference/auth/list-devices) | Bearer | — | Tokens issued to the account |
+| `DELETE` | [`/devices/{id}`](/api-reference/auth/revoke-device) | Bearer | — | Revoke one token |
+| `POST` | [`/logout-all`](/api-reference/auth/logout-all) | Bearer | — | Revoke every token |
+| `POST` | [`/password/update`](/api-reference/auth/update-password) | Bearer | — | Change the password |
+| `POST` | [`/password/forgot`](/api-reference/auth/forgot-password) | — | — | Email a reset link |
+| `POST` | [`/password/reset`](/api-reference/auth/reset-password) | — | — | Reset with the emailed token |
+| `GET` | [`/email/verify/{id}/{hash}`](/api-reference/auth/verify-email) | — | — | Verify an email address |
+| `POST` | [`/email/resend`](/api-reference/auth/resend-verification) | — | — | Resend the verification email |
+
+## Email change
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/email/change`](/api-reference/email-change/get-pending) | Bearer | — | Pending change, if any |
+| `POST` | [`/email/change`](/api-reference/email-change/start) | Bearer | 6 / 10 min | Start a change |
+| `POST` | [`/email/change/resend`](/api-reference/email-change/resend) | Bearer | 3 / 10 min | Fresh links |
+| `DELETE` | [`/email/change`](/api-reference/email-change/discard) | Bearer | — | Drop the pending change |
+| `POST` | [`/email/change/confirm`](/api-reference/email-change/confirm) | Token in body | 10 / min | Confirm from the new address |
+| `POST` | [`/email/change/cancel`](/api-reference/email-change/cancel) | Token in body | 10 / min | Cancel from the old address |
+
+## Trainings
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/trainings`](/api-reference/trainings/list) | — | — | Published catalogue (cached) |
+| `GET` | [`/trainings/{idOrSlug}`](/api-reference/trainings/get) | — | — | Training details (cached) |
+| `GET` | [`/trainings/options`](/api-reference/trainings/options) | — | — | `{ id, title }` picker list |
+| `GET` | [`/categories`](/api-reference/trainings/categories) | — | — | Training categories |
+
+## Blog
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/blog-posts`](/api-reference/blog/list-posts) | — | — | Published posts |
+| `GET` | [`/blog-posts/is_pinned`](/api-reference/blog/pinned-posts) | — | — | Three pinned posts |
+| `GET` | [`/blog-posts/{slug}`](/api-reference/blog/get-post) | — | — | One post, full HTML |
+| `GET` | [`/blog-categories`](/api-reference/blog/list-categories) | — | — | Categories with published posts |
+
+## Knowledge Corner
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/articles`](/api-reference/articles/list) | — | — | Published articles |
+| `GET` | [`/articles/filters`](/api-reference/articles/filters) | — | — | Category and type facets |
+| `GET` | [`/articles/pinned`](/api-reference/articles/pinned) | — | — | Up to 10 pinned articles |
+| `GET` | [`/articles/{slug}`](/api-reference/articles/get) | — | — | One article + related |
+
+## Site content
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/landing-page`](/api-reference/content/landing-page) | — | — | Site-wide settings and home-page content |
+| `GET` | [`/testimonials`](/api-reference/content/list-testimonials) | — | — | Published testimonials |
+| `GET` | [`/testimonials/pinned`](/api-reference/content/pinned-testimonials) | — | — | Same as above (legacy) |
+| `GET` | [`/webinars`](/api-reference/content/list-webinars) | — | — | Published webinars |
+| `GET` | [`/faqs`](/api-reference/content/list-faqs) | — | — | Published FAQs |
+| `GET` | [`/pages`](/api-reference/content/list-pages) | — | — | CMS pages |
+| `GET` | [`/pages/{slug}`](/api-reference/content/get-page) | — | — | One CMS page |
+| `GET` | [`/menu`](/api-reference/content/list-menu) | — | — | Navigation menu |
+| `GET` | [`/menu/{id}`](/api-reference/content/get-menu-item) | — | — | One menu item |
+
+## Forms & submissions
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `POST` | [`/contact-us`](/api-reference/forms/contact-us) | — | — | Contact message |
+| `POST` | [`/enrollments`](/api-reference/forms/create-enrollment) | — | — | Enroll in a training |
+| `POST` | [`/devis`](/api-reference/forms/create-devis) | — | 6 / min | Quote request |
+| `POST` | [`/newsletter`](/api-reference/forms/newsletter-subscribe) | — | 5 / min | Subscribe |
+| `POST` | [`/newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | — | 5 / min | Unsubscribe |
+| `POST` | [`/reclamation-submissions`](/api-reference/forms/create-reclamation) | — | 6 / min | File a réclamation |
+| `GET` | [`/reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | — | 20 / min | Track a réclamation |
+| `POST` | [`/review-submissions/create`](/api-reference/forms/create-review) | — | 6 / min | Leave a review |
+| `GET` | [`/review-submissions`](/api-reference/forms/list-reviews) | — | — | Every review |
+| `POST` | [`/testimonials`](/api-reference/forms/submit-testimonial) | — | 6 / min | Submit a testimonial |
+
+## System
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/health`](/api-reference/system/health) | — | — | JSON health check |
+| `GET` | [`/`](/api-reference/system/status-page) | — | — | HTML status page |
+
+## Public web routes (outside `/api`)
+
+| Method | URL | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/share/blog/{slug}`](/api-reference/web/share-blog) | Open Graph page for a blog post |
+| `GET` | [`/share/article/{slug}`](/api-reference/web/share-article) | Open Graph page for an article |
+| `GET` | [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings) | Trainings sitemap |
+| `GET` | [`/sitemap-articles.xml`](/api-reference/web/sitemap-articles) | Articles sitemap |
+| `GET` | `/health` | Same payload as `GET /api/health` |
+
+## Not part of the API
+
+- **`POST /api/register`** was removed on 2026-11-04 and answers `404`: staff accounts come from the admin panel.
+- **`/api/import`, `/api/export`, `/api/export/{id}`** were removed on 2026-10-02. JSON import and export of
+  blog posts, articles and trainings are admin-panel features.
+- **The admin panel (`/admin`)** uses session authentication and HTML/Inertia responses. It is not a JSON API.

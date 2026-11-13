@@ -1,0 +1,122 @@
+---
+title: "Request a quote (devis)"
+sidebarTitle: "Request a quote"
+description: "Send a quote request for one or more trainings, as a company or an individual."
+api: "POST /devis"
+playground: "simple"
+---
+
+Backs the site's `/devis` page. The request is stored for the staff (**Inbox → Devis**), the address joins
+the newsletter list with source `devis` (unless already there), every staff account gets a notification,
+and the team inbox receives an email whose `Reply-To` is the requester.
+
+Server-side rules on top of validation:
+
+- An `individual` request has `company_name` and `participants_count` **forced to `null`**.
+- Training titles are **resolved on the server** from published trainings. Ids that are not published are
+  dropped silently, and titles are never taken from the client.
+- A failed email does not fail the request: the response says `"email_sent": false`.
+
+Rate limit: **6 requests per minute**.
+
+## Body
+
+<ParamField body="client_type" type="string" required>
+  `company` or `individual`.
+</ParamField>
+
+<ParamField body="company_name" type="string">
+  Required when `client_type` is `company`. At most 191 characters.
+</ParamField>
+
+<ParamField body="participants_count" type="integer">
+  Required when `client_type` is `company`. Between 1 and 10,000.
+</ParamField>
+
+<ParamField body="full_name" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  Valid email (RFC), at most 191 characters.
+</ParamField>
+
+<ParamField body="phone" type="string">
+  At most 50 characters.
+</ParamField>
+
+<ParamField body="training_ids" type="integer[]">
+  Up to 20 training ids, from [List training options](/api-reference/trainings/options).
+</ParamField>
+
+<ParamField body="message" type="string">
+  At most 5,000 characters.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Votre demande de devis a bien été envoyée.`</ResponseField>
+<ResponseField name="email_sent" type="boolean" required>Whether the team email went out.</ResponseField>
+<ResponseField name="reference" type="integer" required>Id of the stored request, to quote in follow-ups.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/devis" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_type": "company",
+    "company_name": "ACME SARL",
+    "participants_count": 12,
+    "full_name": "Sami Ben Ali",
+    "email": "sami.benali@example.com",
+    "phone": "+216 20 000 000",
+    "training_ids": [5, 6],
+    "message": "Formation souhaitée en présentiel à Tunis."
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/devis", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({
+    client_type: "individual",
+    full_name: "Sami Ben Ali",
+    email: "sami.benali@example.com",
+    training_ids: [5],
+  }),
+});
+if (res.status === 429) showRetryLater();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "message": "Votre demande de devis a bien été envoyée.",
+  "email_sent": true,
+  "reference": 42
+}
+```
+
+```json 422
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "company_name": ["Le nom de l'entreprise est requis."],
+    "participants_count": ["Le nombre de participants est requis."]
+  }
+}
+```
+
+```json 500
+{
+  "message": "L'envoi a échoué. Merci de réessayer."
+}
+```
+
+</ResponseExample>

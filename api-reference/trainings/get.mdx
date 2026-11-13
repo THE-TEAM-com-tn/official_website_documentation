@@ -1,0 +1,145 @@
+---
+title: "Get a training"
+sidebarTitle: "Get a training"
+description: "Full training details by slug or id: pricing, certification, prerequisites, objectives and the modules with their lessons."
+api: "GET /trainings/{idOrSlug}"
+---
+
+Powers the site's course page (`/course/{slug}`). The path accepts the **slug** or the numeric **id**:
+a purely numeric value is looked up by id, anything else by slug. Slugs are unique and never rewritten
+when a title changes, so old links keep working.
+
+The payload is a **bare object** (no `data` wrapper) and is cached for 5 minutes per locale, like the
+list. See [Publishing and caching](/concepts/publishing-and-caching).
+
+<Warning>
+  This endpoint does **not** filter on `visibility_status`: an unpublished training is returned if you
+  know its slug or id. Check `visibility_status` before linking to a training you did not get from
+  [List trainings](/api-reference/trainings/list).
+</Warning>
+
+<ParamField path="idOrSlug" type="string" required>
+  Training slug (`formation-cpmai`) or id (`22`).
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="integer" required />
+<ResponseField name="slug" type="string" required />
+<ResponseField name="title" type="string" required>Translated.</ResponseField>
+<ResponseField name="intro" type="string | null">Translated; admin-authored HTML or text.</ResponseField>
+<ResponseField name="overview" type="string | null">Translated; admin-authored HTML or text.</ResponseField>
+<ResponseField name="duration_label" type="string | null">Translated, for example `24h`.</ResponseField>
+<ResponseField name="price" type="string | null">Decimal as a string, for example `"0.00"`.</ResponseField>
+<ResponseField name="visibility_status" type="string" required>`published` for catalogue trainings.</ResponseField>
+<ResponseField name="is_pinned" type="boolean" required />
+<ResponseField name="featured_image_url" type="string" required>
+  Absolute URL, never `null` (falls back to the shared placeholder image).
+</ResponseField>
+<ResponseField name="badge_image_url" type="string | null">Certification badge image, if uploaded.</ResponseField>
+<ResponseField name="certification" type="object" required>
+  `{ name, url }`, both nullable. `name` is translated.
+</ResponseField>
+<ResponseField name="prerequisites" type="string | null">
+  Free text as typed in the admin, line breaks preserved. Render it as prose, not as a split list.
+</ResponseField>
+<ResponseField name="learning_objectives" type="string | null">Free text, same rules as `prerequisites`.</ResponseField>
+<ResponseField name="elearning_unlocked" type="boolean" required>
+  `true`: buying the training grants lifetime e-learning access, recorded sessions included. `false`:
+  lifetime access to the training resources (PDF, slides) only.
+</ResponseField>
+<ResponseField name="quizzes_count" type="integer | null" />
+<ResponseField name="included_resource" type="object" required>
+  `{ label, url }`, both nullable. `label` is translated.
+</ResponseField>
+<ResponseField name="modules" type="object[]" required>
+  Ordered by `position`.
+
+  <Expandable title="module">
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required>Translated.</ResponseField>
+    <ResponseField name="summary" type="string | null">Translated.</ResponseField>
+    <ResponseField name="position" type="integer" required />
+    <ResponseField name="lessons" type="object[]" required>
+      `{ id, title, position }`, ordered by `position`; `title` is translated. Can be empty.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="categories" type="object[]" required>`{ id, name }`.</ResponseField>
+<ResponseField name="created_at" type="string" required>ISO 8601.</ResponseField>
+<ResponseField name="updated_at" type="string" required>ISO 8601.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/trainings/formation-cpmai" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/trainings/formation-cpmai", {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+if (res.status === 404) throw new Error("Training not found");
+const training = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "id": 22,
+  "slug": "formation-cpmai",
+  "title": "Formation CPMAI",
+  "intro": "Maîtrisez les compétences de gestion de projets intégrant l’intelligence artificielle avec notre formation PMI CPMAI™.",
+  "overview": "Formation complète pour piloter des initiatives IA de bout en bout avec la méthodologie (PMI-)CPMAI™ : cadrage business, compréhension et préparation des données…",
+  "duration_label": "24h",
+  "price": "0.00",
+  "visibility_status": "published",
+  "is_pinned": false,
+  "featured_image_url": "https://admin.theteam.com.tn/storage/trainings/formation-cpmai.png",
+  "badge_image_url": null,
+  "certification": {
+    "name": "PMI Certified Professional in Managing AI (PMI-CPMAI)™",
+    "url": "https://www.pmi.org/certifications/ai-project-management-cpmai"
+  },
+  "prerequisites": "Public Cible :\nChefs de projet, gestionnaires de produits, analystes d'affaires et professionnels souhaitant piloter des initiatives d'IA.\nPrérequis : aucun prérequis strict…",
+  "learning_objectives": "Préparer les participants à la certification PMI-CPMAI™ en maîtrisant la méthodologie CPMAI et les compétences essentielles pour gérer des projets d'IA de bout en bout.",
+  "elearning_unlocked": true,
+  "quizzes_count": 6,
+  "included_resource": {
+    "label": "PMI-CPMAI™ Exam Content Outline (PMI)",
+    "url": "https://www.pmi.org/-/media/pmi/documents/public/pdf/certifications/pmicpmai-exam-content-outline2025-updated.pdf"
+  },
+  "modules": [
+    {
+      "id": 141,
+      "title": "Phases III-IV-V de PMI-CPMAI",
+      "summary": null,
+      "position": 2,
+      "lessons": [
+        { "id": 1236, "title": "4. Training, Fine-tuning et Prompt Engineering (1h15)", "position": 4 },
+        { "id": 1237, "title": "5. Validation performance technique et business (1h30)", "position": 5 },
+        { "id": 1238, "title": "6. MLOps et gouvernance (1h00)", "position": 6 }
+      ]
+    }
+  ],
+  "categories": [],
+  "created_at": "2025-12-19T15:01:56.000000Z",
+  "updated_at": "2025-12-19T15:01:56.000000Z"
+}
+```
+
+```json 404
+{
+  "message": "Formation introuvable."
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,47 @@
+---
+title: "List training categories"
+sidebarTitle: "Training categories"
+description: "Every training category, name and position only, ordered by position."
+api: "GET /categories"
+---
+
+Returns a **bare array** of training categories, ordered by `position`. Only `name` and `position` are
+exposed: no id, no timestamps. Cached for 5 minutes per locale.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Names are translated.
+</ParamField>
+
+## Response
+
+<ResponseField name="name" type="string" required>Category name.</ResponseField>
+<ResponseField name="position" type="integer" required>Display order.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/categories" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/categories", {
+  headers: { Accept: "application/json" },
+});
+const categories = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+[
+  { "name": "Project Management", "position": 1 },
+  { "name": "Agile", "position": 2 },
+  { "name": "Scrum", "position": 3 },
+  { "name": "DevOps", "position": 4 }
+]
+```
+
+</ResponseExample>

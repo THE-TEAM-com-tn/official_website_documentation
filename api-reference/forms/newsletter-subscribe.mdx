@@ -1,0 +1,78 @@
+---
+title: "Subscribe to the newsletter"
+sidebarTitle: "Subscribe"
+description: "Add an email address to the newsletter list. Subscribing twice is not an error."
+api: "POST /newsletter"
+playground: "simple"
+---
+
+Backs the footer form and the `/newsletter` page. The address is trimmed and lower-cased, then stored
+with source `newsletter`. Addresses are unique: re-subscribing returns **`201`** with
+`already_subscribed: true`, so the list never leaks who is on it and the visitor's intent is satisfied.
+
+Staff are notified only for a **new** address. Other forms (contact, devis, réclamation) also feed the
+list with their own source; an address keeps the source of its first sign-up.
+
+Rate limit: **5 requests per minute**.
+
+<ParamField body="email" type="string" required>
+  Valid email (RFC), at most 191 characters.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>French confirmation text.</ResponseField>
+<ResponseField name="already_subscribed" type="boolean" required>`true` when the address was already on the list.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/newsletter" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "nabil.trabelsi@example.com"}'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/newsletter", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ email }),
+});
+const { message, already_subscribed } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "message": "Merci ! Votre inscription à la newsletter est confirmée.",
+  "already_subscribed": false
+}
+```
+
+```json 201 (already)
+{
+  "message": "Cette adresse est déjà inscrite à notre newsletter.",
+  "already_subscribed": true
+}
+```
+
+```json 422
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "email": ["Le champ adresse e-mail doit être une adresse e-mail valide."]
+  }
+}
+```
+
+```json 500
+{
+  "message": "L'inscription a échoué. Merci de réessayer."
+}
+```
+
+</ResponseExample>

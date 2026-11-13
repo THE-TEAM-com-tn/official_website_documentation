@@ -1,0 +1,134 @@
+---
+title: "List pages"
+sidebarTitle: "List pages"
+description: "Paginated CMS pages with search, author and published filters."
+api: "GET /pages"
+---
+
+Returns CMS pages as Laravel's default paginator. Pages are no longer managed in the admin panel, but the
+model and this endpoint remain.
+
+<Warning>
+  Unpublished pages are included unless you pass `is_published=1`. The `search` condition is not grouped
+  in the query (`title LIKE … OR content LIKE … AND …`), so a page whose **title** matches is returned even
+  when it fails `author_id` or `is_published`.
+</Warning>
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="15">
+  Page size, clamped between `1` and `50`.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Matches the title or the content.
+</ParamField>
+
+<ParamField query="author_id" type="integer">
+  Only pages by this author.
+</ParamField>
+
+<ParamField query="is_published" type="boolean">
+  `1` for published pages only, `0` for unpublished only.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. `title`, `content` and the SEO fields are translated.
+</ParamField>
+
+## Response
+
+Laravel paginator: `current_page`, `data`, `first_page_url`, `from`, `last_page`, `last_page_url`,
+`links`, `next_page_url`, `path`, `per_page`, `prev_page_url`, `to`, `total`. See
+[Pagination](/concepts/pagination).
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="page" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required />
+    <ResponseField name="content" type="string | null">HTML.</ResponseField>
+    <ResponseField name="slug" type="string" required />
+    <ResponseField name="image" type="string | null">Stored path. `image_url` is the absolute URL.</ResponseField>
+    <ResponseField name="banner_image" type="string | null">Also `banner_image_url`.</ResponseField>
+    <ResponseField name="video_url" type="string | null" />
+    <ResponseField name="attachment" type="string | null">Also `attachment_url`.</ResponseField>
+    <ResponseField name="author_id" type="integer | null" />
+    <ResponseField name="category_id" type="integer | null" />
+    <ResponseField name="is_published" type="boolean" required />
+    <ResponseField name="meta_title" type="string | null" />
+    <ResponseField name="meta_keywords" type="string[] | null" />
+    <ResponseField name="meta_description" type="string | null" />
+    <ResponseField name="deleted_at" type="string | null" />
+    <ResponseField name="created_at" type="string" required />
+    <ResponseField name="updated_at" type="string" required />
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/pages?is_published=1" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/pages?is_published=1", {
+  headers: { Accept: "application/json" },
+});
+const { data: pages, total } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "current_page": 1,
+  "data": [
+    {
+      "id": 1,
+      "title": "Politique de confidentialité",
+      "content": "<p>Nous protégeons vos données personnelles…</p>",
+      "image": null,
+      "image_url": null,
+      "slug": "politique-de-confidentialite",
+      "banner_image": null,
+      "banner_image_url": null,
+      "video_url": null,
+      "attachment": null,
+      "attachment_url": null,
+      "author_id": 1,
+      "category_id": null,
+      "is_published": true,
+      "meta_title": null,
+      "meta_keywords": ["confidentialité", "rgpd"],
+      "meta_description": null,
+      "deleted_at": null,
+      "created_at": "2026-11-13T18:13:23.000000Z",
+      "updated_at": "2026-11-13T18:13:23.000000Z"
+    }
+  ],
+  "first_page_url": "https://admin.theteam.com.tn/api/pages?page=1",
+  "from": 1,
+  "last_page": 1,
+  "last_page_url": "https://admin.theteam.com.tn/api/pages?page=1",
+  "links": [
+    { "url": null, "label": "&laquo; Précédent", "page": null, "active": false },
+    { "url": "https://admin.theteam.com.tn/api/pages?page=1", "label": "1", "page": 1, "active": true },
+    { "url": null, "label": "Suivant &raquo;", "page": null, "active": false }
+  ],
+  "next_page_url": null,
+  "path": "https://admin.theteam.com.tn/api/pages",
+  "per_page": 15,
+  "prev_page_url": null,
+  "to": 1,
+  "total": 1
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,129 @@
+---
+title: "Log in"
+sidebarTitle: "Log in"
+description: "Exchange a staff account's email and password (plus a 2FA code when enabled) for a Sanctum bearer token."
+api: "POST /login"
+playground: "simple"
+---
+
+Issues a **Laravel Sanctum personal access token** for a staff account. There is no public sign-up:
+accounts are created by an admin in the admin panel (invitation or **Access → Users**), and only
+accounts holding a built-in role (`admin` or `content_manager`) can sign in.
+
+Checks run in this order: credentials → verified email → blocked flag → role → two-factor code.
+Each token is named after the device that requested it (for example `Safari on macOS`) and stamped
+with the caller's IP and User-Agent, so it shows up in [List devices](/api-reference/auth/list-devices).
+Tokens **do not expire**; revoke them with [Log out](/api-reference/auth/logout) or
+[Log out everywhere](/api-reference/auth/logout-all).
+
+<Warning>
+  **Known issue — 2FA accounts.** Sending `2fa_code` **alone** currently returns
+  `500 Server Error` (`Undefined array key "2fa_recovery_code"` in `AuthController@login`). Until the
+  guard is fixed, a TOTP login only succeeds when the body also carries a non-empty
+  `2fa_recovery_code` (it is ignored when `2fa_code` is present). Logging in with a recovery code
+  alone works.
+</Warning>
+
+## Body
+
+<ParamField body="email" type="string" required>
+  Account email address.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Account password.
+</ParamField>
+
+<ParamField body="2fa_code" type="string">
+  Six-digit TOTP code from the authenticator app. Required (or `2fa_recovery_code`) when the account
+  has two-factor authentication enabled.
+</ParamField>
+
+<ParamField body="2fa_recovery_code" type="string">
+  One of the account's single-use recovery codes. A valid code is **consumed**.
+</ParamField>
+
+## Response
+
+<ResponseField name="token" type="string" required>
+  Plain-text Sanctum token (`{id}|{secret}`). Send it as `Authorization: Bearer <token>`. It is shown
+  only once.
+</ResponseField>
+
+<ResponseField name="two_factor_enabled" type="boolean" required>
+  Whether the account has two-factor authentication enabled.
+</ResponseField>
+
+## Errors
+
+| Status | `message` | When |
+| :-- | :-- | :-- |
+| `401` | `Invalid credentials` | Unknown email or wrong password |
+| `403` | `Email not verified` | The account's email is not verified |
+| `403` | `User is blocked` | The account is blocked |
+| `403` | `Account has no access` | The account holds no built-in role |
+| `422` | `2FA code required` | 2FA is enabled and no code was sent |
+| `401` | `Invalid 2FA code` | Wrong TOTP code |
+| `401` | `Invalid recovery code` | Unknown or already-used recovery code |
+| `422` | French validation message + `errors` | Missing or malformed `email` / `password` |
+
+These messages are hard-coded in English; validation messages follow the request language.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/login" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "staff@example.com", "password": "your-password"}'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/login", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ email: "staff@example.com", password: "your-password" }),
+});
+const { token, two_factor_enabled } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "token": "3|Xh2vB8pQe1R7sK0dWnZ4cY6uJ9tA5mLf2gHqEoVi",
+  "two_factor_enabled": false
+}
+```
+
+```json 401
+{
+  "message": "Invalid credentials"
+}
+```
+
+```json 403
+{
+  "message": "Account has no access"
+}
+```
+
+```json 422 (2FA)
+{
+  "message": "2FA code required"
+}
+```
+
+```json 422 (validation)
+{
+  "message": "Le champ adresse e-mail doit être une adresse e-mail valide. (and 1 more error)",
+  "errors": {
+    "email": ["Le champ adresse e-mail doit être une adresse e-mail valide."],
+    "password": ["Le champ mot de passe est obligatoire."]
+  }
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,104 @@
+---
+title: "List menu items"
+sidebarTitle: "List menu"
+description: "Paginated top-level navigation items with their children and linked page."
+api: "GET /menu"
+---
+
+Returns the top-level menu items ordered by `position`, each with its `children` and its linked `page`
+(or `null`). The menu is no longer edited in the admin panel; the endpoint serves what is stored.
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="15">
+  Page size, clamped between `1` and `100`.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Item titles are translated.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="menu item" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required />
+    <ResponseField name="url" type="string | null" />
+    <ResponseField name="page_id" type="integer | null" />
+    <ResponseField name="position" type="integer | null" />
+    <ResponseField name="created_at" type="string" required />
+    <ResponseField name="updated_at" type="string" required />
+    <ResponseField name="children" type="object[]" required>
+      `{ id, title, url, page_id, parent_menu_item_id, position, created_at, updated_at }`.
+    </ResponseField>
+    <ResponseField name="page" type="object | null">The linked page, with the fields of [Get a page](/api-reference/content/get-page).</ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="meta" type="object" required>`{ current_page, per_page, total, last_page }`.</ResponseField>
+<ResponseField name="links" type="object" required>`{ first, last, prev, next }`.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/menu" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/menu?per_page=100", {
+  headers: { Accept: "application/json" },
+});
+const { data: menu } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Formations",
+      "url": "/trainings",
+      "page_id": null,
+      "position": 1,
+      "created_at": "2026-11-13T18:13:23.000000Z",
+      "updated_at": "2026-11-13T18:13:23.000000Z",
+      "children": [
+        {
+          "id": 1,
+          "title": "Confidentialité",
+          "url": "/privacy-policy",
+          "page_id": 1,
+          "parent_menu_item_id": 1,
+          "position": 1,
+          "created_at": "2026-11-13T18:13:32.000000Z",
+          "updated_at": "2026-11-13T18:13:32.000000Z"
+        }
+      ],
+      "page": null
+    }
+  ],
+  "meta": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 1,
+    "last_page": 1
+  },
+  "links": {
+    "first": "https://admin.theteam.com.tn/api/menu?page=1",
+    "last": "https://admin.theteam.com.tn/api/menu?page=1",
+    "prev": null,
+    "next": null
+  }
+}
+```
+
+</ResponseExample>

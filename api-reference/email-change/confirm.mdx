@@ -1,0 +1,67 @@
+---
+title: "Confirm an email change"
+sidebarTitle: "Confirm (token)"
+description: "Apply a pending email change with the token from the link sent to the new address."
+api: "POST /email/change/confirm"
+playground: "simple"
+---
+
+Public endpoint: the token is the proof. On success the API swaps the address (marked verified), deletes
+the request, **revokes every token and browser session** of the account (the caller's included) and
+emails the old address that the change happened. The client must log in again with the new address.
+
+Rate limit: **10 requests per minute**.
+
+<ParamField body="token" type="string" required>
+  The 64-character token: the last path segment of the link
+  `https://admin.theteam.com.tn/admin/email-change/confirm/{token}`. Single use, valid 30 minutes.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>
+  `Adresse e-mail modifiée. Reconnectez-vous avec la nouvelle adresse.`
+</ResponseField>
+<ResponseField name="email" type="string" required>The account's new address.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/email/change/confirm" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"token": "the-64-character-token-from-the-link"}'
+```
+
+```javascript JavaScript
+await fetch("https://admin.theteam.com.tn/api/email/change/confirm", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ token }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Adresse e-mail modifiée. Reconnectez-vous avec la nouvelle adresse.",
+  "email": "new.address@example.com"
+}
+```
+
+```json 409
+{
+  "message": "Cette adresse e-mail n’est plus disponible. Recommencez le changement."
+}
+```
+
+```json 422
+{
+  "message": "Ce lien est invalide ou a expiré."
+}
+```
+
+</ResponseExample>

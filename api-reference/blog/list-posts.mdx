@@ -1,0 +1,170 @@
+---
+title: "List blog posts"
+sidebarTitle: "List posts"
+description: "Paginated published blog posts, newest first, with search and a multi-category filter."
+api: "GET /blog-posts"
+---
+
+Returns **published** posts (`status = true` and `published_at` set), ordered by `published_at`, newest
+first. It powers the `/blogs` page. In the list, `content` is a **plain-text preview** (first three
+non-empty lines, at most about 300 characters). Fetch [a single post](/api-reference/blog/get-post) for
+the full HTML.
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="15">
+  Page size. Not clamped.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Case-insensitive match on the title and the content, both languages.
+</ParamField>
+
+<ParamField query="categories" type="string">
+  Comma-separated category **slugs** (`pmp,scrum`). Returns posts in any of them. Slugs come from
+  [List blog categories](/api-reference/blog/list-categories). Empty entries are ignored.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+## Response
+
+A Laravel API Resource collection: `data`, `links` and `meta`. See [Pagination](/concepts/pagination).
+The pagination links do not carry your filters; add them back when you follow `links.next`.
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="post" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required>Translated.</ResponseField>
+    <ResponseField name="content" type="string" required>Plain-text preview (full HTML on the single-post endpoint).</ResponseField>
+    <ResponseField name="slug" type="string" required>Used by the site's `/blog/{slug}` URLs.</ResponseField>
+    <ResponseField name="thumbnail_image" type="string | null" />
+    <ResponseField name="author_id" type="integer | null" />
+    <ResponseField name="category_id" type="integer | null" />
+    <ResponseField name="tag_id" type="integer | null">Legacy column, usually `null`. Use `tags`.</ResponseField>
+    <ResponseField name="meta_title" type="string | null">SEO title (auto-filled from the title when left blank).</ResponseField>
+    <ResponseField name="meta_description" type="string | null">SEO description (auto-filled from the content).</ResponseField>
+    <ResponseField name="meta_url" type="string | null" />
+    <ResponseField name="seo" type="string | null" />
+    <ResponseField name="seo_keywords" type="string | null" />
+    <ResponseField name="status" type="boolean" required>Always `true` here.</ResponseField>
+    <ResponseField name="is_pinned" type="boolean" required />
+    <ResponseField name="published_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="deleted_at" type="null" required />
+    <ResponseField name="created_at" type="string" required />
+    <ResponseField name="updated_at" type="string" required />
+    <ResponseField name="image_url" type="string | null">Cover image URL.</ResponseField>
+    <ResponseField name="reading_minutes" type="integer" required>
+      Estimated reading time of the **full** content (words / 200, at least 1).
+    </ResponseField>
+    <ResponseField name="tags" type="object[]" required>`{ id, name, color, sort }`.</ResponseField>
+    <ResponseField name="category" type="object | null">
+      `{ id, name, sub_title, slug, image, meta_title, meta_keywords, meta_description }`.
+    </ResponseField>
+    <ResponseField name="author" type="object | null">
+      `{ id, name, email, avatar_url }`. `email` is the author's staff-account address.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="links" type="object" required>`first`, `last`, `prev`, `next` URLs.</ResponseField>
+<ResponseField name="meta" type="object" required>
+  `current_page`, `from`, `last_page`, `links`, `path`, `per_page`, `to`, `total`.
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/blog-posts?per_page=6&categories=pmp,power-bi" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({ per_page: "6", categories: ["pmp", "power-bi"].join(",") });
+const res = await fetch(`https://admin.theteam.com.tn/api/blog-posts?${params}`, {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+const { data: posts, meta } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Pourquoi passer la certification PMP en Tunisie en 2026 ?",
+      "content": "La certification PMP (Project Management Professional), délivrée par le Project Management Institute (PMI), demeure la référence mondiale en management de projet. En Tunisie, elle est de plus en plus demandée par les employeurs, dans le secteur privé comme public, car elle atteste d'une maîtrise con...",
+      "slug": "pourquoi-passer-la-certification-pmp-en-tunisie-en-2026",
+      "thumbnail_image": null,
+      "author_id": 1,
+      "category_id": 2,
+      "tag_id": null,
+      "meta_title": "Certification PMP en Tunisie : pourquoi se lancer",
+      "meta_description": "La certification PMP reste la référence en gestion de projet. Découvrez ses avantages en Tunisie, les prérequis du PMI et comment préparer l'examen efficacement.",
+      "meta_url": null,
+      "seo": null,
+      "seo_keywords": null,
+      "status": true,
+      "is_pinned": true,
+      "published_at": "2026-11-09T18:10:14.000000Z",
+      "deleted_at": null,
+      "created_at": "2026-11-13T18:10:14.000000Z",
+      "updated_at": "2026-11-13T18:10:14.000000Z",
+      "image_url": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+      "reading_minutes": 4,
+      "tags": [
+        { "id": 1, "name": "Project Management", "color": "#6366F1", "sort": 1 },
+        { "id": 2, "name": "PMP", "color": "#8B5CF6", "sort": 2 }
+      ],
+      "category": {
+        "id": 2,
+        "name": "PMP",
+        "sub_title": "PMP Exam & Prep",
+        "slug": "pmp",
+        "image": null,
+        "meta_title": "PMP Exam Preparation",
+        "meta_keywords": ["pmp", "pmp exam", "pmi", "pmbok"],
+        "meta_description": "Resources and insights for PMP certification and exam readiness."
+      },
+      "author": {
+        "id": 1,
+        "name": "Admin",
+        "email": "author@example.com",
+        "avatar_url": null
+      }
+    }
+  ],
+  "links": {
+    "first": "https://admin.theteam.com.tn/api/blog-posts?page=1",
+    "last": "https://admin.theteam.com.tn/api/blog-posts?page=2",
+    "prev": null,
+    "next": "https://admin.theteam.com.tn/api/blog-posts?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 2,
+    "links": [
+      { "url": null, "label": "&laquo; Précédent", "page": null, "active": false },
+      { "url": "https://admin.theteam.com.tn/api/blog-posts?page=1", "label": "1", "page": 1, "active": true },
+      { "url": "https://admin.theteam.com.tn/api/blog-posts?page=2", "label": "2", "page": 2, "active": false },
+      { "url": "https://admin.theteam.com.tn/api/blog-posts?page=2", "label": "Suivant &raquo;", "page": 2, "active": false }
+    ],
+    "path": "https://admin.theteam.com.tn/api/blog-posts",
+    "per_page": 6,
+    "to": 6,
+    "total": 10
+  }
+}
+```
+
+</ResponseExample>

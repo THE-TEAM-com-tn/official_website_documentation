@@ -1,0 +1,55 @@
+---
+title: "Log out everywhere"
+sidebarTitle: "Log out everywhere"
+description: "Revoke every token of the account, including the one making the request."
+api: "POST /logout-all"
+authMethod: "bearer"
+playground: "simple"
+---
+
+Deletes **all** of the account's tokens. Every API client, including this one, must log in again.
+Browser sessions of the admin panel are not affected; they are managed on its **Security** page.
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer <token>`.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Logged out from all devices.`</ResponseField>
+<ResponseField name="revoked" type="integer" required>Number of tokens deleted.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/logout-all" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/logout-all", {
+  method: "POST",
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+const { revoked } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Logged out from all devices.",
+  "revoked": 3
+}
+```
+
+```json 401
+{
+  "message": "Unauthenticated."
+}
+```
+
+</ResponseExample>

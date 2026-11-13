@@ -1,0 +1,73 @@
+---
+title: "Get a page"
+sidebarTitle: "Get a page"
+description: "One CMS page by slug."
+api: "GET /pages/{slug}"
+---
+
+Returns the page as a **bare object**, with the same fields as in [List pages](/api-reference/content/list-pages).
+
+<Warning>
+  This endpoint does not check `is_published`: an unpublished page is returned too. Check the flag before
+  rendering it.
+</Warning>
+
+<ParamField path="slug" type="string" required>
+  Page slug.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/pages/politique-de-confidentialite" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch(`https://admin.theteam.com.tn/api/pages/${encodeURIComponent(slug)}`, {
+  headers: { Accept: "application/json" },
+});
+const page = await res.json();
+if (!res.ok || !page.is_published) return notFound();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "id": 1,
+  "title": "Politique de confidentialité",
+  "content": "<p>Nous protégeons vos données personnelles…</p>",
+  "image": null,
+  "image_url": null,
+  "slug": "politique-de-confidentialite",
+  "banner_image": null,
+  "banner_image_url": null,
+  "video_url": null,
+  "attachment": null,
+  "attachment_url": null,
+  "author_id": 1,
+  "category_id": null,
+  "is_published": true,
+  "meta_title": null,
+  "meta_keywords": ["confidentialité", "rgpd"],
+  "meta_description": null,
+  "deleted_at": null,
+  "created_at": "2026-11-13T18:13:23.000000Z",
+  "updated_at": "2026-11-13T18:13:23.000000Z"
+}
+```
+
+```json 404
+{
+  "message": "No query results for model [App\\Models\\Page]."
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,90 @@
+---
+title: "Localization"
+sidebarTitle: "Localization"
+description: "Choose French or English with X-Locale or ?lang. The API translates both content and messages, with the same response shapes in both languages."
+---
+
+The public site is bilingual: French at the historical URLs, English under `/en/`. The API follows the
+same rule. It answers in **French by default** and in **English on request**, and the response shape
+never changes between the two.
+
+## Choosing the language
+
+| Priority | Mechanism | Example |
+| :-- | :-- | :-- |
+| 1 | `lang` query parameter | `GET /api/trainings?lang=en` |
+| 2 | `X-Locale` header | `X-Locale: en` |
+| 3 | Default | French |
+
+- Only `fr` and `en` are accepted. Any other value falls back to French.
+- `Accept-Language` is **ignored on purpose**. Browsers always send it, and honouring it would mix English
+  errors into the French site.
+- Every API response carries `Vary: X-Locale`, so shared caches keep one copy per language.
+
+The public site sets `X-Locale` once on its axios instance whenever the visitor switches language.
+
+## What gets translated
+
+**Content.** Bilingual columns are stored as `{"fr": …, "en": …}` and are always serialized as a **single
+string** in the requested language:
+
+- Trainings: `title`, `intro`, `overview`, `duration_label`, certification name, `prerequisites`,
+  `learning_objectives`, included-resource label; modules (`title`, `summary`), lessons (`title`),
+  training categories (`name`).
+- Blog posts (`title`, `content`, `meta_title`, `meta_description`) and their categories.
+- Knowledge Corner articles (`title`, `excerpt`, `content`, `image_alt`, SEO fields) and `type_label`.
+- Pages, menu items, landing-page texts, staff titles, testimonials (`job_title`, `content`), partner
+  descriptions and categories, carousel slides, featured categories, FAQs, webinars.
+
+A missing English translation **falls back to the French text**. It is never empty and never returns
+both languages. Slugs are shared between languages.
+
+**Messages.** Only Laravel's own messages follow the locale: validation errors (`errors`), the
+pagination labels and the email-change re-authentication errors. The `message` strings written by
+hand in the controllers do **not** change with the locale:
+
+| Source | Language in both modes | Example |
+| :-- | :-- | :-- |
+| Form and email-change controllers | French | `Merci ! Votre inscription à la newsletter est confirmée.` |
+| Login and account controller | English | `Invalid credentials`, `Password updated.` |
+| Validation `errors` | Request language | `Le champ adresse e-mail …` / `The email field must be a valid email address.` |
+
+<CodeGroup>
+
+```json French (default)
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "email": ["Le champ adresse e-mail doit être une adresse e-mail valide."]
+  }
+}
+```
+
+```json English (X-Locale: en)
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "email": ["The email field must be a valid email address."]
+  }
+}
+```
+
+</CodeGroup>
+
+## Details to know
+
+- In the summary of a Laravel validation error, the "(and N more errors)" suffix stays in English:
+  `"Le champ formation sélectionné est invalide. (and 3 more errors)"`.
+- English field names are the raw input names (`The client name field is required.`), while French
+  ones are humanised (`Le champ nom est obligatoire.`).
+
+<Tip>
+  Render validation `errors` **verbatim**: they are already in the page's language. Because hand-written
+  `message` strings are always French, an English client should show its own text for success and
+  generic failures.
+</Tip>
+
+## Share pages
+
+The `/share/blog/{slug}` and `/share/article/{slug}` web routes accept `?lang=en` too. They then render
+English Open Graph tags and redirect the visitor to the `/en/` URL.

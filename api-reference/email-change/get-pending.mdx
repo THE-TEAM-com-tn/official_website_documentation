@@ -1,0 +1,66 @@
+---
+title: "Get the pending email change"
+sidebarTitle: "Get pending change"
+description: "Return the account's pending email-address change, if any."
+api: "GET /email/change"
+authMethod: "bearer"
+---
+
+An email change is a two-sided, verified flow: nothing changes until the link sent to the new address is
+confirmed. See [Authentication → Email change flow](/concepts/authentication#email-change-flow).
+
+Send the token as `Authorization: Bearer <token>`.
+
+## Response
+
+<ResponseField name="pending" type="object | null" required>
+  `null` when no change is pending.
+
+  <Expandable title="properties">
+    <ResponseField name="new_email" type="string" required>The requested address.</ResponseField>
+    <ResponseField name="expires_at" type="string" required>
+      ISO 8601. Confirmation links live **30 minutes**.
+    </ResponseField>
+    <ResponseField name="expired" type="boolean" required>
+      `true` once `expires_at` has passed. An expired request can no longer be confirmed or resent; start
+      a new one.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/email/change" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/email/change", {
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+const { pending } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 (pending)
+{
+  "pending": {
+    "new_email": "new.address@example.com",
+    "expires_at": "2026-11-13T18:45:00+00:00",
+    "expired": false
+  }
+}
+```
+
+```json 200 (none)
+{
+  "pending": null
+}
+```
+
+</ResponseExample>

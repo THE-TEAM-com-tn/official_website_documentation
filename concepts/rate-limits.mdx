@@ -1,0 +1,54 @@
+---
+title: "Rate limits"
+sidebarTitle: "Rate limits"
+description: "Which endpoints are throttled, how the limits are counted, and what a 429 response looks like."
+---
+
+The API has **no global rate limit**. Throttling is applied per route, on the endpoints that write data
+or protect a secret. Limits are counted **per client IP**, or per account on authenticated routes, over a
+fixed window.
+
+| Endpoint | Limit |
+| :-- | :-- |
+| [`POST /devis`](/api-reference/forms/create-devis) | 6 per minute |
+| [`POST /reclamation-submissions`](/api-reference/forms/create-reclamation) | 6 per minute |
+| [`GET /reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | 20 per minute (the tracking code is the only credential) |
+| [`POST /review-submissions/create`](/api-reference/forms/create-review) | 6 per minute |
+| [`POST /testimonials`](/api-reference/forms/submit-testimonial) | 6 per minute |
+| [`POST /newsletter`](/api-reference/forms/newsletter-subscribe) | 5 per minute |
+| [`POST /newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | 5 per minute |
+| [`POST /email/change`](/api-reference/email-change/start) | 6 per 10 minutes |
+| [`POST /email/change/resend`](/api-reference/email-change/resend) | 3 per 10 minutes |
+| [`POST /email/change/confirm`](/api-reference/email-change/confirm) | 10 per minute |
+| [`POST /email/change/cancel`](/api-reference/email-change/cancel) | 10 per minute |
+
+<Note>
+  `POST /contact-us`, `POST /enrollments` and the login and password endpoints are **not throttled** today.
+</Note>
+
+## Headers
+
+Throttled routes report the budget on every response:
+
+```http
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 4
+```
+
+## When you hit the limit
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 42
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 0
+```
+
+```json
+{
+  "message": "Too Many Attempts."
+}
+```
+
+The message is not translated. On the public site, show a "try again in a minute" message for any
+`429` instead of the raw text.

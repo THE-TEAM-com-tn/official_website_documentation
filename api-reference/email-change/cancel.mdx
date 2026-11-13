@@ -1,0 +1,62 @@
+---
+title: "Cancel an email change"
+sidebarTitle: "Cancel (token)"
+description: "Stop a pending email change from the old address and sign the account out everywhere."
+api: "POST /email/change/cancel"
+playground: "simple"
+---
+
+Public endpoint for the **"this wasn't me"** link emailed to the old address. It drops the pending request
+**and revokes every token and browser session** of the account, because someone with the password tried
+to take it over. The owner should then change the password.
+
+The cancel token keeps working after the confirmation link has expired, as long as the request has not
+been confirmed or cancelled.
+
+Rate limit: **10 requests per minute**.
+
+<ParamField body="token" type="string" required>
+  The 64-character token: the last path segment of
+  `https://admin.theteam.com.tn/admin/email-change/cancel/{token}`.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>
+  `Demande annulée. Tous les appareils ont été déconnectés.`
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/email/change/cancel" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"token": "the-64-character-token-from-the-link"}'
+```
+
+```javascript JavaScript
+await fetch("https://admin.theteam.com.tn/api/email/change/cancel", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ token }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Demande annulée. Tous les appareils ont été déconnectés."
+}
+```
+
+```json 422
+{
+  "message": "Ce lien est invalide ou a déjà été utilisé."
+}
+```
+
+</ResponseExample>

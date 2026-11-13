@@ -1,0 +1,103 @@
+---
+title: "Submit a testimonial"
+sidebarTitle: "Submit a testimonial"
+description: "Send a testimonial; it stays unpublished until staff approve it."
+api: "POST /testimonials"
+playground: "simple"
+---
+
+Backs the testimonial form of the site. The testimonial is saved **unpublished** and only appears in
+[List testimonials](/api-reference/content/list-testimonials) once staff publish it in the admin panel.
+Every staff account gets a notification. No email is sent.
+
+`redirection_url` holds the author's LinkedIn profile ("LinkedIn profile URL" on the site), and
+`use_linkedin_image` records their consent to use their LinkedIn photo: staff still upload the photo by hand.
+
+Rate limit: **6 requests per minute**.
+
+## Body
+
+<ParamField body="name" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="job_title" type="string">
+  At most 255 characters.
+</ParamField>
+
+<ParamField body="content" type="string" required>
+  At most 5,000 characters.
+</ParamField>
+
+<ParamField body="redirection_url" type="string">
+  Valid URL, at most 1,024 characters.
+</ParamField>
+
+<ParamField body="use_linkedin_image" type="boolean" default="false">
+  Consent to use the LinkedIn profile photo.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean" required />
+<ResponseField name="message" type="string" required>French confirmation text.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/testimonials" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sami Ben Ali",
+    "job_title": "Chef de projet, ACME",
+    "content": "Une préparation PMP exigeante et très bien structurée.",
+    "redirection_url": "https://www.linkedin.com/in/example",
+    "use_linkedin_image": true
+  }'
+```
+
+```javascript JavaScript
+await fetch("https://admin.theteam.com.tn/api/testimonials", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: "Sami Ben Ali",
+    content: "Une préparation PMP exigeante et très bien structurée.",
+    use_linkedin_image: false,
+  }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "success": true,
+  "message": "Merci ! Votre témoignage a été envoyé et sera publié après validation."
+}
+```
+
+```json 422
+{
+  "success": false,
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "name": ["Le champ nom est obligatoire."],
+    "content": ["Le champ contenu est obligatoire."],
+    "redirection_url": ["Le format de l'URL de lien n'est pas valide."]
+  }
+}
+```
+
+```json 500
+{
+  "success": false,
+  "message": "Échec de l'envoi. Veuillez réessayer plus tard.",
+  "error": null
+}
+```
+
+</ResponseExample>

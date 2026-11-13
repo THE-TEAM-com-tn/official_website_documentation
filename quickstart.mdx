@@ -1,47 +1,132 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+sidebarTitle: "Quickstart"
+description: "Make your first requests to the TheTeam API: check health, list trainings in French and English, open one by slug, and sign in as staff."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+Content endpoints need no key, so you can call the production API straight from a terminal.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+<Warning>
+  Form endpoints (`POST /contact-us`, `/enrollments`, `/devis`…) write to the **production** database,
+  notify the staff and send real emails. Test them against a local backend, as described in
+  [Run the backend locally](#run-the-backend-locally).
+</Warning>
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
+  <Step title="Check that the API is up">
     ```bash
-    npm install your-package
+    curl https://admin.theteam.com.tn/api/health -H "Accept: application/json"
+    ```
+
+    ```json
+    {
+      "status": "healthy",
+      "timestamp": "2026-11-13T18:11:02.283797Z",
+      "environment": "production"
+    }
     ```
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+
+  <Step title="List trainings">
+    Always send `Accept: application/json`. Without it, a validation error turns into an HTML redirect
+    instead of a JSON `422`.
 
     ```bash
-    your-cli init
+    curl "https://admin.theteam.com.tn/api/trainings?per_page=5" -H "Accept: application/json"
+    ```
+
+    The answer is a `{ data, pagination }` envelope. Each item has an `id` and a `slug`.
+  </Step>
+
+  <Step title="Ask for English">
+    The API answers in French by default. Add `X-Locale: en` (or `?lang=en`) to get the English
+    translation of every translatable field; untranslated fields fall back to French.
+
+    ```bash
+    curl "https://admin.theteam.com.tn/api/trainings?per_page=5" \
+      -H "Accept: application/json" \
+      -H "X-Locale: en"
     ```
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
+
+  <Step title="Open one training">
+    Use the `slug` (or the numeric `id`) from the list:
 
     ```bash
-    your-cli start
+    curl "https://admin.theteam.com.tn/api/trainings/formation-pmi-acp" -H "Accept: application/json"
     ```
+
+    The detail payload adds pricing, certification, prerequisites and the modules with their lessons.
+    See [Get a training](/api-reference/trainings/get).
+  </Step>
+
+  <Step title="Sign in as staff (optional)">
+    Only staff accounts with a role can get a token. There is no public sign-up.
+
+    ```bash
+    curl -X POST "https://admin.theteam.com.tn/api/login" \
+      -H "Accept: application/json" -H "Content-Type: application/json" \
+      -d '{"email": "staff@example.com", "password": "your-password"}'
+    ```
+
+    Then send the token on protected endpoints:
+
+    ```bash
+    curl "https://admin.theteam.com.tn/api/user" \
+      -H "Accept: application/json" -H "Authorization: Bearer $TOKEN"
+    ```
+
+    See [Authentication](/concepts/authentication).
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Call the API from JavaScript
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+The public site uses axios with a shared base URL and an `X-Locale` header. The same pattern works with
+`fetch`:
+
+```javascript
+const API_BASE = "https://admin.theteam.com.tn/api";
+
+async function api(path, { locale = "fr", ...init } = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-Locale": locale,
+      ...init.headers,
+    },
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw Object.assign(new Error(body?.message ?? res.statusText), { status: res.status, body });
+  return body;
+}
+
+const { data: posts } = await api("/blog-posts?per_page=6", { locale: "en" });
+```
+
+Handle `422` (show `errors` next to each field), `429` (ask the visitor to retry in a minute) and a
+generic fallback for everything else. Validation `errors` come back in the request language; most
+hand-written `message` strings are French in both modes. See
+[Responses and errors](/concepts/responses-and-errors) and [Localization](/concepts/localization).
+
+## Run the backend locally
+
+Use a local backend to try the form endpoints without touching production.
+
+```bash
+cd official_website_backend
+composer install && npm install
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve --port=8020
+```
+
+Then call `http://127.0.0.1:8020/api` instead of the production base URL. Set `MAIL_MAILER=log` in your
+local `.env` so form submissions write emails to the log instead of sending them.
+
+<Note>
+  The backend needs a PHP release patched against php2shell (8.2.35+, 8.3.36+, 8.4.27+ or 8.5.12+).
+  XAMPP's PHP 8.2.4 is refused by Composer; use Homebrew `php@8.2` or newer.
+</Note>

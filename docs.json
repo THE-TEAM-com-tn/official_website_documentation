@@ -1,72 +1,200 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "TheTeam API",
+  "description": "Public HTTP API of the TheTeam website backend (admin.theteam.com.tn): trainings, blog, Knowledge Corner, site content and public forms.",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    "primary": "#259D79",
+    "light": "#3CC49A",
+    "dark": "#1E7F62"
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/light.png",
+    "dark": "/logo/dark.png",
+    "href": "/"
+  },
+  "favicon": "/favicon.svg",
+  "fonts": {
+    "heading": { "family": "Outfit" },
+    "body": { "family": "Inter" }
+  },
+  "appearance": {
+    "default": "system"
+  },
+  "api": {
+    "mdx": {
+      "server": "https://admin.theteam.com.tn/api"
+    },
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "autogenerate": false
+    },
+    "params": {
+      "expanded": "all"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": ["index", "quickstart"]
+          },
+          {
+            "group": "Core concepts",
+            "pages": [
+              "concepts/authentication",
+              "concepts/localization",
+              "concepts/responses-and-errors",
+              "concepts/pagination",
+              "concepts/rate-limits",
+              "concepts/publishing-and-caching"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api-reference/overview"]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "api-reference/auth/login",
+              "api-reference/auth/get-user",
+              "api-reference/auth/logout",
+              "api-reference/auth/list-devices",
+              "api-reference/auth/revoke-device",
+              "api-reference/auth/logout-all",
+              "api-reference/auth/update-password",
+              "api-reference/auth/forgot-password",
+              "api-reference/auth/reset-password",
+              "api-reference/auth/verify-email",
+              "api-reference/auth/resend-verification"
+            ]
+          },
+          {
+            "group": "Email change",
+            "pages": [
+              "api-reference/email-change/get-pending",
+              "api-reference/email-change/start",
+              "api-reference/email-change/resend",
+              "api-reference/email-change/discard",
+              "api-reference/email-change/confirm",
+              "api-reference/email-change/cancel"
+            ]
+          },
+          {
+            "group": "Trainings",
+            "pages": [
+              "api-reference/trainings/list",
+              "api-reference/trainings/get",
+              "api-reference/trainings/options",
+              "api-reference/trainings/categories"
+            ]
+          },
+          {
+            "group": "Blog",
+            "pages": [
+              "api-reference/blog/list-posts",
+              "api-reference/blog/pinned-posts",
+              "api-reference/blog/get-post",
+              "api-reference/blog/list-categories"
+            ]
+          },
+          {
+            "group": "Knowledge Corner",
+            "pages": [
+              "api-reference/articles/list",
+              "api-reference/articles/filters",
+              "api-reference/articles/pinned",
+              "api-reference/articles/get"
+            ]
+          },
+          {
+            "group": "Site content",
+            "pages": [
+              "api-reference/content/landing-page",
+              "api-reference/content/list-testimonials",
+              "api-reference/content/pinned-testimonials",
+              "api-reference/content/list-webinars",
+              "api-reference/content/list-faqs",
+              "api-reference/content/list-pages",
+              "api-reference/content/get-page",
+              "api-reference/content/list-menu",
+              "api-reference/content/get-menu-item"
+            ]
+          },
+          {
+            "group": "Forms & submissions",
+            "pages": [
+              "api-reference/forms/contact-us",
+              "api-reference/forms/create-enrollment",
+              "api-reference/forms/create-devis",
+              "api-reference/forms/newsletter-subscribe",
+              "api-reference/forms/newsletter-unsubscribe",
+              "api-reference/forms/create-reclamation",
+              "api-reference/forms/track-reclamation",
+              "api-reference/forms/create-review",
+              "api-reference/forms/list-reviews",
+              "api-reference/forms/submit-testimonial"
+            ]
+          },
+          {
+            "group": "System",
+            "pages": ["api-reference/system/health", "api-reference/system/status-page"]
+          },
+          {
+            "group": "Share pages & sitemaps",
+            "pages": [
+              "api-reference/web/share-blog",
+              "api-reference/web/share-article",
+              "api-reference/web/sitemap-trainings",
+              "api-reference/web/sitemap-articles"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "navbar": {
     "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@mintlify.com"
-      }
+      { "label": "Website", "href": "https://theteam.com.tn" },
+      { "label": "Admin panel", "href": "https://admin.theteam.com.tn/admin" }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "label": "API status",
+      "href": "https://admin.theteam.com.tn/"
     }
   },
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude", "cursor", "vscode"]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+      "website": "https://theteam.com.tn",
+      "linkedin": "https://tn.linkedin.com/company/the-team-tunisie",
+      "facebook": "https://www.facebook.com/TheteamTN/",
+      "instagram": "https://www.instagram.com/the_team_tn/",
+      "youtube": "https://www.youtube.com/channel/UCBPlXrGX_sbk82XfwQAEc5w"
+    },
+    "links": [
+      {
+        "header": "Repositories",
+        "items": [
+          { "label": "Backend", "href": "https://github.com/THE-TEAM-com-tn/official_website_backend" },
+          { "label": "Frontend", "href": "https://github.com/THE-TEAM-com-tn/official_website_frontend" },
+          { "label": "Coordination repo", "href": "https://github.com/THE-TEAM-com-tn/Official_website" }
+        ]
+      }
+    ]
   }
 }

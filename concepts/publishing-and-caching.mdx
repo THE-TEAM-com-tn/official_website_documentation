@@ -1,0 +1,64 @@
+---
+title: "Publishing and caching"
+sidebarTitle: "Publishing and caching"
+description: "What makes content visible through the API, and why a change in the admin panel can take a few minutes to show."
+---
+
+## Publish gating
+
+Content is managed in the admin panel. The API serves an item only once it is published:
+
+| Content | Visible when | Notes |
+| :-- | :-- | :-- |
+| Blog posts | `status = true` **and** `published_at` is set | A future `published_at` does **not** hide a post |
+| Knowledge Corner articles | `status = true` **and** `published_at` is set **and reached** | A future date schedules the article: `404` until then |
+| Trainings (list, options, sitemap) | `visibility_status = "published"` | See the note on training detail below |
+| Testimonials | `is_pinned = true` (shown as **Published** in the admin) | Public submissions arrive unpublished |
+| Webinars, FAQs | `is_published = true` | |
+| Blog categories, article facets | Have at least one published post or article | |
+
+<Warning>
+  Two read endpoints are **not** gated:
+
+  - [`GET /trainings/{idOrSlug}`](/api-reference/trainings/get) returns a training whatever its
+    `visibility_status`. The payload includes `visibility_status`, so check it if you link to drafts.
+  - [`GET /pages`](/api-reference/content/list-pages) and [`GET /pages/{slug}`](/api-reference/content/get-page)
+    return unpublished pages. Filter with `?is_published=1` on the list.
+</Warning>
+
+Enrollment and devis submissions only accept **published** trainings, whatever the ids sent.
+
+## Training catalogue cache
+
+Training reads are cached for **5 minutes**:
+
+- `GET /trainings` (per page, page size, search and pinned filter)
+- `GET /trainings/{idOrSlug}`
+- `GET /trainings/options`
+- `GET /categories`
+- `/sitemap-trainings.xml`
+
+Each cache key includes the request language. Saving or deleting a training or a training category in
+the admin panel **bumps a version number** that is part of every key, so the next request rebuilds the
+payload. The 5-minute lifetime only matters for changes made outside the application, such as a direct
+database edit.
+
+<Tip>
+  "The backend is right but the site is stale" is usually this cache, or the visitor's own browser cache,
+  not a bug. Wait five minutes or save the training again in the admin panel.
+</Tip>
+
+## Other caches
+
+| Resource | Cache |
+| :-- | :-- |
+| `/sitemap-articles.xml` | 10 minutes, cleared on every article write |
+| `/sitemap-trainings.xml` | 5 minutes (catalogue cache), sent with `Cache-Control: public, max-age=300` |
+| Everything else | Not cached. Responses carry `Cache-Control: no-cache, private` |
+
+## Images
+
+Image fields are absolute URLs. Uploaded files are served from `https://admin.theteam.com.tn/storage/…`;
+images inserted in rich text and some seeded content point to external hosts. Training images fall back
+to `https://admin.theteam.com.tn/images/training-placeholder.jpg`, and articles without a cover return a
+shared placeholder with `has_image: false`.

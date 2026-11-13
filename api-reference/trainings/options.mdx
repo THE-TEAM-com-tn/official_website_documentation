@@ -1,0 +1,57 @@
+---
+title: "List training options"
+sidebarTitle: "Training options"
+description: "Lightweight id and title list of every published training, for pickers such as the devis form."
+api: "GET /trainings/options"
+---
+
+Returns every **published** training as `{ id, title }`, ordered by title, with no pagination. It exists
+so a dropdown does not download the full catalogue (about seven times larger). The ids are what
+[Request a quote](/api-reference/forms/create-devis) expects in `training_ids`.
+
+Cached for 5 minutes per locale, invalidated when a training changes.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Titles are translated.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="option" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required />
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/trainings/options" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/trainings/options", {
+  headers: { Accept: "application/json" },
+});
+const { data: options } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    { "id": 13, "title": "Formation BA par la pratique" },
+    { "id": 14, "title": "Formation BPM" },
+    { "id": 21, "title": "Formation CAPM" },
+    { "id": 33, "title": "Formation CKA" },
+    { "id": 22, "title": "Formation CPMAI" }
+  ]
+}
+```
+
+</ResponseExample>

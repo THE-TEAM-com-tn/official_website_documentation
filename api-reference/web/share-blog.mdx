@@ -1,0 +1,64 @@
+---
+title: "Blog share page"
+sidebarTitle: "Blog share page"
+description: "Server-rendered Open Graph page for a blog post: real preview tags for social crawlers, instant redirect for people."
+api: "GET https://admin.theteam.com.tn/share/blog/{slug}"
+playground: "simple"
+---
+
+The public site is a static SPA, so social crawlers (Facebook, LinkedIn, X, WhatsApp) never see the
+per-post tags it sets in JavaScript. The site's share buttons therefore link here. This web route (outside
+`/api`) returns an HTML page with the post's Open Graph and Twitter tags, and immediately redirects people
+to `https://theteam.com.tn/blog/{slug}`.
+
+- **Title:** `meta_title`, or the post title.
+- **Description:** `meta_description`, or the first 200 characters of the content.
+- **Image:** the post's cover.
+- Unknown or unpublished slugs redirect (`302`) to `https://theteam.com.tn/blogs`.
+- `?lang=en` renders the English title and description (French when untranslated). The redirect still
+  targets the French URL `/blog/{slug}`; only the [article share page](/api-reference/web/share-article)
+  redirects to `/en/`.
+
+<ParamField path="slug" type="string" required>
+  Blog post slug.
+</ParamField>
+
+<ParamField query="lang" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/share/blog/power-bi-en-tunisie-transformer-vos-donnees-en-decisions"
+```
+
+```html Share link
+<a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fadmin.theteam.com.tn%2Fshare%2Fblog%2Fpower-bi-en-tunisie-transformer-vos-donnees-en-decisions">
+  Share on LinkedIn
+</a>
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```html 200
+<title>Formation Power BI en Tunisie : guide complet</title>
+<link rel="canonical" href="https://theteam.com.tn/blog/power-bi-en-tunisie-transformer-vos-donnees-en-decisions">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="The Team">
+<meta property="og:title" content="Formation Power BI en Tunisie : guide complet">
+<meta property="og:description" content="Modélisation, DAX, tableaux de bord : découvrez comment la formation Power BI aide les entreprises tunisiennes à transformer leurs données en décisions concrètes.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&amp;fit=crop&amp;w=1200&amp;q=80">
+<meta property="og:url" content="https://theteam.com.tn/blog/power-bi-en-tunisie-transformer-vos-donnees-en-decisions">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="refresh" content="0;url=https://theteam.com.tn/blog/power-bi-en-tunisie-transformer-vos-donnees-en-decisions">
+```
+
+```http 302
+HTTP/1.1 302 Found
+Location: https://theteam.com.tn/blogs
+```
+
+</ResponseExample>

@@ -1,0 +1,43 @@
+---
+title: "Health check"
+sidebarTitle: "Health check"
+description: "Lightweight JSON health check for uptime monitoring."
+api: "GET /health"
+---
+
+Returns `200` with a static payload as long as the application boots. It does not query the database or
+the mail server; for those checks, see the [status page](/api-reference/system/status-page).
+
+The same payload is served at `https://admin.theteam.com.tn/health`, outside `/api`.
+
+## Response
+
+<ResponseField name="status" type="string" required>Always `healthy`.</ResponseField>
+<ResponseField name="timestamp" type="string" required>Server time, ISO 8601 with microseconds (UTC).</ResponseField>
+<ResponseField name="environment" type="string" required>`production` on the live server.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/health" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/health");
+const healthy = res.ok && (await res.json()).status === "healthy";
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "status": "healthy",
+  "timestamp": "2026-11-13T18:11:02.283797Z",
+  "environment": "production"
+}
+```
+
+</ResponseExample>

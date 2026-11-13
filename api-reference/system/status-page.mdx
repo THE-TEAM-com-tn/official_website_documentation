@@ -1,0 +1,38 @@
+---
+title: "Status page"
+sidebarTitle: "Status page"
+description: "Human-readable HTML status page of the backend services."
+api: "GET /"
+playground: "simple"
+---
+
+`GET /api/` and the backend root `https://admin.theteam.com.tn/` return an **HTML page**, not JSON. It shows
+the state of the API, the database, the cache, the queue, the storage and email delivery, with an overall
+status and a few safe system details.
+
+Each check reads **operational**, **degraded** or **outage**, and the overall status is the worst of them. Failure details are written to the server log
+only; the page shows generic messages. For automated monitoring, use the [health check](/api-reference/system/health).
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```html 200
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Service THE TEAM - Status Page</title>
+  </head>
+  <body>
+    <!-- API, database, cache, queue, storage and mail checks -->
+  </body>
+</html>
+```
+
+</ResponseExample>

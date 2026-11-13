@@ -1,0 +1,80 @@
+---
+title: "List pinned blog posts"
+sidebarTitle: "Pinned posts"
+description: "The three most recently updated pinned and published blog posts, in a slim shape."
+api: "GET /blog-posts/is_pinned"
+---
+
+Returns up to **3** posts that are pinned **and** published, ordered by `updated_at`, newest first. The
+items use a slimmer shape than the list: no content, tags or category.
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="post" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required>Translated.</ResponseField>
+    <ResponseField name="slug" type="string" required />
+    <ResponseField name="author_id" type="integer | null" />
+    <ResponseField name="category_id" type="integer | null" />
+    <ResponseField name="status" type="boolean" required />
+    <ResponseField name="is_pinned" type="boolean" required />
+    <ResponseField name="published_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="updated_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="image_url" type="string | null" />
+    <ResponseField name="author" type="object | null">`{ id, name, email }`.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/blog-posts/is_pinned" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/blog-posts/is_pinned", {
+  headers: { Accept: "application/json" },
+});
+const { data: pinned } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Pourquoi passer la certification PMP en Tunisie en 2026 ?",
+      "slug": "pourquoi-passer-la-certification-pmp-en-tunisie-en-2026",
+      "author_id": 1,
+      "category_id": 2,
+      "status": true,
+      "is_pinned": true,
+      "published_at": "2026-11-09T18:10:14.000000Z",
+      "updated_at": "2026-11-13T18:10:14.000000Z",
+      "image_url": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+      "author": { "id": 1, "name": "Admin", "email": "author@example.com" }
+    },
+    {
+      "id": 4,
+      "title": "Power BI en Tunisie : transformer vos données en décisions",
+      "slug": "power-bi-en-tunisie-transformer-vos-donnees-en-decisions",
+      "author_id": 1,
+      "category_id": 8,
+      "status": true,
+      "is_pinned": true,
+      "published_at": "2026-11-05T18:10:14.000000Z",
+      "updated_at": "2026-11-13T18:10:14.000000Z",
+      "image_url": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+      "author": { "id": 1, "name": "Admin", "email": "author@example.com" }
+    }
+  ]
+}
+```
+
+</ResponseExample>

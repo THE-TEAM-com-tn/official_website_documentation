@@ -1,0 +1,87 @@
+---
+title: "List webinars"
+sidebarTitle: "List webinars"
+description: "Paginated published webinars with ready-to-use YouTube embed and thumbnail URLs."
+api: "GET /webinars"
+---
+
+Returns **published** webinars (`is_published = true`), ordered by `published_at` (newest first, undated
+last) then `position`. Staff only store a YouTube URL in any form (watch, `youtu.be`, embed, shorts,
+iframe code or a bare id); the API derives the video id, the embed URL and the thumbnail from it.
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="15">
+  Page size, clamped between `1` and `50`.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. `title` and `description` are translated.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="webinar" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="title" type="string" required />
+    <ResponseField name="description" type="string | null" />
+    <ResponseField name="speaker" type="string | null" />
+    <ResponseField name="youtube_url" type="string" required>The URL as stored by staff.</ResponseField>
+    <ResponseField name="youtube_video_id" type="string | null">`null` when no id can be parsed.</ResponseField>
+    <ResponseField name="youtube_embed_url" type="string | null">`https://www.youtube.com/embed/{id}`.</ResponseField>
+    <ResponseField name="youtube_thumbnail_url" type="string | null">`https://img.youtube.com/vi/{id}/hqdefault.jpg`.</ResponseField>
+    <ResponseField name="published_at" type="string | null">ISO 8601.</ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="pagination" type="object" required>
+  `{ current_page, per_page, total, last_page }`.
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/webinars" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/webinars?per_page=12", {
+  headers: { Accept: "application/json" },
+});
+const { data: webinars, pagination } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Réussir sa certification PMP",
+      "description": "Un webinaire pratique sur la préparation à l’examen PMP.",
+      "speaker": "The Team",
+      "youtube_url": "https://youtu.be/JaW-qOE4wao",
+      "youtube_video_id": "JaW-qOE4wao",
+      "youtube_embed_url": "https://www.youtube.com/embed/JaW-qOE4wao",
+      "youtube_thumbnail_url": "https://img.youtube.com/vi/JaW-qOE4wao/hqdefault.jpg",
+      "published_at": "2026-08-22T12:00:00.000000Z"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 1,
+    "last_page": 1
+  }
+}
+```
+
+</ResponseExample>

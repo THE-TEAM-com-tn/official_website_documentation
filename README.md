@@ -1,55 +1,38 @@
-# Mintlify Starter Kit
+# TheTeam API documentation
 
-Use the starter kit to get your docs deployed and ready to customize.
+Mintlify documentation for the public HTTP API of the TheTeam website backend
+(`https://admin.theteam.com.tn/api`) — trainings, blog, Knowledge Corner articles, site content,
+public forms and staff-account authentication.
 
-Click the green **Use this template** button at the top of this repo to copy the Mintlify starter kit. The starter kit contains examples with
+The API itself lives in [official_website_backend](https://github.com/THE-TEAM-com-tn/official_website_backend);
+the site that consumes it in [official_website_frontend](https://github.com/THE-TEAM-com-tn/official_website_frontend).
 
-- Guide pages
-- Navigation
-- Customizations
-- API reference pages
-- Use of popular components
-
-**[Follow the full quickstart guide](https://starter.mintlify.com/quickstart)**
-
-## AI-assisted writing
-
-Set up your AI coding tool to work with Mintlify:
+## Preview locally
 
 ```bash
-npx skills add https://mintlify.com/docs
-```
-
-This command installs Mintlify's documentation skill for your configured AI tools like Claude Code, Cursor, Windsurf, and others. The skill includes component reference, writing standards, and workflow guidance.
-
-See the guides for [Claude Code](https://www.mintlify.com/docs/guides/claude-code), [Codex](https://www.mintlify.com/docs/guides/codex), [Cursor](https://www.mintlify.com/docs/guides/cursor), and [Devin Desktop](https://www.mintlify.com/docs/guides/devin-desktop) for tool-specific setup.
-
-## Development
-
-Install the [Mintlify CLI](https://www.npmjs.com/package/mint) to preview your documentation changes locally. To install, use the following command:
-
-```
 npm i -g mint
+mint dev          # http://localhost:3000
 ```
 
-Run the following command at the root of your documentation, where your `docs.json` is located:
+## Check before pushing
 
+```bash
+mint validate     # strict build
+mint broken-links
 ```
-mint dev
-```
 
-View your local preview at `http://localhost:3000`.
+## Structure
 
-## Publishing changes
+| Path | Content |
+| :-- | :-- |
+| `docs.json` | Theme, colours, logo, navigation, API playground settings |
+| `index.mdx`, `quickstart.mdx` | Introduction (with the use-case diagram) and first requests |
+| `concepts/` | Authentication, localization, responses & errors, pagination, rate limits, publishing & caching |
+| `api-reference/` | One page per endpoint, grouped like the navigation |
 
-Install our GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app) to propagate changes from your repo to your deployment. Changes are deployed to production automatically after pushing to the default branch.
+Writing rules and the backend-sync checklist are in [`CLAUDE.md`](CLAUDE.md).
 
-## Need help?
+## Publishing
 
-### Troubleshooting
-
-- If your dev environment isn't running: Run `mint update` to ensure you have the most recent version of the CLI.
-- If a page loads as a 404: Make sure you are running in a folder with a valid `docs.json`.
-
-### Resources
-- [Mintlify documentation](https://mintlify.com/docs)
+Install the Mintlify GitHub app from the [dashboard](https://dashboard.mintlify.com/settings/organization/github-app)
+and connect this repository: every push to `main` deploys the site.

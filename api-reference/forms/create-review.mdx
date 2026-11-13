@@ -1,0 +1,106 @@
+---
+title: "Leave a review"
+sidebarTitle: "Leave a review"
+description: "Submit a rated review about e-learning, a training or the company."
+api: "POST /review-submissions/create"
+playground: "simple"
+---
+
+Backs the site's `/review` page. The review is stored, every staff account gets a notification and the
+team inbox receives an email. A failed email is logged and the review is still saved.
+
+Rate limit: **6 requests per minute**.
+
+## Body
+
+<ParamField body="name" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="email" type="string">
+  Valid email, at most 191 characters.
+</ParamField>
+
+<ParamField body="phone" type="string">
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="rating" type="integer" required>
+  From 1 to 5.
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  `elearning`, `formation` or `entreprise`.
+</ParamField>
+
+<ParamField body="comment" type="string" required>
+  The review text.
+</ParamField>
+
+| `subject` | `subject_label` |
+| :-- | :-- |
+| `elearning` | E-learning TheTeam |
+| `formation` | Formation par The Team |
+| `entreprise` | L'entreprise (sujet général) |
+
+## Response
+
+The stored review as a **bare object**: the fields above plus `id`, `subject_label`, `created_at` and
+`updated_at`.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/review-submissions/create" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Sami Ben Ali",
+    "email": "sami.benali@example.com",
+    "phone": "+216 20 000 000",
+    "rating": 5,
+    "subject": "formation",
+    "comment": "Formation très claire, formateur disponible."
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/review-submissions/create", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ name: "Sami Ben Ali", rating: 5, subject: "formation", comment: "Formation très claire." }),
+});
+const review = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "id": 7,
+  "name": "Sami Ben Ali",
+  "email": "sami.benali@example.com",
+  "phone": "+216 20 000 000",
+  "rating": 5,
+  "subject": "formation",
+  "comment": "Formation très claire, formateur disponible.",
+  "created_at": "2026-11-13T18:12:49.000000Z",
+  "updated_at": "2026-11-13T18:12:49.000000Z",
+  "subject_label": "Formation par The Team"
+}
+```
+
+```json 422
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "rating": ["La valeur de note ne peut pas être supérieure à 5."],
+    "subject": ["Le champ objet est invalide."],
+    "comment": ["Le champ commentaire est obligatoire."]
+  }
+}
+```
+
+</ResponseExample>

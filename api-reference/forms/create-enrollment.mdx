@@ -1,0 +1,166 @@
+---
+title: "Enroll in a training"
+sidebarTitle: "Enroll in a training"
+description: "Register one or more seats on the next session of a published training."
+api: "POST /enrollments"
+playground: "simple"
+---
+
+Backs the enrollment form of the course page. The enrollment attaches to the training itself (there is
+no session table) and staff confirm it in the admin panel. The training title is copied into
+`training_title`, so the record stays readable if the training is renamed. Every staff account gets a
+notification. No email is sent.
+
+Only **published** trainings accept enrollments. This endpoint is not rate-limited.
+
+## Body
+
+<ParamField body="training_id" type="integer" required>
+  Id of a published training (from [List trainings](/api-reference/trainings/list)).
+</ParamField>
+
+<ParamField body="contact_name" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="contact_email" type="string" required>
+  Valid email, at most 191 characters.
+</ParamField>
+
+<ParamField body="contact_phone" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="customer_type" type="string" default="private">
+  `company` or `private`. `null` counts as missing.
+</ParamField>
+
+<ParamField body="seats" type="integer" default="1">
+  Between 1 and 500. `null` counts as missing.
+</ParamField>
+
+<ParamField body="internal_notes" type="string">
+  Free text from the visitor (preferred dates, constraints…).
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Votre inscription a bien été enregistrée.`</ResponseField>
+<ResponseField name="data" type="object" required>
+  The stored enrollment: the fields above plus `id`, `training_title`, `is_confirmed` (`false`),
+  `is_archived` (`false`), `created_at`, `updated_at`, and `training`, the **full training record** as
+  stored, internal columns included (`featured_image_path`, `status`, `elearning_unlock_rule`…).
+</ResponseField>
+
+## Errors
+
+- `422` with Laravel's default shape when a field is invalid or the id does not exist.
+- `422` with `{"message": "Certains champs sont invalides.", "errors": {"training_id": ["La formation sélectionnée n'est pas disponible."]}}`
+  when the training exists but is not published.
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/enrollments" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "training_id": 5,
+    "contact_name": "Sami Ben Ali",
+    "contact_email": "sami.benali@example.com",
+    "contact_phone": "+216 20 000 000",
+    "customer_type": "company",
+    "seats": 3,
+    "internal_notes": "Sessions le week-end de préférence."
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/enrollments", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({
+    training_id: 5,
+    contact_name: "Sami Ben Ali",
+    contact_email: "sami.benali@example.com",
+    contact_phone: "+216 20 000 000",
+    customer_type: "company",
+    seats: 3,
+  }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "message": "Votre inscription a bien été enregistrée.",
+  "data": {
+    "customer_type": "company",
+    "seats": 3,
+    "is_confirmed": false,
+    "is_archived": false,
+    "training_id": 5,
+    "contact_name": "Sami Ben Ali",
+    "contact_email": "sami.benali@example.com",
+    "contact_phone": "+216 20 000 000",
+    "internal_notes": "Sessions le week-end de préférence.",
+    "training_title": "Formation PMI ACP",
+    "updated_at": "2026-11-13T18:12:49.000000Z",
+    "created_at": "2026-11-13T18:12:49.000000Z",
+    "id": 1,
+    "training": {
+      "id": 5,
+      "title": "Formation PMI ACP",
+      "slug": "formation-pmi-acp",
+      "intro": "Obtenez une reconnaissance internationale en agilité avec notre formation PMI-ACP®…",
+      "overview": "Formation intensive orientée examen couvrant les domaines PMI-ACP®…",
+      "featured_image_path": "trainings/formation-pmi-acp.png",
+      "badge_image_path": null,
+      "duration_label": "24h",
+      "status": "active",
+      "order_column": null,
+      "total_review_count": 0,
+      "average_rating": "0.00",
+      "price": "0.00",
+      "visibility_status": "published",
+      "is_pinned": false,
+      "certification_name": "PMI Agile Certified Practitioner (PMI-ACP)®",
+      "certification_url": "https://www.pmi.org/certifications/agile-acp",
+      "prerequisites": "Aucun prérequis strict. Une connaissance de base des approches agiles et/ou de la gestion de projet est recommandée.",
+      "learning_objectives": "Comprendre la contractualisation agile et l’adaptabilité des méthodes agiles…",
+      "elearning_unlock_rule": "on_purchase",
+      "quizzes_count": 2,
+      "included_resource_url": "https://www.pmi.org/certifications/agile-acp",
+      "included_resource_label": "ACP official website",
+      "created_at": "2025-12-19T08:53:11.000000Z",
+      "updated_at": "2025-12-24T12:08:01.000000Z"
+    }
+  }
+}
+```
+
+```json 422
+{
+  "message": "Le champ formation sélectionné est invalide. (and 3 more errors)",
+  "errors": {
+    "training_id": ["Le champ formation sélectionné est invalide."],
+    "contact_name": ["Le champ nom est obligatoire."],
+    "contact_email": ["Le champ adresse e-mail doit être une adresse e-mail valide."],
+    "contact_phone": ["Le champ numéro de téléphone est obligatoire."]
+  }
+}
+```
+
+```json 422 (unpublished)
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "training_id": ["La formation sélectionnée n'est pas disponible."]
+  }
+}
+```
+
+</ResponseExample>

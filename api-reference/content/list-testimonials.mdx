@@ -1,0 +1,72 @@
+---
+title: "List testimonials"
+sidebarTitle: "List testimonials"
+description: "Published testimonials, ordered by position, as a bare array."
+api: "GET /testimonials"
+---
+
+Returns the **published** testimonials (`is_pinned = true`, shown as **Published** in the admin panel)
+ordered by `position`, as a **bare JSON array**. Testimonials sent through
+[Submit a testimonial](/api-reference/forms/submit-testimonial) stay hidden until staff publish them.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. `job_title` and `content` are translated.
+</ParamField>
+
+## Response
+
+An array of testimonials:
+
+<ResponseField name="id" type="integer" required />
+<ResponseField name="name" type="string" required>Author name.</ResponseField>
+<ResponseField name="job_title" type="string | null">Translated.</ResponseField>
+<ResponseField name="content" type="string" required>Translated testimonial text.</ResponseField>
+<ResponseField name="redirection_url" type="string | null">Author's LinkedIn profile or company page.</ResponseField>
+<ResponseField name="is_pinned" type="boolean" required>Always `true` here.</ResponseField>
+<ResponseField name="position" type="integer | null">Display order.</ResponseField>
+<ResponseField name="testimonial_image_url" type="string | null">Absolute photo URL.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/testimonials" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/testimonials", {
+  headers: { Accept: "application/json" },
+});
+const testimonials = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+[
+  {
+    "id": 1,
+    "name": "Oussema Zekri",
+    "job_title": "DMD | MHA | PMP® Certified",
+    "content": "Je voulais, par le présent témoignage, vous remercier pour tous les efforts fournis lors de la préparation…",
+    "redirection_url": "https://www.linkedin.com/in/droussamazekri/",
+    "is_pinned": true,
+    "position": 1,
+    "testimonial_image_url": "https://admin.theteam.com.tn/storage/files/1_avatar_male_1.png"
+  },
+  {
+    "id": 2,
+    "name": "Yomna Rebai",
+    "job_title": "Directrice Générale des Etudes Technologiques @ Ministry of Higher Education and Scientific Reseach of Tunisia",
+    "content": "J’ai eu le plaisir et la chance de suivre une formation de préparation au PMP de 5 jours…",
+    "redirection_url": "https://www.linkedin.com/company/mesrst/",
+    "is_pinned": true,
+    "position": 2,
+    "testimonial_image_url": "https://admin.theteam.com.tn/storage/files/1_avatar_female_1.png"
+  }
+]
+```
+
+</ResponseExample>

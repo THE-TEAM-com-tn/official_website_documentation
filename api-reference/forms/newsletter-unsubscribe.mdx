@@ -1,0 +1,68 @@
+---
+title: "Unsubscribe from the newsletter"
+sidebarTitle: "Unsubscribe"
+description: "Remove an email address from the newsletter list. Always answers 200."
+api: "POST /newsletter/unsubscribe"
+playground: "simple"
+---
+
+Backs the unsubscribe tab of the `/newsletter` page (`/newsletter?mode=unsubscribe`). The address is
+trimmed and lower-cased, then removed whatever its source.
+
+The answer is **the same `200`** whether or not the address was subscribed, so nobody can probe the list.
+The address is the only credential (newsletters carry no per-recipient token): the worst case is someone
+removing an address that is not theirs, which its owner can re-add in one click.
+
+Rate limit: **5 requests per minute**.
+
+<ParamField body="email" type="string" required>
+  Valid email (RFC), at most 191 characters.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Votre adresse ne recevra plus notre newsletter.`</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/newsletter/unsubscribe" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "nabil.trabelsi@example.com"}'
+```
+
+```javascript JavaScript
+await fetch("https://admin.theteam.com.tn/api/newsletter/unsubscribe", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({ email }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Votre adresse ne recevra plus notre newsletter."
+}
+```
+
+```json 422
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "email": ["Le champ adresse e-mail doit être une adresse e-mail valide."]
+  }
+}
+```
+
+```json 500
+{
+  "message": "La désinscription a échoué. Merci de réessayer."
+}
+```
+
+</ResponseExample>

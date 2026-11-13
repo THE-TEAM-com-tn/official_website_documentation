@@ -1,0 +1,101 @@
+---
+title: "Pagination"
+sidebarTitle: "Pagination"
+description: "Page parameters, defaults and the four paginated response shapes used by the TheTeam API."
+---
+
+Paginated endpoints take `page` (1-based) and `per_page`. Defaults and limits differ per endpoint:
+
+| Endpoint | `per_page` default | Allowed range | Envelope |
+| :-- | :-- | :-- | :-- |
+| [`GET /blog-posts`](/api-reference/blog/list-posts) | 15 | not clamped | API Resource |
+| [`GET /articles`](/api-reference/articles/list) | 12 | 1–50 | API Resource |
+| [`GET /trainings`](/api-reference/trainings/list) | 15 | 1–50 | `{ data, pagination }` |
+| [`GET /webinars`](/api-reference/content/list-webinars) | 15 | 1–50 | `{ data, pagination }` |
+| [`GET /menu`](/api-reference/content/list-menu) | 15 | 1–100 | `{ data, meta, links }` |
+| [`GET /pages`](/api-reference/content/list-pages) | 15 | 1–50 | Laravel paginator |
+
+Every other list (categories, testimonials, FAQs, reviews, pinned items, training options) returns all
+rows at once.
+
+## API Resource shape
+
+Blog posts and Knowledge Corner articles use Laravel API Resources. Navigation sits in `links`, counts in
+`meta`. `meta.links` is the page-button list Laravel generates; its labels follow the request language.
+
+```json
+{
+  "data": [ { "id": 1, "title": "…" } ],
+  "links": {
+    "first": "https://admin.theteam.com.tn/api/blog-posts?page=1",
+    "last": "https://admin.theteam.com.tn/api/blog-posts?page=5",
+    "prev": null,
+    "next": "https://admin.theteam.com.tn/api/blog-posts?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 5,
+    "links": [
+      { "url": null, "label": "&laquo; Précédent", "page": null, "active": false },
+      { "url": "https://admin.theteam.com.tn/api/blog-posts?page=1", "label": "1", "page": 1, "active": true },
+      { "url": "https://admin.theteam.com.tn/api/blog-posts?page=2", "label": "Suivant &raquo;", "page": 2, "active": false }
+    ],
+    "path": "https://admin.theteam.com.tn/api/blog-posts",
+    "per_page": 2,
+    "to": 2,
+    "total": 10
+  }
+}
+```
+
+`GET /articles` keeps the other query parameters in its links (`?per_page=2&page=2`). `GET /blog-posts`
+does not, so rebuild those URLs yourself when you filter.
+
+## `{ data, pagination }` shape
+
+Trainings and webinars return only counters:
+
+```json
+{
+  "data": [ { "id": 5, "slug": "formation-pmi-acp" } ],
+  "pagination": { "current_page": 1, "per_page": 2, "total": 39, "last_page": 20 }
+}
+```
+
+## Menu shape
+
+```json
+{
+  "data": [ { "id": 1, "title": "Formations" } ],
+  "meta": { "current_page": 1, "per_page": 15, "total": 1, "last_page": 1 },
+  "links": {
+    "first": "https://admin.theteam.com.tn/api/menu?page=1",
+    "last": "https://admin.theteam.com.tn/api/menu?page=1",
+    "prev": null,
+    "next": null
+  }
+}
+```
+
+## Laravel paginator shape
+
+`GET /pages` returns Laravel's paginator serialized as-is, with the counters at the top level:
+
+```json
+{
+  "current_page": 1,
+  "data": [ { "id": 1, "slug": "politique-de-confidentialite" } ],
+  "first_page_url": "https://admin.theteam.com.tn/api/pages?page=1",
+  "from": 1,
+  "last_page": 1,
+  "last_page_url": "https://admin.theteam.com.tn/api/pages?page=1",
+  "links": [ { "url": null, "label": "&laquo; Précédent", "page": null, "active": false } ],
+  "next_page_url": null,
+  "path": "https://admin.theteam.com.tn/api/pages",
+  "per_page": 15,
+  "prev_page_url": null,
+  "to": 1,
+  "total": 1
+}
+```

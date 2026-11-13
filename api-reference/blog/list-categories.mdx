@@ -1,0 +1,62 @@
+---
+title: "List blog categories"
+sidebarTitle: "List categories"
+description: "Blog categories that have at least one published post, for the category filter."
+api: "GET /blog-categories"
+---
+
+Returns the categories that have **at least one published post**, ordered by name, so the filter never
+offers an empty choice. Pass the `slug` values to [List blog posts](/api-reference/blog/list-posts) as
+`?categories=`.
+
+Blog posts and Knowledge Corner articles share the same categories, but this endpoint only counts blog
+posts. For article facets, use [Article filters](/api-reference/articles/filters).
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Names are translated.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="category" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="name" type="string" required />
+    <ResponseField name="slug" type="string" required />
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/blog-categories" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/blog-categories", {
+  headers: { Accept: "application/json" },
+});
+const { data: categories } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    { "id": 9, "name": "Business Analysis", "slug": "business-analysis" },
+    { "id": 6, "name": "DevOps", "slug": "devops" },
+    { "id": 12, "name": "E-learning", "slug": "e-learning" },
+    { "id": 11, "name": "Formation professionnelle", "slug": "formation-professionnelle" },
+    { "id": 2, "name": "PMP", "slug": "pmp" },
+    { "id": 8, "name": "Power BI", "slug": "power-bi" },
+    { "id": 1, "name": "Project Management", "slug": "project-management" },
+    { "id": 5, "name": "Scrum", "slug": "scrum" }
+  ]
+}
+```
+
+</ResponseExample>

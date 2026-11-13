@@ -1,0 +1,86 @@
+---
+title: "Track a réclamation"
+sidebarTitle: "Track a réclamation"
+description: "Look up a réclamation's status and the team's reply with its tracking code."
+api: "GET /reclamation-submissions/{tracking}"
+---
+
+Backs the **Suivre** tab of the `/reclamation` page. The tracking code is normalised to uppercase and must
+match `^[A-F0-9]{10}$`. The payload is **client-safe**: internal columns (id, client email, archive flag,
+editor) are never returned.
+
+Malformed and unknown codes both answer `404`, with different messages; treat them the same in the UI.
+Because the code is the only credential, the route is limited to **20 requests per minute**.
+
+<ParamField path="tracking" type="string" required>
+  10-character tracking code, case-insensitive.
+</ParamField>
+
+## Response
+
+<ResponseField name="tracking" type="string" required />
+<ResponseField name="type" type="string" required>`refund`, `complaint`, `technical`, `billing` or `other`.</ResponseField>
+<ResponseField name="type_label" type="string" required>French label.</ResponseField>
+<ResponseField name="subject" type="string" required />
+<ResponseField name="message" type="string" required />
+<ResponseField name="status" type="string" required>`unchecked`, `processing`, `resolved` or `closed`.</ResponseField>
+<ResponseField name="status_label" type="string" required>French label (table below).</ResponseField>
+<ResponseField name="reply" type="string | null">The team's reply, once written.</ResponseField>
+<ResponseField name="replied_at" type="string | null">ISO 8601, set whenever the reply changes.</ResponseField>
+<ResponseField name="created_at" type="string" required>ISO 8601.</ResponseField>
+
+| `status` | `status_label` |
+| :-- | :-- |
+| `unchecked` | En attente de traitement |
+| `processing` | En cours de traitement |
+| `resolved` | Résolue |
+| `closed` | Clôturée |
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/reclamation-submissions/9E9969EE97" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const code = input.trim().toUpperCase();
+const res = await fetch(`https://admin.theteam.com.tn/api/reclamation-submissions/${encodeURIComponent(code)}`, {
+  headers: { Accept: "application/json" },
+});
+if (res.status === 404) return showUnknownCode();
+const reclamation = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "tracking": "9E9969EE97",
+  "type": "complaint",
+  "type_label": "Réclamation",
+  "subject": "Attestation non reçue",
+  "message": "Je n’ai pas encore reçu mon attestation de la session d’octobre.",
+  "status": "resolved",
+  "status_label": "Résolue",
+  "reply": "Votre attestation vous a été renvoyée par e-mail.",
+  "replied_at": "2026-11-14T09:12:00+00:00",
+  "created_at": "2026-11-13T18:12:49+00:00"
+}
+```
+
+```json 404 (unknown)
+{
+  "message": "Aucune réclamation ne correspond à ce numéro de suivi."
+}
+```
+
+```json 404 (malformed)
+{
+  "message": "Numéro de suivi invalide."
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,55 @@
+---
+title: "Article share page"
+sidebarTitle: "Article share page"
+description: "Server-rendered Open Graph page for a Knowledge Corner article, in French or English."
+api: "GET https://admin.theteam.com.tn/share/article/{slug}"
+playground: "simple"
+---
+
+The article counterpart of the [blog share page](/api-reference/web/share-blog). Crawlers read real Open
+Graph, Twitter and `article:*` tags (published and modified times, section, tags); people are redirected at
+once to `https://theteam.com.tn/{slug}`, or `https://theteam.com.tn/en/{slug}` with `?lang=en`.
+
+- Title and description are the article's resolved SEO fields.
+- `og:locale` is `fr_FR` or `en_GB`.
+- Unknown, scheduled or unpublished slugs redirect (`302`) to the Knowledge Corner listing (`/articles` or
+  `/en/articles`).
+
+<ParamField path="slug" type="string" required>
+  Article slug.
+</ParamField>
+
+<ParamField query="lang" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/share/article/certification-pmp-version-8?lang=en"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```html 200
+<link rel="canonical" href="https://theteam.com.tn/en/certification-pmp-version-8">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="The Team">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="PMP Version 8: PMBOK 8 and the New 2026 PMP Exam">
+<meta property="og:description" content="The new 2026 PMP exam aligned with PMBOK 8: domains, format, question types, eligibility and a study plan to pass on your first attempt.">
+<meta property="og:url" content="https://theteam.com.tn/en/certification-pmp-version-8">
+<meta property="og:image" content="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&amp;fit=crop&amp;w=1600&amp;q=80">
+<meta property="og:image:alt" content="Project manager organising a planning board on a wall">
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="refresh" content="0;url=https://theteam.com.tn/en/certification-pmp-version-8">
+```
+
+```http 302
+HTTP/1.1 302 Found
+Location: https://theteam.com.tn/en/articles
+```
+
+</ResponseExample>

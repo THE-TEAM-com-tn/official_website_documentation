@@ -1,0 +1,45 @@
+---
+title: "Trainings sitemap"
+sidebarTitle: "Trainings sitemap"
+description: "XML sitemap of every published training, with French and English alternates."
+api: "GET https://admin.theteam.com.tn/sitemap-trainings.xml"
+playground: "simple"
+---
+
+A [sitemaps.org](https://www.sitemaps.org/protocol.html) `urlset` with one entry per **published**
+training, pointing at the site's course page `https://theteam.com.tn/course/{slug}`, with `hreflang`
+alternates for the `/en/` URL. `lastmod` is the training's last update.
+
+The static site cannot list the catalogue itself, so the backend generates this file. Publish it under the
+**public domain**: nginx on `theteam.com.tn` proxies `https://theteam.com.tn/sitemap-trainings.xml` to this
+route, and the site's `robots.txt` lists that URL. Do not submit the `admin.` URL: that host's `robots.txt`
+disallows everything.
+
+Served as `application/xml; charset=UTF-8` with `Cache-Control: public, max-age=300`, and cached by the
+[training catalogue cache](/concepts/publishing-and-caching#training-catalogue-cache).
+
+<RequestExample>
+
+```bash cURL
+curl "https://theteam.com.tn/sitemap-trainings.xml"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```xml 200
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://theteam.com.tn/course/formation-ba-par-la-pratique</loc>
+    <lastmod>2025-12-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://theteam.com.tn/course/formation-ba-par-la-pratique"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://theteam.com.tn/en/course/formation-ba-par-la-pratique"/>
+  </url>
+</urlset>
+```
+
+</ResponseExample>

@@ -1,0 +1,67 @@
+---
+title: "Get the current user"
+sidebarTitle: "Get current user"
+description: "Return the staff account that owns the bearer token."
+api: "GET /user"
+authMethod: "bearer"
+---
+
+Returns the authenticated account as stored, minus hidden columns (`password`, `remember_token`,
+`two_factor_secret`, `two_factor_recovery_codes`). Roles are not included.
+
+Send the token as `Authorization: Bearer <token>`.
+
+## Response
+
+<ResponseField name="id" type="integer" required />
+<ResponseField name="name" type="string" required />
+<ResponseField name="email" type="string" required />
+<ResponseField name="avatar_url" type="string | null">
+  Stored avatar path or URL, as saved from the admin profile page.
+</ResponseField>
+<ResponseField name="email_verified_at" type="string | null">ISO 8601 timestamp.</ResponseField>
+<ResponseField name="two_factor_confirmed_at" type="string | null">
+  When two-factor authentication was confirmed; `null` when 2FA is off.
+</ResponseField>
+<ResponseField name="created_at" type="string" required>ISO 8601 timestamp.</ResponseField>
+<ResponseField name="updated_at" type="string" required>ISO 8601 timestamp.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/user" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/user", {
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+const user = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "id": 1,
+  "name": "Admin",
+  "email": "staff@example.com",
+  "avatar_url": null,
+  "email_verified_at": "2026-11-13T18:10:13.000000Z",
+  "two_factor_confirmed_at": null,
+  "created_at": "2026-11-13T18:10:14.000000Z",
+  "updated_at": "2026-11-13T18:10:14.000000Z"
+}
+```
+
+```json 401
+{
+  "message": "Unauthenticated."
+}
+```
+
+</ResponseExample>

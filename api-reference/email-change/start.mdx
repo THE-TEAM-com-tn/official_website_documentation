@@ -1,0 +1,109 @@
+---
+title: "Start an email change"
+sidebarTitle: "Start a change"
+description: "Re-check the password (and 2FA), then email a confirmation link to the new address and a cancel link to the old one."
+api: "POST /email/change"
+authMethod: "bearer"
+playground: "simple"
+---
+
+Nothing changes yet. The API:
+
+1. re-checks the **current password** and, when the account has 2FA, a **TOTP or recovery code**;
+2. checks that the new address is free and different from the current one;
+3. stores a pending request (replacing any previous one) that expires in **30 minutes**;
+4. emails a single-use **confirmation link** to the new address and a **cancel link** to the old one.
+
+The links open backend-hosted pages (`https://admin.theteam.com.tn/admin/email-change/…`). To build your
+own screens, use [Confirm](/api-reference/email-change/confirm) and
+[Cancel](/api-reference/email-change/cancel) with the token from the link.
+
+Rate limit: **6 requests per 10 minutes**.
+
+<ParamField header="Authorization" type="string" required>
+  `Bearer <token>`.
+</ParamField>
+
+<ParamField body="new_email" type="string" required>
+  The new address. Valid email, at most 191 characters.
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The account's current password.
+</ParamField>
+
+<ParamField body="2fa_code" type="string">
+  TOTP code. Required (or `2fa_recovery_code`) when 2FA is enabled.
+</ParamField>
+
+<ParamField body="2fa_recovery_code" type="string">
+  A recovery code, consumed on use.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>
+  `Un lien de confirmation a été envoyé à la nouvelle adresse.`
+</ResponseField>
+<ResponseField name="pending" type="object" required>
+  `{ new_email, expires_at, expired }`, as in [Get the pending change](/api-reference/email-change/get-pending).
+</ResponseField>
+
+## Validation errors (`422`)
+
+| Field | French message |
+| :-- | :-- |
+| `password` | `Le mot de passe est incorrect.` |
+| `code` | `Saisissez le code de votre application d’authentification.` (2FA on, no code) |
+| `code` | `Le code est invalide.` |
+| `new_email` | `C’est déjà votre adresse e-mail.` |
+| `new_email` | `Cette adresse e-mail est déjà utilisée.` |
+| `new_email` | `Impossible d’envoyer l’e-mail de confirmation. Réessayez dans un instant.` (emails failed; nothing is kept) |
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/email/change" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"new_email": "new.address@example.com", "password": "current-password"}'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/email/change", {
+  method: "POST",
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({ new_email: "new.address@example.com", password: "current-password" }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "message": "Un lien de confirmation a été envoyé à la nouvelle adresse.",
+  "pending": {
+    "new_email": "new.address@example.com",
+    "expires_at": "2026-11-13T18:45:00+00:00",
+    "expired": false
+  }
+}
+```
+
+```json 422
+{
+  "message": "Le mot de passe est incorrect.",
+  "errors": {
+    "password": ["Le mot de passe est incorrect."]
+  }
+}
+```
+
+</ResponseExample>

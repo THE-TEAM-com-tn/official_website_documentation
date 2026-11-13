@@ -1,0 +1,128 @@
+---
+title: "List trainings"
+sidebarTitle: "List trainings"
+description: "Paginated catalogue of published trainings, with optional title search and a pinned-only filter."
+api: "GET /trainings"
+---
+
+Returns the **published** trainings (`visibility_status = "published"`) in a custom `{ data, pagination }`
+envelope. Each item is the light "card" shape used by the catalogue page; fetch
+[a single training](/api-reference/trainings/get) for modules, pricing and certification details.
+
+<Info>
+  Responses are cached for up to **5 minutes** per locale and query. An edit in the admin panel
+  invalidates the cache immediately — see [Publishing & caching](/concepts/publishing-and-caching).
+</Info>
+
+## Query parameters
+
+<ParamField query="page" type="integer" default="1">
+  Page number. Values below `1` are treated as `1`.
+</ParamField>
+
+<ParamField query="per_page" type="integer" default="15">
+  Page size, clamped between `1` and `50`.
+</ParamField>
+
+<ParamField query="search" type="string">
+  Case-insensitive match on the training **title** (`LIKE %search%`, both languages).
+</ParamField>
+
+<ParamField query="pinned" type="boolean">
+  `1` / `true` returns only highlighted trainings (`is_pinned = true`). Used by the site's sitemap page.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Translatable fields come back in that language, falling back to French. See
+  [Localization](/concepts/localization).
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  Trainings on this page. The order is the database's natural order (no explicit sort).
+
+  <Expandable title="training" defaultOpen>
+    <ResponseField name="id" type="integer" required>Training id.</ResponseField>
+    <ResponseField name="slug" type="string" required>
+      SEO identifier used by the site's `/course/{slug}` URLs. Never rewritten when the title changes.
+    </ResponseField>
+    <ResponseField name="title" type="string" required>Training title (translated).</ResponseField>
+    <ResponseField name="intro" type="string | null">Short introduction (translated, may contain HTML).</ResponseField>
+    <ResponseField name="overview" type="string | null">Longer overview (translated, may contain HTML).</ResponseField>
+    <ResponseField name="featured_image_url" type="string" required>
+      Absolute image URL. **Never `null`**: trainings without an image return the shared placeholder
+      `https://admin.theteam.com.tn/images/training-placeholder.jpg`.
+    </ResponseField>
+    <ResponseField name="duration_label" type="string | null">Free-text duration, for example `24h`.</ResponseField>
+    <ResponseField name="is_pinned" type="boolean" required>Highlighted training.</ResponseField>
+    <ResponseField name="categories" type="object[]" required>
+      Training categories as `{ id, name }` (name translated). Can be empty.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="pagination" type="object" required>
+  <Expandable title="properties">
+    <ResponseField name="current_page" type="integer" required />
+    <ResponseField name="per_page" type="integer" required />
+    <ResponseField name="total" type="integer" required>Total number of matching trainings.</ResponseField>
+    <ResponseField name="last_page" type="integer" required />
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/trainings?per_page=2&search=agile" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const params = new URLSearchParams({ per_page: "2", search: "agile" });
+const res = await fetch(`https://admin.theteam.com.tn/api/trainings?${params}`, {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+const { data, pagination } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 5,
+      "slug": "formation-pmi-acp",
+      "title": "Formation PMI ACP",
+      "intro": "Obtenez une reconnaissance internationale en agilité avec notre formation PMI-ACP®. Elle vous prépare efficacement à maîtriser les principales approches agiles…",
+      "overview": "Formation intensive orientée examen couvrant les domaines PMI-ACP® (mindset agile, delivery orienté valeur, parties prenantes…).",
+      "featured_image_url": "https://admin.theteam.com.tn/storage/trainings/formation-pmi-acp.png",
+      "duration_label": "24h",
+      "is_pinned": false,
+      "categories": []
+    },
+    {
+      "id": 6,
+      "slug": "les-methodes-agiles-par-la-pratique",
+      "title": "les méthodes agiles par la pratique",
+      "intro": "Apprenez les approches agiles de manière pratique avec notre formation ‘Les approches agiles par la pratique’…",
+      "overview": "Formation “learning by doing” : bases de l’agilité + focus Scrum, puis ateliers guidés (backlog, estimation, sprint)…",
+      "featured_image_url": "https://admin.theteam.com.tn/storage/trainings/les-methodes-agiles-par-la-pratique.png",
+      "duration_label": "16h",
+      "is_pinned": false,
+      "categories": []
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 2,
+    "total": 39,
+    "last_page": 20
+  }
+}
+```
+
+</ResponseExample>

@@ -1,0 +1,102 @@
+---
+title: "Get a blog post"
+sidebarTitle: "Get a post"
+description: "One published blog post by slug, with its full HTML content."
+api: "GET /blog-posts/{slug}"
+---
+
+Looks the post up by **slug** (not id). The post must be published; drafts, deleted and unknown posts
+answer `404`. The fields are the same as in [List blog posts](/api-reference/blog/list-posts), except
+that `content` is the **full HTML body**.
+
+Social networks should not be given the site's `/blog/{slug}` URL directly: share
+[`/share/blog/{slug}`](/api-reference/web/share-blog), which serves real Open Graph tags.
+
+<ParamField path="slug" type="string" required>
+  Post slug, derived from the French title.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. The slug is the same in both languages.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object" required>
+  A post object. See [List blog posts](/api-reference/blog/list-posts) for every field.
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/blog-posts/power-bi-en-tunisie-transformer-vos-donnees-en-decisions" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch(`https://admin.theteam.com.tn/api/blog-posts/${encodeURIComponent(slug)}`, {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+if (res.status === 404) return notFound();
+const { data: post } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": {
+    "id": 4,
+    "title": "Power BI en Tunisie : transformer vos données en décisions",
+    "content": "<p>Les entreprises tunisiennes produisent chaque jour une masse croissante de données : ventes, production, finances, ressources humaines…</p><h2>Pourquoi Power BI s'impose</h2><p>Power BI connaît une adoption rapide, y compris chez les PME tunisiennes…</p>",
+    "slug": "power-bi-en-tunisie-transformer-vos-donnees-en-decisions",
+    "thumbnail_image": null,
+    "author_id": 1,
+    "category_id": 8,
+    "tag_id": null,
+    "meta_title": "Formation Power BI en Tunisie : guide complet",
+    "meta_description": "Modélisation, DAX, tableaux de bord : découvrez comment la formation Power BI aide les entreprises tunisiennes à transformer leurs données en décisions concrètes.",
+    "meta_url": null,
+    "seo": null,
+    "seo_keywords": null,
+    "status": true,
+    "is_pinned": true,
+    "published_at": "2026-11-05T18:10:14.000000Z",
+    "deleted_at": null,
+    "created_at": "2026-11-13T18:10:14.000000Z",
+    "updated_at": "2026-11-13T18:10:14.000000Z",
+    "image_url": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80",
+    "reading_minutes": 4,
+    "tags": [
+      { "id": 18, "name": "Power BI", "color": "#FACC15", "sort": 18 },
+      { "id": 19, "name": "DAX", "color": "#EAB308", "sort": 19 }
+    ],
+    "category": {
+      "id": 8,
+      "name": "Power BI",
+      "sub_title": "Data Analytics & BI",
+      "slug": "power-bi",
+      "image": null,
+      "meta_title": "Power BI & Dashboards",
+      "meta_keywords": ["power bi", "dax", "power query", "data model", "bi", "dashboard"],
+      "meta_description": "DAX, data modeling, and dashboard design."
+    },
+    "author": {
+      "id": 1,
+      "name": "Admin",
+      "email": "author@example.com",
+      "avatar_url": null
+    }
+  }
+}
+```
+
+```json 404
+{
+  "message": "No query results for model [App\\Models\\BlogPost]."
+}
+```
+
+</ResponseExample>

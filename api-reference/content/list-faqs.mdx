@@ -1,0 +1,60 @@
+---
+title: "List FAQs"
+sidebarTitle: "List FAQs"
+description: "Published frequently asked questions, in display order."
+api: "GET /faqs"
+---
+
+Returns the **published** FAQs ordered by `position`, then `id`, for the site's `/faq` page. Staff manage
+them in the admin panel under **Content → FAQs**. Answers are admin-authored and may contain HTML.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Untranslated entries fall back to French.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="faq" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="question" type="string" required />
+    <ResponseField name="answer" type="string" required />
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/faqs" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/faqs", {
+  headers: { Accept: "application/json" },
+});
+const { data: faqs } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 1,
+      "question": "Qu’est-ce que The Team ?",
+      "answer": "The Team est un cabinet tunisien de formation et de conseil professionnel. Nous accompagnons les entreprises et les professionnels vers l’excellence à travers des formations certifiantes, du conseil (consulting) et notre plateforme e-learning Strived."
+    },
+    {
+      "id": 2,
+      "question": "Quelles certifications puis-je préparer ?",
+      "answer": "Nous préparons aux principales certifications internationales : management de projet (PMP, CAPM), méthodologies agiles (PSM, PSPO, Scrum), business analysis (ECBA, CBAP), business intelligence (Power BI), ainsi que DevOps, ISTQB et bien d’autres."
+    }
+  ]
+}
+```
+
+</ResponseExample>

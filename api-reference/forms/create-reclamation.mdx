@@ -1,0 +1,128 @@
+---
+title: "File a réclamation"
+sidebarTitle: "File a réclamation"
+description: "Submit a complaint and receive the tracking code the client uses to follow it."
+api: "POST /reclamation-submissions"
+playground: "simple"
+---
+
+Backs the **Déposer** tab of the site's `/reclamation` page. The API generates a 10-character uppercase
+hexadecimal **tracking code**, the client's only handle on the réclamation: show it prominently and let the
+client copy it. Track it with [Track a réclamation](/api-reference/forms/track-reclamation).
+
+Side effects: a confirmation email goes **to the client** with the team inbox in CC (it quotes the tracking
+code), the address joins the newsletter list with source `reclamation`, and every staff account gets a
+notification. A failed email never loses the réclamation: the response says `"email_sent": false`.
+
+Rate limit: **6 requests per minute**.
+
+## Body
+
+<ParamField body="type" type="string" required>
+  `refund`, `complaint`, `technical`, `billing` or `other`.
+</ParamField>
+
+<ParamField body="client_email" type="string" required>
+  Valid email, at most 191 characters.
+</ParamField>
+
+<ParamField body="subject" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="message" type="string" required>
+  The réclamation text.
+</ParamField>
+
+## Response
+
+<ResponseField name="message" type="string" required>`Votre réclamation a bien été enregistrée.`</ResponseField>
+<ResponseField name="tracking" type="string" required>The tracking code, for example `9E9969EE97`.</ResponseField>
+<ResponseField name="email_sent" type="boolean" required />
+<ResponseField name="submission" type="object" required>
+  The client-safe réclamation, same shape as [Track a réclamation](/api-reference/forms/track-reclamation).
+</ResponseField>
+
+## Labels
+
+`type_label` and `status_label` are French labels computed by the API. Do not hard-code them in the client.
+
+| `type` | `type_label` |
+| :-- | :-- |
+| `refund` | Remboursement |
+| `complaint` | Réclamation |
+| `technical` | Problème technique |
+| `billing` | Facturation |
+| `other` | Autre |
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/reclamation-submissions" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "complaint",
+    "client_email": "sami.benali@example.com",
+    "subject": "Attestation non reçue",
+    "message": "Je n’ai pas encore reçu mon attestation de la session d’octobre."
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/reclamation-submissions", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  body: JSON.stringify({
+    type: "complaint",
+    client_email: "sami.benali@example.com",
+    subject: "Attestation non reçue",
+    message: "Je n’ai pas encore reçu mon attestation de la session d’octobre.",
+  }),
+});
+const { tracking } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "message": "Votre réclamation a bien été enregistrée.",
+  "tracking": "9E9969EE97",
+  "email_sent": true,
+  "submission": {
+    "tracking": "9E9969EE97",
+    "type": "complaint",
+    "type_label": "Réclamation",
+    "subject": "Attestation non reçue",
+    "message": "Je n’ai pas encore reçu mon attestation de la session d’octobre.",
+    "status": "unchecked",
+    "status_label": "En attente de traitement",
+    "reply": null,
+    "replied_at": null,
+    "created_at": "2026-11-13T18:12:49+00:00"
+  }
+}
+```
+
+```json 422
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "type": ["Le champ type de réclamation est invalide."],
+    "client_email": ["Le champ adresse e-mail doit être une adresse e-mail valide."],
+    "subject": ["Le champ objet est obligatoire."],
+    "message": ["Le champ message est obligatoire."]
+  }
+}
+```
+
+```json 500
+{
+  "message": "L'enregistrement de votre réclamation a échoué. Veuillez réessayer plus tard."
+}
+```
+
+</ResponseExample>

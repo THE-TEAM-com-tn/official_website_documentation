@@ -1,0 +1,106 @@
+---
+title: "Send a contact message"
+sidebarTitle: "Contact us"
+description: "Store a contact-form message, notify the staff and email the team inbox."
+api: "POST /contact-us"
+playground: "simple"
+---
+
+Backs the site's `/contact-us` form. The message is stored with status `pending` (staff see it in the
+admin panel under **Inbox → Contact messages**), the address is added to the newsletter list with source
+`contact` (unless it is already there), every staff account gets a notification, and the team inbox
+receives an email.
+
+<Note>
+  This endpoint is **not rate-limited**. If the team email fails, the message is already stored but the
+  endpoint answers `500`.
+</Note>
+
+## Body
+
+<ParamField body="client_name" type="string" required>
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="client_email" type="string" required>
+  Valid email, at most 191 characters.
+</ParamField>
+
+<ParamField body="client_phone_number" type="string">
+  At most 20 characters.
+</ParamField>
+
+<ParamField body="client_message_subject" type="string">
+  At most 191 characters.
+</ParamField>
+
+<ParamField body="client_message" type="string" required>
+  The message.
+</ParamField>
+
+## Response
+
+<ResponseField name="success" type="boolean" required />
+<ResponseField name="message" type="string" required>French confirmation text.</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://admin.theteam.com.tn/api/contact-us" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_name": "Sami Ben Ali",
+    "client_email": "sami.benali@example.com",
+    "client_phone_number": "+216 20 000 000",
+    "client_message_subject": "Formation PMP",
+    "client_message": "Bonjour, je souhaite connaître les prochaines dates de la formation PMP."
+  }'
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/contact-us", {
+  method: "POST",
+  headers: { Accept: "application/json", "Content-Type": "application/json", "X-Locale": "fr" },
+  body: JSON.stringify({
+    client_name: "Sami Ben Ali",
+    client_email: "sami.benali@example.com",
+    client_phone_number: "+216 20 000 000",
+    client_message_subject: "Formation PMP",
+    client_message: "Bonjour, je souhaite connaître les prochaines dates de la formation PMP.",
+  }),
+});
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 201
+{
+  "success": true,
+  "message": "Votre message a bien été envoyé ! Nous vous répondrons dans les plus brefs délais."
+}
+```
+
+```json 422
+{
+  "success": false,
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "client_name": ["Le champ nom est obligatoire."],
+    "client_email": ["Le champ adresse e-mail doit être une adresse e-mail valide."],
+    "client_message": ["Le champ message est obligatoire."]
+  }
+}
+```
+
+```json 500
+{
+  "success": false,
+  "message": "L'envoi de votre message a échoué. Veuillez réessayer plus tard.",
+  "error": null
+}
+```
+
+</ResponseExample>

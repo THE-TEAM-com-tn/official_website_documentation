@@ -1,0 +1,265 @@
+---
+title: "Get the landing page"
+sidebarTitle: "Landing page"
+description: "The home-page singleton with its staff, partner companies, carousel, featured categories and published testimonials."
+api: "GET /landing-page"
+---
+
+Returns the site-wide settings record wrapped in `landing_page`. The public site fetches it **once per
+visit** and shares it across the home page, header, footer, calendar and 404 page, so it carries more than
+the home page: company details, footer contacts and social links, section toggles, the promo strip and the
+mobile-app links.
+
+The record is serialized as stored, with its relations. The internal team-inbox address
+(`notification_email`) is always removed.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`. Translatable texts (company description, header and banner texts, promo strip, staff
+  titles, testimonial texts, partner descriptions and categories, slides, featured categories) follow it.
+</ParamField>
+
+## Response
+
+<ResponseField name="landing_page" type="object" required>
+  <Expandable title="company and header" defaultOpen>
+    <ResponseField name="id" type="integer" required />
+    <ResponseField name="company_name" type="string | null" />
+    <ResponseField name="company_description" type="string | null">Translated.</ResponseField>
+    <ResponseField name="company_logo" type="string | null">Stored path. Also `company_logo_dark`, `company_favicon`.</ResponseField>
+    <ResponseField name="company_website" type="string | null" />
+    <ResponseField name="header_title" type="string | null">Translated. Also `header_subtitle`, `header_description`.</ResponseField>
+    <ResponseField name="header_registration_link" type="string | null" />
+    <ResponseField name="header_url" type="string | null" />
+    <ResponseField name="header_image" type="string | null">Also `header_background_image`.</ResponseField>
+  </Expandable>
+
+  <Expandable title="footer, apps and calendar">
+    <ResponseField name="footer_address" type="string | null" />
+    <ResponseField name="footer_phone_number" type="string | null">Also `footer_mobile_number`, `footer_whatsapp_number`.</ResponseField>
+    <ResponseField name="footer_contact_email" type="string | null" />
+    <ResponseField name="footer_gmaps_url" type="string | null" />
+    <ResponseField name="footer_facebook_url" type="string | null">
+      Also `footer_twitter_url`, `footer_linkedin_url`, `footer_instagram_url`, `footer_youtube_url`.
+    </ResponseField>
+    <ResponseField name="app_store_url" type="string | null">
+      Mobile-app link. Empty means "not published yet": the site shows a coming-soon badge. Same for `play_store_url`.
+    </ResponseField>
+    <ResponseField name="goole_calendar_url" type="string | null">
+      Embedded Google Calendar URL of the training sessions. The key is spelled `goole` in the database.
+    </ResponseField>
+  </Expandable>
+
+  <Expandable title="banners and section toggles">
+    <ResponseField name="banner_title" type="string | null">Translated. Also `banner_url`, `banner_image`.</ResponseField>
+    <ResponseField name="promo_banner_body" type="string | null">
+      Rich-text HTML of the top-of-page promo strip (links, bold, italic, underline). Translated.
+    </ResponseField>
+    <ResponseField name="show_promo_banner" type="boolean" required>
+      The strip shows only when this is `true` **and** `promo_banner_body` is not empty. Defaults to `false`.
+    </ResponseField>
+    <ResponseField name="show_header_section" type="boolean">
+      Also `show_facts_section`, `show_partners_section`, `show_testimonials_section`,
+      `show_banner_section`, `show_link_section`. Some come back as `1`/`0` instead of booleans.
+    </ResponseField>
+  </Expandable>
+
+  <Expandable title="relations">
+    <ResponseField name="staff_members" type="object[]" required>
+      Team members: `name`, `title` (translated), `linkedin`, `position`, `staff_members_image` and the
+      absolute `staff_members_image_url`.
+    </ResponseField>
+    <ResponseField name="partner_companies" type="object[]" required>
+      Clients and partners: `name`, `description` (translated), `website_url`, `is_pinned`, `position`, the
+      logo path and absolute `partner_companies_logo_url`, and `subcategory` (nullable) with its parent
+      `category`. `subcategory.display_name` reads `Category › Sub-category`.
+    </ResponseField>
+    <ResponseField name="carousel_slides" type="object[]" required>
+      `name`, `title`, `description`, `redirection_url`, `carousel_slide_image`, `position`.
+    </ResponseField>
+    <ResponseField name="featured_categories" type="object[]" required>
+      `name`, `featured_category_icon`, `featured_category_image`, `position`.
+    </ResponseField>
+    <ResponseField name="testimonials" type="object[]" required>
+      **Published** testimonials only, ordered by `position`, with `testimonial_image_url`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+Every record also carries `created_at`, `updated_at` and, for uploaded images, a `*_file_id` column
+(usually `null`).
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/landing-page" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/landing-page", {
+  headers: { Accept: "application/json", "X-Locale": "fr" },
+});
+const { landing_page } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "landing_page": {
+    "id": 1,
+    "company_name": "The Team",
+    "company_description": "Leading training and development company specializing in professional education and skill enhancement programs.",
+    "company_logo": null,
+    "company_logo_file_id": null,
+    "company_logo_dark": null,
+    "company_favicon": null,
+    "company_favicon_file_id": null,
+    "company_website": "https://theteam.com.tn",
+    "app_store_url": null,
+    "play_store_url": null,
+    "header_title": "Welcome to Our Site",
+    "header_subtitle": "Discover Amazing Features",
+    "header_description": "This is a description of our landing page.",
+    "header_registration_link": "#",
+    "header_url": "#",
+    "header_updated_at": "2026-11-13 18:10:14",
+    "header_image": null,
+    "header_image_file_id": null,
+    "header_background_image": null,
+    "header_background_image_file_id": null,
+    "footer_address": "Impasse1, 12 Cités des médecins, avenue TAHAR SFAR, 2092 El MANAR II – TUNISIA",
+    "footer_phone_number": "+216 98 378 579",
+    "footer_mobile_number": null,
+    "footer_contact_email": "commercial@theteam.com.tn",
+    "footer_gmaps_url": "https://maps.app.goo.gl/oUBTGYKUo3CJn3iWA",
+    "footer_facebook_url": "https://www.facebook.com/TheteamTN/",
+    "footer_twitter_url": null,
+    "footer_linkedin_url": "https://tn.linkedin.com/company/the-team-tunisie",
+    "footer_instagram_url": "https://www.instagram.com/the_team_tn/",
+    "footer_youtube_url": "https://www.youtube.com/channel/UCBPlXrGX_sbk82XfwQAEc5w",
+    "footer_whatsapp_number": null,
+    "banner_image": null,
+    "banner_image_file_id": null,
+    "banner_title": "Special Offer",
+    "banner_url": "#",
+    "promo_banner_body": null,
+    "show_promo_banner": false,
+    "goole_calendar_url": "https://calendar.google.com/calendar/embed?src=…",
+    "show_header_section": true,
+    "show_facts_section": 1,
+    "show_partners_section": true,
+    "show_testimonials_section": true,
+    "show_banner_section": false,
+    "show_link_section": true,
+    "created_at": "2026-11-13T18:10:14.000000Z",
+    "updated_at": "2026-11-13T18:10:14.000000Z",
+    "staff_members": [
+      {
+        "id": 2,
+        "name": "Monia SAHBANI",
+        "title": "Responsable Département Formation et Certification",
+        "staff_members_image": "staff-members/monia-sahbani-responsable-formation-certification.webp",
+        "staff_members_image_file_id": null,
+        "linkedin": "https://www.linkedin.com/in/monia-sahbani/",
+        "position": 2,
+        "landing_page_id": 1,
+        "created_at": "2026-11-13T18:10:14.000000Z",
+        "updated_at": "2026-11-13T18:10:14.000000Z",
+        "staff_members_image_url": "https://admin.theteam.com.tn/storage/staff-members/monia-sahbani-responsable-formation-certification.webp"
+      }
+    ],
+    "partner_companies": [
+      {
+        "id": 1,
+        "name": "Registre National des Entreprises (RNE)",
+        "description": "Le Registre National des Entreprises (RNE) est l'organisme officiel chargé de l'immatriculation…",
+        "partner_companies_logo": "files/1_RNE.jpg",
+        "partner_companies_logo_file_id": null,
+        "is_pinned": 1,
+        "website_url": "https://www.rne.tn",
+        "landing_page_id": 1,
+        "partner_subcategory_id": 13,
+        "position": 1,
+        "created_at": "2026-11-13T18:10:14.000000Z",
+        "updated_at": "2026-11-13T18:10:14.000000Z",
+        "partner_companies_logo_url": "https://admin.theteam.com.tn/storage/files/1_RNE.jpg",
+        "subcategory": {
+          "id": 13,
+          "partner_category_id": 2,
+          "name": "Entreprises Publiques",
+          "position": 9,
+          "created_at": "2026-11-13T18:10:14.000000Z",
+          "updated_at": "2026-11-13T18:10:14.000000Z",
+          "display_name": "Formation › Entreprises Publiques",
+          "category": {
+            "id": 2,
+            "name": "Formation",
+            "position": 2,
+            "created_at": "2026-11-13T18:10:14.000000Z",
+            "updated_at": "2026-11-13T18:10:14.000000Z"
+          }
+        }
+      }
+    ],
+    "carousel_slides": [
+      {
+        "id": 1,
+        "name": "Slide One",
+        "title": "Welcome to Our Site",
+        "carousel_slide_image": null,
+        "carousel_slide_image_file_id": null,
+        "redirection_url": "https://example.com/welcome",
+        "description": "Discover amazing features.",
+        "position": 1,
+        "landing_page_id": 1,
+        "created_at": "2026-11-13T18:10:14.000000Z",
+        "updated_at": "2026-11-13T18:10:14.000000Z"
+      }
+    ],
+    "featured_categories": [
+      {
+        "id": 1,
+        "name": "Security",
+        "featured_category_icon": null,
+        "featured_category_icon_file_id": null,
+        "featured_category_image": null,
+        "featured_category_image_file_id": null,
+        "landing_page_id": 1,
+        "position": 1,
+        "created_at": "2026-11-13T18:10:14.000000Z",
+        "updated_at": "2026-11-13T18:10:14.000000Z"
+      }
+    ],
+    "testimonials": [
+      {
+        "id": 1,
+        "name": "Oussema Zekri",
+        "job_title": "DMD | MHA | PMP® Certified",
+        "content": "Je voulais, par le présent témoignage, vous remercier pour tous les efforts fournis lors de la préparation…",
+        "redirection_url": "https://www.linkedin.com/in/droussamazekri/",
+        "use_linkedin_image": false,
+        "testimonial_image": "files/1_avatar_male_1.png",
+        "testimonial_image_file_id": null,
+        "is_pinned": true,
+        "landing_page_id": 1,
+        "position": 1,
+        "deleted_at": null,
+        "created_at": "2026-11-13T18:10:14.000000Z",
+        "updated_at": "2026-11-13T18:10:14.000000Z",
+        "testimonial_image_url": "https://admin.theteam.com.tn/storage/files/1_avatar_male_1.png"
+      }
+    ]
+  }
+}
+```
+
+```json 404
+{
+  "message": "Page d'accueil introuvable."
+}
+```
+
+</ResponseExample>

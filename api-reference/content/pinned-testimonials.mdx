@@ -1,0 +1,48 @@
+---
+title: "List pinned testimonials"
+sidebarTitle: "Pinned testimonials"
+description: "Same result as List testimonials; kept for backwards compatibility."
+api: "GET /testimonials/pinned"
+---
+
+Returns exactly the same bare array as [List testimonials](/api-reference/content/list-testimonials):
+"pinned" and "published" are the same flag. Prefer `GET /testimonials` in new code.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/testimonials/pinned" \
+  -H "Accept: application/json"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/testimonials/pinned", {
+  headers: { Accept: "application/json" },
+});
+const testimonials = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+[
+  {
+    "id": 1,
+    "name": "Oussema Zekri",
+    "job_title": "DMD | MHA | PMP® Certified",
+    "content": "Je voulais, par le présent témoignage, vous remercier pour tous les efforts fournis lors de la préparation…",
+    "redirection_url": "https://www.linkedin.com/in/droussamazekri/",
+    "is_pinned": true,
+    "position": 1,
+    "testimonial_image_url": "https://admin.theteam.com.tn/storage/files/1_avatar_male_1.png"
+  }
+]
+```
+
+</ResponseExample>

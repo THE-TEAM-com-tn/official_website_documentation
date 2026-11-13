@@ -1,0 +1,130 @@
+---
+title: "Responses and errors"
+sidebarTitle: "Responses and errors"
+description: "The response envelopes the API uses, its status codes, and the shapes of its 404, 422, 429 and 500 errors."
+---
+
+The API grew endpoint by endpoint, so its envelopes are **not uniform**. Each endpoint page shows the
+exact shape. This page lists the patterns, so you know what to expect.
+
+## Always send `Accept: application/json`
+
+Laravel decides between JSON and HTML from the `Accept` header. Without `Accept: application/json`:
+
+- a validation failure on endpoints that use Laravel's default validation (login, password, email,
+  enrollment) returns a `302` **redirect** instead of a `422`;
+- a missing token returns a `302` redirect to the admin login page instead of a `401`;
+- a missing model returns an HTML `404` page.
+
+## Success envelopes
+
+| Pattern | Shape | Used by |
+| :-- | :-- | :-- |
+| API Resource | `{ "data": … }` (+ `links`, `meta` when paginated) | Blog posts, Knowledge Corner articles |
+| Custom paginated | `{ "data": [...], "pagination": {...} }` | Trainings, webinars |
+| Custom paginated (menu) | `{ "data": [...], "meta": {...}, "links": {...} }` | Menu |
+| Laravel paginator | `{ "current_page", "data", "first_page_url", ... }` | Pages |
+| Named wrapper | `{ "landing_page": {...} }`, `{ "pending": ... }` | Landing page, email change |
+| Bare value | `[ ... ]` or `{ ... }` | Training categories, testimonials, reviews, training detail, a page, the current user, a réclamation |
+| Message | `{ "message": "...", ... }` | Forms and account actions |
+
+See [Pagination](/concepts/pagination) for the paginated shapes.
+
+## Status codes
+
+| Status | Meaning |
+| :-- | :-- |
+| `200 OK` | Read or action succeeded |
+| `201 Created` | A form submission was stored (contact, enrollment, devis, newsletter, réclamation, review, testimonial) |
+| `400 Bad Request` | Only `POST /email/resend` for an already verified account |
+| `401 Unauthorized` | Missing or invalid token, wrong credentials, wrong 2FA code, wrong current password |
+| `403 Forbidden` | Login refused (unverified, blocked or role-less account), invalid verification link |
+| `404 Not Found` | Unknown or unpublished resource, unknown route |
+| `405 Method Not Allowed` | Wrong HTTP method for the path |
+| `409 Conflict` | Email change confirmed after the address was taken |
+| `410 Gone` | Resending an expired email change |
+| `422 Unprocessable Entity` | Validation failed |
+| `429 Too Many Requests` | Rate limit hit. See [Rate limits](/concepts/rate-limits) |
+| `500 Internal Server Error` | Unexpected failure. Most forms return a French `message` |
+
+## Validation errors (`422`)
+
+Three shapes exist, depending on how the controller validates.
+
+<CodeGroup>
+
+```json Laravel default
+{
+  "message": "Le champ formation sélectionné est invalide. (and 3 more errors)",
+  "errors": {
+    "training_id": ["Le champ formation sélectionné est invalide."],
+    "contact_name": ["Le champ nom est obligatoire."],
+    "contact_email": ["Le champ adresse e-mail doit être une adresse e-mail valide."],
+    "contact_phone": ["Le champ numéro de téléphone est obligatoire."]
+  }
+}
+```
+
+```json Fixed message
+{
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "email": ["Le champ adresse e-mail doit être une adresse e-mail valide."]
+  }
+}
+```
+
+```json With success flag
+{
+  "success": false,
+  "message": "Certains champs sont invalides.",
+  "errors": {
+    "client_email": ["Le champ adresse e-mail doit être une adresse e-mail valide."]
+  }
+}
+```
+
+</CodeGroup>
+
+| Shape | Endpoints |
+| :-- | :-- |
+| Laravel default (`message` = first error) | Login, password and email endpoints, enrollments, email change |
+| Fixed message | Devis, newsletter, réclamations, reviews |
+| With `success: false` | Contact us, testimonial submission |
+
+In every shape, `errors` maps each field to a list of messages. Show them next to the matching inputs.
+
+## Not found (`404`)
+
+| Body | Returned by |
+| :-- | :-- |
+| `{"message": "No query results for model [App\\Models\\BlogPost]."}` | Blog post, article and page by slug (Laravel's default) |
+| `{"message": "Formation introuvable."}` | Training detail |
+| `{"message": "Élément de menu introuvable."}` | Menu item |
+| `{"message": "Page d'accueil introuvable."}` | Landing page, when none exists |
+| `{"message": "Numéro de suivi invalide."}` / `{"message": "Aucune réclamation ne correspond à ce numéro de suivi."}` | Réclamation tracking (malformed / unknown code) |
+| `{"message": "The route api/register could not be found."}` | Unknown route |
+
+## Rate limited (`429`)
+
+```json 429
+{
+  "message": "Too Many Attempts."
+}
+```
+
+The response carries `Retry-After` (seconds), `X-RateLimit-Limit` and `X-RateLimit-Remaining: 0`.
+
+## Server errors (`500`)
+
+Form controllers catch storage failures and return a French message, for example
+`{"message": "L'envoi a échoué. Merci de réessayer."}` for a devis. Contact us and testimonial submissions
+add `"success": false` and an `error` key that is `null` in production. Anything uncaught returns
+Laravel's generic `{"message": "Server Error"}`.
+
+## Mail failures never fail a request
+
+Devis, réclamation and review submissions are saved before the email goes out. A failed email is logged
+and the request still succeeds. Devis and réclamation responses report it with `"email_sent": false`.
+**Contact us is the exception:** if the team notification email fails, the message is already stored
+but the endpoint answers `500`.

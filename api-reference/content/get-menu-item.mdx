@@ -1,0 +1,70 @@
+---
+title: "Get a menu item"
+sidebarTitle: "Get a menu item"
+description: "One top-level menu item with its children and linked page."
+api: "GET /menu/{id}"
+---
+
+Returns one top-level item wrapped in `data`, with the fields of [List menu items](/api-reference/content/list-menu).
+
+<ParamField path="id" type="integer" required>
+  Top-level menu item id.
+</ParamField>
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/menu/1" \
+  -H "Accept: application/json" \
+  -H "X-Locale: en"
+```
+
+```javascript JavaScript
+const res = await fetch(`https://admin.theteam.com.tn/api/menu/${id}`, {
+  headers: { Accept: "application/json", "X-Locale": "en" },
+});
+const { data: item } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 (en)
+{
+  "data": {
+    "id": 1,
+    "title": "Trainings",
+    "url": "/trainings",
+    "page_id": null,
+    "position": 1,
+    "created_at": "2026-11-13T18:13:23.000000Z",
+    "updated_at": "2026-11-13T18:13:23.000000Z",
+    "children": [
+      {
+        "id": 1,
+        "title": "Privacy",
+        "url": "/privacy-policy",
+        "page_id": 1,
+        "parent_menu_item_id": 1,
+        "position": 1,
+        "created_at": "2026-11-13T18:13:32.000000Z",
+        "updated_at": "2026-11-13T18:13:32.000000Z"
+      }
+    ],
+    "page": null
+  }
+}
+```
+
+```json 404
+{
+  "message": "Élément de menu introuvable."
+}
+```
+
+</ResponseExample>

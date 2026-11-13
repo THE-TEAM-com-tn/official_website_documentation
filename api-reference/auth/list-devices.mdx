@@ -1,0 +1,100 @@
+---
+title: "List connected devices"
+sidebarTitle: "List devices"
+description: "Every token issued to the account, with the device, IP and last use of each, and the current one flagged."
+api: "GET /devices"
+authMethod: "bearer"
+---
+
+Lists the account's Sanctum tokens, most recently used first. Each token was stamped at
+[login](/api-reference/auth/login) with the IP and User-Agent that requested it; the User-Agent is parsed
+into a device type, browser and platform.
+
+The admin panel's **Security** page shows the same tokens next to the browser sessions.
+
+Send the token as `Authorization: Bearer <token>`.
+
+## Response
+
+<ResponseField name="data" type="object[]" required>
+  <Expandable title="device" defaultOpen>
+    <ResponseField name="id" type="integer" required>
+      Token id. Pass it to [Revoke a device](/api-reference/auth/revoke-device).
+    </ResponseField>
+    <ResponseField name="name" type="string" required>Token name, set from the device at login.</ResponseField>
+    <ResponseField name="device" type="object" required>
+      <Expandable title="properties">
+        <ResponseField name="type" type="string" required>`mobile`, `tablet`, `desktop` or `unknown`.</ResponseField>
+        <ResponseField name="browser" type="string" required>For example `Safari`, `Chrome`, or `Unknown`.</ResponseField>
+        <ResponseField name="platform" type="string" required>For example `macOS`, `iOS`, `Windows`, or `Unknown`.</ResponseField>
+        <ResponseField name="label" type="string" required>`{browser} on {platform}`, or `Unknown device`.</ResponseField>
+      </Expandable>
+    </ResponseField>
+    <ResponseField name="ip_address" type="string | null">IP the token was issued to.</ResponseField>
+    <ResponseField name="last_used_at" type="string | null">ISO 8601; `null` if never used.</ResponseField>
+    <ResponseField name="created_at" type="string" required>ISO 8601.</ResponseField>
+    <ResponseField name="is_current" type="boolean" required>`true` for the token making this request.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/devices" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/devices", {
+  headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+});
+const { data: devices } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "data": [
+    {
+      "id": 12,
+      "name": "Safari on macOS",
+      "device": {
+        "type": "desktop",
+        "browser": "Safari",
+        "platform": "macOS",
+        "label": "Safari on macOS"
+      },
+      "ip_address": "203.0.113.10",
+      "last_used_at": "2026-11-13T18:12:10+00:00",
+      "created_at": "2026-11-13T18:12:10+00:00",
+      "is_current": true
+    },
+    {
+      "id": 9,
+      "name": "Chrome on Android",
+      "device": {
+        "type": "mobile",
+        "browser": "Chrome",
+        "platform": "Android",
+        "label": "Chrome on Android"
+      },
+      "ip_address": "198.51.100.24",
+      "last_used_at": null,
+      "created_at": "2026-11-02T09:41:57+00:00",
+      "is_current": false
+    }
+  ]
+}
+```
+
+```json 401
+{
+  "message": "Unauthenticated."
+}
+```
+
+</ResponseExample>

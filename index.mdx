@@ -1,20 +1,120 @@
 ---
 title: "Introduction"
-description: "Welcome to your project"
+sidebarTitle: "Introduction"
+description: "The public HTTP API behind theteam.com.tn: trainings, blog, Knowledge Corner, site content, public forms and staff-account authentication."
 ---
 
-Write a short description of your product here. What it does, who it's for, and what they can accomplish with it.
+The **TheTeam API** is the JSON API of the TheTeam website backend, a Laravel 12 application served at
+`https://admin.theteam.com.tn`. The public website [theteam.com.tn](https://theteam.com.tn), a static
+React app, reads all of its dynamic content from this API and posts every public form to it.
 
-<Tip>
-  Ready to make this your own? Start by editing this page. Update your `docs.json` file to customize your site. Then fill out the [Quickstart](/quickstart) page.
-</Tip>
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Make your first request and fetch the training catalogue in French or English.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference/overview">
+    All 50 endpoints, each with request and response examples.
+  </Card>
+</CardGroup>
 
-<Card title="Quickstart" icon="rocket" href="/quickstart">
-  This card links to the quickstart page in your project.
-</Card>
-<Card title="Components" icon="puzzle-piece" href="https://mintlify.com/docs/components">
-  Add cards, callouts, steps, tabs, and more to design and structure your pages.
-</Card>
-<Card title="Settings" icon="gear" href="https://mintlify.com/docs/organize/settings">
-  Set your site name, branding, and navigation in the `docs.json` file.
-</Card>
+## At a glance
+
+| | |
+| :-- | :-- |
+| **Base URL** | `https://admin.theteam.com.tn/api` |
+| **Format** | JSON in and out. Send `Accept: application/json` on every request. |
+| **Authentication** | None for content and public forms. Staff-account endpoints use a [Sanctum bearer token](/concepts/authentication). |
+| **Language** | French by default, English with `X-Locale: en` or `?lang=en`. See [Localization](/concepts/localization). |
+| **Rate limits** | Per IP, on the form and token endpoints only. See [Rate limits](/concepts/rate-limits). |
+| **CORS** | Every origin is allowed. |
+
+## Use cases
+
+The diagram shows who uses the backend and for what. Each use case maps to one or more endpoints in the
+[API reference](/api-reference/overview).
+
+```mermaid
+flowchart LR
+  visitor["Website visitor"]
+  client["Client or prospect"]
+  staff["Staff member<br/>(admin or content manager)"]
+  crawler["Search engines and<br/>social networks"]
+  monitor["Uptime monitoring"]
+
+  subgraph backend["TheTeam backend API — admin.theteam.com.tn"]
+    direction TB
+    uc1(["Browse trainings and categories"])
+    uc2(["Read blog posts and Knowledge Corner articles"])
+    uc3(["Load landing page, FAQ, webinars and testimonials"])
+    uc4(["Enroll in a training"])
+    uc5(["Request a quote (devis)"])
+    uc6(["Send a contact message"])
+    uc7(["File and track a réclamation"])
+    uc8(["Leave a review or a testimonial"])
+    uc9(["Subscribe or unsubscribe from the newsletter"])
+    uc10(["Sign in and manage tokens and devices"])
+    uc11(["Change password or email address"])
+    uc12(["Render share previews (Open Graph)"])
+    uc13(["Read the trainings and articles sitemaps"])
+    uc14(["Check API health"])
+  end
+
+  inbox["Team inbox and<br/>admin-panel notifications"]
+
+  visitor --> uc1 & uc2 & uc3
+  client --> uc4 & uc5 & uc6 & uc7 & uc8 & uc9
+  staff --> uc10 & uc11
+  crawler --> uc12 & uc13
+  monitor --> uc14
+
+  uc4 & uc5 & uc6 & uc7 & uc8 -.-> inbox
+  uc9 -.-> inbox
+```
+
+Dotted arrows are side effects. Every accepted form submission stores a notification for each staff
+account (the admin panel's bell; for the newsletter, only when the address is new). Contact, devis,
+review and réclamation submissions also email the team inbox, and réclamation confirmations go to the
+client with the team in CC.
+
+## How the pieces fit
+
+```mermaid
+flowchart LR
+  site["theteam.com.tn<br/>React SPA"] -- "JSON over HTTPS<br/>X-Locale: fr or en" --> api["/api/*<br/>public JSON API"]
+  crawlers["Crawlers"] --> web["/share/*, /sitemap-*.xml<br/>public web routes"]
+  admin["Staff browser"] -- "session cookie" --> panel["/admin<br/>Inertia admin panel"]
+  api --> db[("MySQL")]
+  web --> db
+  panel --> db
+  api -. "emails" .-> smtp["SMTP"]
+```
+
+- **Public JSON API (`/api/*`).** Documented here. Read endpoints serve only published content.
+  Form endpoints validate, store and notify.
+- **Public web routes.** Open Graph share pages and XML sitemaps for crawlers, plus a health check.
+  They are in the API reference under [Share pages & sitemaps](/api-reference/web/share-blog).
+- **Admin panel (`/admin`).** Staff manage every resource there, over session authentication with
+  HTML and Inertia responses. **It is not a JSON API** and is not covered by these docs.
+
+## Endpoint groups
+
+<CardGroup cols={3}>
+  <Card title="Authentication" icon="key" href="/api-reference/auth/login">
+    Staff tokens, devices, password and email changes.
+  </Card>
+  <Card title="Trainings" icon="graduation-cap" href="/api-reference/trainings/list">
+    Catalogue, training details, picker options, categories.
+  </Card>
+  <Card title="Blog" icon="newspaper" href="/api-reference/blog/list-posts">
+    Posts, pinned posts and categories.
+  </Card>
+  <Card title="Knowledge Corner" icon="book-open" href="/api-reference/articles/list">
+    Long-form articles, facets and related articles.
+  </Card>
+  <Card title="Site content" icon="house" href="/api-reference/content/landing-page">
+    Landing page, testimonials, webinars, FAQ, pages, menu.
+  </Card>
+  <Card title="Forms & submissions" icon="paper-plane" href="/api-reference/forms/contact-us">
+    Contact, enrollment, devis, newsletter, réclamation, reviews.
+  </Card>
+</CardGroup>

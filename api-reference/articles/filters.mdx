@@ -1,0 +1,75 @@
+---
+title: "Get article filters"
+sidebarTitle: "Article filters"
+description: "Categories and resource types that have published articles, with their counts, for the Knowledge Corner sidebar."
+api: "GET /articles/filters"
+---
+
+Returns the facets of the Knowledge Corner: only the categories and types with **at least one published
+article**, each with its count. Categories are sorted by name; type labels follow the request language.
+
+<ParamField header="X-Locale" type="string" default="fr">
+  `fr` or `en`.
+</ParamField>
+
+## Response
+
+<ResponseField name="data" type="object" required>
+  <Expandable title="properties" defaultOpen>
+    <ResponseField name="categories" type="object[]" required>
+      `{ id, name, slug, count }`. Pass `slug` to [List articles](/api-reference/articles/list) as `?categories=`.
+    </ResponseField>
+    <ResponseField name="types" type="object[]" required>
+      `{ value, label, count }`. Pass `value` as `?types=`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl "https://admin.theteam.com.tn/api/articles/filters" \
+  -H "Accept: application/json" \
+  -H "X-Locale: en"
+```
+
+```javascript JavaScript
+const res = await fetch("https://admin.theteam.com.tn/api/articles/filters", {
+  headers: { Accept: "application/json", "X-Locale": "en" },
+});
+const { data: { categories, types } } = await res.json();
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200 (en)
+{
+  "data": {
+    "categories": [
+      { "id": 2, "name": "PMP", "slug": "pmp", "count": 2 }
+    ],
+    "types": [
+      { "value": "guide", "label": "Guide", "count": 1 },
+      { "value": "glossary", "label": "Glossary", "count": 1 }
+    ]
+  }
+}
+```
+
+```json 200 (fr)
+{
+  "data": {
+    "categories": [
+      { "id": 2, "name": "PMP", "slug": "pmp", "count": 2 }
+    ],
+    "types": [
+      { "value": "guide", "label": "Guide", "count": 1 },
+      { "value": "glossary", "label": "Glossaire", "count": 1 }
+    ]
+  }
+}
+```
+
+</ResponseExample>
