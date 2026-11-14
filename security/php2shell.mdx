@@ -1,0 +1,186 @@
+---
+title: "php2shell (CVE-2026-109618 / CVE-2026-109619)"
+sidebarTitle: "php2shell"
+description: "Two critical PHP vulnerabilities fixed on 2026-10-21: which PHP releases are patched, what the backend enforces, and how to upgrade production and dev machines."
+---
+
+Two critical PHP vulnerabilities, published with the PHP security releases of
+**2026-10-21**, let an **unauthenticated** attacker corrupt PHP's memory with a
+crafted HTTP request and potentially **execute code on the server**. The
+backend (`admin.theteam.com.tn`) runs on PHP, so it is exposed whenever its PHP
+runtime is not patched. The frontend (`theteam.com.tn`) is a static SPA — no PHP
+runs there, so it is not affected.
+
+<Warning>
+  **The fix is a PHP upgrade, on every machine that runs the backend.** Nothing in the Laravel
+  code can mitigate a bug in the PHP engine itself. The code changes below only make sure the app
+  is never installed or run on an unpatched PHP without someone noticing.
+</Warning>
+
+## 1. The vulnerability
+
+| **Field** | **Value** |
+| :-------- | :-------- |
+| Name | "php2shell" |
+| CVEs | `CVE-2026-109618`, `CVE-2026-109619` |
+| PHP advisories | [GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w), [GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp) |
+| php.net changelog wording | Core: "Avoid state corruption via bailout" |
+| Impact | Unauthenticated remote code execution, triggered by crafted HTTP requests (out-of-memory "bailout" corrupting engine state). `mod_php` under Apache is called out as especially exposed. |
+| Attack surface here | Every HTTP request that reaches PHP — the public API, the admin panel, the status page. No login needed. |
+| Only complete fix | Upgrade PHP to a patched release |
+
+The details were leaked before the release, so scanning for unpatched servers
+should be assumed to have started already.
+
+## 2. Patched versions
+
+Any release **below** these is vulnerable:
+
+| **Branch** | **First patched** | **Status of the branch** |
+| :--------- | :---------------- | :----------------------- |
+| 8.2 | **8.2.35** | Security fixes only until **2026-12-31**, then end of life |
+| 8.3 | **8.3.36** | Security fixes only |
+| 8.4 | **8.4.27** | Active |
+| 8.5 | **8.5.12** | Active |
+| 8.1 and older | — | End of life, **no official fix** (only vendor backports) |
+
+Since **2026-11-14** the backend **requires PHP 8.4.27+** (or 8.5.12+). PHP 8.2
+and 8.3 are no longer accepted, even when patched. From 2026-10-21 to
+2026-11-14 it targeted 8.2.35+ (the version family of the team's XAMPP). The
+8.2 branch stops getting security fixes at the end of 2026, so the floor was
+raised before that date.
+
+## 3. What changed in the backend
+
+Introduced on 2026-10-21 together with the Laravel 12 upgrade (branch
+`upgrade/laravel-12-php-8.2`, since merged into `main` and deleted). The PHP
+floor was raised to 8.4 on 2026-11-14.
+
+| **Layer** | **What it does** | **File** |
+| :-------- | :--------------- | :------- |
+| Install-time | `require.php` = `~8.4.27 \|\| ^8.5.12`, enforced against the **real** PHP by the `pre-install-cmd` / `pre-update-cmd` hooks (`composer check-platform-reqs --lock --no-dev`). `composer install` / `update` **refuse** to run on PHP 8.2 / 8.3 and on any unpatched PHP (checked 2026-11-14: 8.2.35 refused, 8.4.27 accepted) | `composer.json` |
+| Dependency resolution | `config.platform.php` = `8.4.27` (= `PhpRuntime::MINIMUM`; `8.2.35` until 2026-11-14, a fake `8.3.0` before that). The lock file is resolved for the oldest supported runtime, so it installs on 8.4.27 and everything newer. Because this setting *fakes* the PHP version, Composer alone would never compare `require.php` with the real runtime — hence the hooks above | `composer.json` |
+| Boot-time | Composer's generated `vendor/composer/platform_check.php` stops the app on PHP **\< 8.4.27** with a clear message instead of serving requests. It only knows the lower bound, so it does **not** catch 8.5.0–8.5.11. The next row does | `vendor/composer/platform_check.php` (generated) |
+| Every branch | `App\Support\PhpRuntime` knows the first patched release of each branch, plus `MINIMUM` (the oldest PHP the app runs on) | `app/Support/PhpRuntime.php` |
+| Deploy check | `php artisan security:php` → exit `0` when patched, `1` (with the release to upgrade to) when vulnerable | `app/Console/Commands/CheckPhpSecurity.php` |
+| Overview | `php artisan about` now has a **Security** block: `PATCHED` / `VULNERABLE` | `app/Providers/AppServiceProvider.php` |
+| Tests | Patched / vulnerable / end-of-life / distro-suffixed versions, and the `composer.json` constraint itself | `tests/Unit/PhpRuntimeTest.php` |
+
+<Warning>
+  **Fail-closed on purpose.** On PHP **8.2 / 8.3**, or a **8.4 older than 8.4.27**, the app no
+  longer boots (Composer's platform check). On any of those, or an unpatched 8.5, `composer install`
+  fails. **Upgrade the server's PHP first, then deploy** (section 4). To relax only the boot-time
+  check, set `"platform-check": false` in `composer.json` → `config` — not recommended.
+</Warning>
+
+The public [status page](/api-reference/system/status-page) (`/`) and
+[`/api/health`](/api-reference/system/health) expose **no** version numbers, so
+they do not help an attacker find an unpatched runtime.
+
+## 4. What to do — production (Plesk)
+
+1. **Upgrade PHP on the server.** Plesk → **Tools & Settings → Updates** →
+   install the latest PHP 8.4 component (Plesk ships the patched
+   builds as `/opt/plesk/php/<branch>/`). On a VPS without Plesk-managed PHP,
+   update the OS packages (`apt`/`dnf`) and check the vendor's tracker.
+2. **Point the domain at the patched handler.** Websites & Domains →
+   `admin.theteam.com.tn` → **PHP Settings** → choose the upgraded version
+   (**8.4.27+ required** — or 8.5.12+), handler **FPM** — not `mod_php`.
+3. **Restart every process that has the old PHP loaded.** Updating the
+   package does not change running processes:
+   - every updated PHP-FPM service (`systemctl list-units 'plesk-php*'`, then
+     `systemctl restart plesk-php84-fpm …`);
+   - **Apache** (`apache2` / `httpd`): mandatory if any domain runs PHP as an
+     *Apache module* (mod_php, the highest-risk setup) or *FastCGI served by
+     Apache*;
+   - `systemctl reload nginx`, and `systemctl restart sw-engine` (Plesk's own
+     panel PHP) after the Plesk update.
+
+   Then confirm no PHP process is older than the restart
+   (`ps -eo pid,lstart,cmd | grep -E "php-fpm: master|php-cgi|apache2|httpd"`).
+   Patch **every PHP version and every domain** on the server, not only this
+   app's. Full procedure: `Guide_for_laravel_12.md` (root of the coordination
+   repository) sections 4 and 7.
+4. **Check the web PHP, not only the CLI** (`php -v` reports the command-line
+   binary only): `curl -sI https://admin.theteam.com.tn/api/health | grep -i
+   x-powered-by` must show the patched version (before setting `expose_php =
+   Off`). Then check with the same binary the site uses — the `php` on the SSH `PATH`
+   is not necessarily the domain's handler:
+   ```bash
+   cd /httpdocs
+   /opt/plesk/php/8.4/bin/php -v                     # ≥ 8.4.27 (or 8.5.12)
+   /opt/plesk/php/8.4/bin/php artisan security:php   # must print "is patched"
+   ```
+5. **Then deploy `main`**:
+   ```bash
+   PHP=/opt/plesk/php/8.4/bin/php                     # the domain's (patched) handler
+   $PHP "$(command -v composer)" install --no-dev --optimize-autoloader
+   $PHP artisan migrate --force                       # no new migration in this change
+   $PHP artisan optimize:clear
+   $PHP artisan config:cache && $PHP artisan route:cache && $PHP artisan view:cache
+   ```
+   The point is to run Composer and Artisan with the **patched** PHP.
+6. **Hide the version** while at it: PHP Settings → `expose_php = Off` removes
+   the `X-Powered-By: PHP/8.x` header scanners use to pick targets (see
+   `official_website_backend/DEPLOY_PLESK.md`).
+7. **Look for signs of compromise** if the server ran an unpatched PHP after
+   the details leaked: unexpected `.php` files under `public/` and
+   `storage/app/public/`, unknown cron jobs, new admin users
+   (admin panel → **Access → Activity Log**), and spikes of malformed or
+   oversized requests in the access log. Rotate `.env` secrets (DB password,
+   `APP_KEY`, SMTP, R2 keys) if anything looks off.
+
+## 5. What to do — local development (XAMPP / Homebrew)
+
+| **Runtime on the dev Mac** | **Version found 2026-10-21** | **Status** |
+| :------------------------- | :--------------------------- | :--------- |
+| XAMPP (`/Applications/XAMPP/xamppfiles/bin/php`) | 8.2.4 | ❌ vulnerable — and XAMPP for macOS ships no newer 8.2 build |
+| Homebrew `php` (default `php` on the PATH) | 8.4.6 | ❌ vulnerable |
+| Homebrew `php@8.2` | **8.2.35** (installed 2026-10-21) | ✅ patched, but too old for the app since 2026-11-14 |
+| Homebrew `php@8.4` (default `php` on the PATH, checked 2026-11-14) | **8.4.27** | ✅ patched — **the runtime to use** |
+
+XAMPP's bundled PHP cannot be patched in place. Keep XAMPP for **MySQL /
+phpMyAdmin** if you like, but run the Laravel app with Homebrew's patched PHP:
+
+```bash
+brew update && brew install php@8.4        # 8.4.27+
+brew link --overwrite --force php@8.4      # make it the default `php`
+
+php -v                                     # PHP 8.4.27 …
+cd official_website_backend && composer install && php artisan security:php
+php artisan serve --port=8020
+```
+
+In PhpStorm, set **Settings → PHP → CLI Interpreter** to
+`/opt/homebrew/opt/php@8.4/bin/php`.
+
+Do not expose a local dev server (XAMPP Apache, `artisan serve`) to the
+network while it runs an unpatched PHP.
+
+## 6. Verifying
+
+```bash
+php -v                          # ≥ 8.4.27 (or 8.5.12)
+php artisan security:php        # "PHP 8.4.27 (…) is patched against CVE-2026-109618 / CVE-2026-109619 (php2shell)."
+php artisan about               # "Security" block → PATCHED
+php artisan test --filter=PhpRuntime
+```
+
+On an older or unpatched PHP the same commands fail loudly: `composer install`
+stops in `check-platform-reqs` (the lock needs PHP 8.4), and booting the app on
+8.2.35 stops at `Composer detected issues in your platform: Your Composer
+dependencies require a PHP version ">= 8.4.27"`.
+
+## 7. Sources
+
+- PHP security advisory GHSA-w8hw-w9fx-j79w (CVE-2026-109618) —
+  [https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w](https://github.com/php/php-src/security/advisories/GHSA-w8hw-w9fx-j79w)
+- PHP security advisory GHSA-6wmf-4rv5-p3rp (CVE-2026-109619) —
+  [https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp](https://github.com/php/php-src/security/advisories/GHSA-6wmf-4rv5-p3rp)
+- php.net release announcement and `ChangeLog-8` (8.2.35: "Fixed
+  GHSA-w8hw-w9fx-j79w, GHSA-6wmf-4rv5-p3rp (Avoid state corruption via
+  bailout)") — [https://www.php.net/ChangeLog-8.php](https://www.php.net/ChangeLog-8.php)
+- The PHP Foundation —
+  [https://thephp.foundation/blog/2026/10/21/todays-php-security-release-and-how-were-strengthening-php-security/](https://thephp.foundation/blog/2026/10/21/todays-php-security-release-and-how-were-strengthening-php-security/)
+- CIRCL TR-102 — [https://www.circl.lu/pub/tr-102/](https://www.circl.lu/pub/tr-102/)
+- Huntress — [https://www.huntress.com/blog/php2shell-leaked-critical-php-vulnerabilities](https://www.huntress.com/blog/php2shell-leaked-critical-php-vulnerabilities)

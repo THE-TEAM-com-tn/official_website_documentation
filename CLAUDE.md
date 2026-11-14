@@ -28,7 +28,11 @@ It lives next to the two app repos inside the `Official_website` coordination fo
 | :-- | :-- |
 | `../official_website_backend/` | Laravel 12 backend on PHP 8.4 (8.4.27+ / 8.5.12+, php2shell-patched) — **the source of truth for everything documented here** |
 | `../official_website_frontend/` | React site that consumes the API (logo/favicon come from its `public/`) |
-| `../DOCUMENTATION/` | Older internal `.mdx` notes (feature guides, admin panel). Useful background, but verify against the code before copying anything |
+
+The coordination repo's old `DOCUMENTATION/` folder (internal feature guides, admin panel) was
+removed on 2026-11-14; its php2shell page moved here as `security/php2shell.mdx`. Any other old page
+can still be read for background with `git -C .. show 550c1c9:DOCUMENTATION/<name>.mdx` — verify
+against the code before copying anything.
 
 ## 2. Layout
 
@@ -38,10 +42,13 @@ index.mdx                            # Introduction: first request, use-case dia
 concepts/*.mdx                       # authentication, localization, responses & errors, pagination, rate limits, publishing & caching
 api-reference/<group>/overview.mdx   # one short overview per group: that group's endpoint table + notes
 api-reference/<group>/*.mdx          # one page per endpoint (manual MDX API pages)
+security/php2shell.mdx               # php2shell notice: patched PHP releases, backend guards, upgrade steps
+security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need the real client IP, how to check
+style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
-Navigation tabs: **Guides** · **Content** (trainings, blog, articles, site content) · **Forms** ·
+Navigation tabs: **Guides** (incl. the **Security** group) · **Content** (trainings, blog, articles, site content) · **Forms** ·
 **Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps).
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.
@@ -78,6 +85,11 @@ template intro, `LICENSE`): keep it that way.
   of Mintlify's generated files (they must start with an H1). Don't delete them or add page links.
 - No footer (no social icons, no links to the private app repositories) and no navbar link to the
   admin login.
+- The site is **Private** (Mintlify dashboard → Access → Authenticated: readers sign in with a
+  Mintlify account of the organization). Mintlify then adds a reader **"Log out"** link to the navbar
+  and mobile sidebar; `style.css` hides it via the documented `.logout-link` hook. Keep that file.
+- Rate limits: when the backend adds or changes a `throttle`, update `concepts/rate-limits.mdx` and
+  the "Rate limit:" line on that endpoint's page.
 
 ## 4. Keeping the docs in sync with the backend
 

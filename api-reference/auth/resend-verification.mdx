@@ -6,19 +6,20 @@ api: "POST /email/resend"
 playground: "simple"
 ---
 
+The answer is always the same `200`, whatever the address. Only an unverified staff account receives
+an email.
+
+Rate limit: **3 requests per 10 minutes**.
+
 <ParamField body="email" type="string" required>
   Account email address.
 </ParamField>
 
 ## Response
 
-<ResponseField name="message" type="string" required>`Verification email resent.`</ResponseField>
-
-| Status | When |
-| :-- | :-- |
-| `400` | The address is already verified (`Already verified.`) |
-| `404` | No account uses this address |
-| `422` | `email` missing or malformed |
+<ResponseField name="message" type="string" required>
+  `If that address belongs to an unverified account, a verification email is on its way.`
+</ResponseField>
 
 <RequestExample>
 
@@ -43,19 +44,16 @@ await fetch("https://admin.theteam.com.tn/api/email/resend", {
 
 ```json 200
 {
-  "message": "Verification email resent."
+  "message": "If that address belongs to an unverified account, a verification email is on its way."
 }
 ```
 
-```json 400
+```json 422
 {
-  "message": "Already verified."
-}
-```
-
-```json 404
-{
-  "message": "No query results for model [App\\Models\\User]."
+  "message": "Le champ adresse e-mail est obligatoire.",
+  "errors": {
+    "email": ["Le champ adresse e-mail est obligatoire."]
+  }
 }
 ```
 

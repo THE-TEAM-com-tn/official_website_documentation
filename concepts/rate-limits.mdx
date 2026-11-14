@@ -1,14 +1,32 @@
 ---
 title: "Rate limits"
 sidebarTitle: "Rate limits"
-description: "Which endpoints are throttled, how the limits are counted, and what a 429 response looks like."
+description: "The global limit on every endpoint, the stricter per-endpoint limits, and what a 429 response looks like."
 ---
 
-Throttling is applied per route. Limits are counted **per client IP**, or per account on authenticated routes, over a
-fixed window.
+Limits are counted **per client IP** (per account on routes that need a token) over a fixed window.
+Two layers apply:
+
+1. **Every endpoint: 300 requests per minute per IP.** A safety net against floods, generous enough for
+   a whole office or classroom browsing the site from one network.
+2. **Stricter limits on the endpoints that send email, store data or check a secret**, listed below.
+   Each endpoint has its **own counter**: using up one form does not block another.
+
+## Per-endpoint limits
 
 | Endpoint | Limit |
 | :-- | :-- |
+| [`POST /login`](/api-reference/auth/login) | 5 per minute |
+| [`POST /password/forgot`](/api-reference/auth/forgot-password) | 5 per minute |
+| [`POST /password/reset`](/api-reference/auth/reset-password) | 5 per minute |
+| [`POST /password/update`](/api-reference/auth/update-password) | 6 per minute (per account) |
+| [`POST /email/resend`](/api-reference/auth/resend-verification) | 3 per 10 minutes |
+| [`POST /email/change`](/api-reference/email-change/start) | 6 per 10 minutes (per account) |
+| [`POST /email/change/resend`](/api-reference/email-change/resend) | 3 per 10 minutes (per account) |
+| [`POST /email/change/confirm`](/api-reference/email-change/confirm) | 10 per minute |
+| [`POST /email/change/cancel`](/api-reference/email-change/cancel) | 10 per minute |
+| [`POST /contact-us`](/api-reference/forms/contact-us) | 6 per minute |
+| [`POST /enrollments`](/api-reference/forms/create-enrollment) | 6 per minute |
 | [`POST /devis`](/api-reference/forms/create-devis) | 6 per minute |
 | [`POST /reclamation-submissions`](/api-reference/forms/create-reclamation) | 6 per minute |
 | [`GET /reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | 20 per minute (the tracking code is the only credential) |
@@ -16,21 +34,17 @@ fixed window.
 | [`POST /testimonials`](/api-reference/forms/submit-testimonial) | 6 per minute |
 | [`POST /newsletter`](/api-reference/forms/newsletter-subscribe) | 5 per minute |
 | [`POST /newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | 5 per minute |
-| [`POST /email/change`](/api-reference/email-change/start) | 6 per 10 minutes |
-| [`POST /email/change/resend`](/api-reference/email-change/resend) | 3 per 10 minutes |
-| [`POST /email/change/confirm`](/api-reference/email-change/confirm) | 10 per minute |
-| [`POST /email/change/cancel`](/api-reference/email-change/cancel) | 10 per minute |
-
-Design every client to handle a `429` on any write endpoint, not only on the ones listed above.
 
 ## Headers
 
-Throttled routes report the budget on every response:
+Every response reports the budget of the tightest limit that applies:
 
 ```http
 X-RateLimit-Limit: 5
 X-RateLimit-Remaining: 4
 ```
+
+On an endpoint without its own limit, that is the global one (`X-RateLimit-Limit: 300`).
 
 ## When you hit the limit
 
@@ -49,3 +63,8 @@ X-RateLimit-Remaining: 0
 
 The message is not translated. On the public site, show a "try again in a minute" message for any
 `429` instead of the raw text.
+
+<Tip>
+  Why limits are counted per IP, and how to check that the server sees each visitor's own IP:
+  [Client IP and rate limits](/security/client-ip-and-rate-limits).
+</Tip>

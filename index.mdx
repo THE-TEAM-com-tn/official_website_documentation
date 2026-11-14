@@ -31,7 +31,7 @@ React app, reads all of its dynamic content from this API and posts every public
 | **Format** | JSON in and out. Send `Accept: application/json` on every request. |
 | **Authentication** | None for content and public forms. Staff-account endpoints use a [Sanctum bearer token](/concepts/authentication). |
 | **Language** | French by default, English with `X-Locale: en` or `?lang=en`. See [Localization](/concepts/localization). |
-| **Rate limits** | Per client IP, per route. See [Rate limits](/concepts/rate-limits). |
+| **Rate limits** | Per client IP: 300 requests per minute on every endpoint, stricter on forms and account endpoints. See [Rate limits](/concepts/rate-limits). |
 | **CORS** | Every origin is allowed. |
 
 ## Your first request
@@ -140,4 +140,5 @@ local `.env` so form submissions write emails to the log instead of sending them
 <Note>
   The backend runs Laravel 12 on **PHP 8.4** and needs a release patched against php2shell: 8.4.27+ (or 8.5.12+).
   PHP 8.2 / 8.3 — including XAMPP's PHP 8.2.4 — are refused by Composer; use Homebrew `php@8.4`.
+  See [php2shell](/security/php2shell).
 </Note>

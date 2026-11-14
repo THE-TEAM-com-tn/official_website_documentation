@@ -16,6 +16,8 @@ with the caller's IP and User-Agent, so it shows up in [List devices](/api-refer
 Tokens **do not expire**; revoke them with [Log out](/api-reference/auth/logout) or
 [Log out everywhere](/api-reference/auth/logout-all).
 
+Rate limit: **5 requests per minute**.
+
 <Warning>
   **Known issue — 2FA accounts.** Sending `2fa_code` **alone** currently returns
   `500 Server Error` (`Undefined array key "2fa_recovery_code"` in `AuthController@login`). Until the

@@ -60,6 +60,13 @@
               "concepts/rate-limits",
               "concepts/publishing-and-caching"
             ]
+          },
+          {
+            "group": "Security",
+            "pages": [
+              "security/php2shell",
+              "security/client-ip-and-rate-limits"
+            ]
           }
         ]
       },

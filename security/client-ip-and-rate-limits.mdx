@@ -1,0 +1,86 @@
+---
+title: "Client IP and rate limits"
+sidebarTitle: "Client IP"
+description: "Why the rate limits depend on the server seeing each visitor's own IP address, how to check it in two minutes, and when to check again."
+---
+
+## The short version
+
+The rate limits count requests **per visitor**, and the backend recognises a visitor by their
+**IP address**. That only works if the server sees each visitor's **own** IP.
+
+On our server it should: nothing was found in front of it (see below), so nothing is configured. Do the
+[2-minute check](#check-it-yourself-2-minutes) once to confirm it, and again if you ever put a service
+such as Cloudflare in front of `admin.theteam.com.tn`.
+
+## An analogy
+
+Picture a guard at the door of a building who lets each person in **5 times per minute**. The guard
+recognises people by their face.
+
+- **Normal case:** every visitor walks in themselves. The guard sees each face and counts each person
+  separately.
+- **Problem case:** every visitor is driven in by the same taxi driver, and the guard only sees the
+  driver's face. After 5 visits, the guard blocks **everyone**, because to them it is the same person.
+
+The guard is the rate limit, the face is the IP address, and the taxi driver is a **proxy**.
+
+## What is a proxy?
+
+A proxy is a server that sits **in front of** our server and passes requests along: Cloudflare (when
+its orange "proxied" cloud is on), a CDN or a load balancer. When one is in front, our server sees the
+**proxy's IP** on every request instead of the visitor's.
+
+## The two possible setups
+
+| | No proxy in front (our setup) | A proxy in front |
+| :-- | :-- | :-- |
+| IP the backend sees | The visitor's own IP | The proxy's IP, the same for many visitors |
+| Rate limits | Each visitor has their own counter | Visitors share one counter |
+| What can go wrong | Nothing | A few login attempts by anyone block the admin login for everyone; busy minutes block the whole site |
+| What to do | Nothing | Tell Laravel which proxy to trust, so it reads the visitor's IP from the header the proxy adds |
+
+Telling Laravel to trust a proxy is the `trustProxies` setting in `bootstrap/app.php`. It is
+deliberately **not** set today.
+
+## Why not simply turn that setting on?
+
+A proxy passes the visitor's real IP in a header called `X-Forwarded-For`. Anyone can write that
+header themselves. If Laravel trusted it without a real proxy in front, an attacker could send a
+different fake IP with every request, look like a brand-new visitor each time, and **never hit a
+limit**.
+
+So: trust a proxy only when one really exists, and only that proxy.
+
+## Check it yourself (2 minutes)
+
+<Steps>
+  <Step title="Sign in to the admin panel from two networks">
+    Sign in once from your computer, and once from your phone on **mobile data**, with Wi-Fi off.
+  </Step>
+  <Step title="Open the Security page">
+    In the admin panel, open the user menu and choose **Security**. The **Connected devices** list
+    shows the IP address of each signed-in device. (If the list stays empty, the server does not keep
+    sessions in the database; ask a developer to check `SESSION_DRIVER`.)
+  </Step>
+  <Step title="Compare the two IP addresses">
+    - **Two different addresses** → the server sees each visitor's own IP. Everything is fine.
+    - **The same address on both**, especially `127.0.0.1` or the server's own address → a proxy is in
+      front. Ask a developer to configure `trustProxies` for that proxy.
+  </Step>
+</Steps>
+
+## What was checked on 2026-11-14
+
+The backend's responses show no CDN or proxy service in front of the hosting server. That points to
+Laravel receiving each visitor's own IP, but only the 2-minute check above proves it.
+
+## When to check again
+
+- You turn on Cloudflare's proxy (orange cloud), or any CDN or load balancer, for
+  `admin.theteam.com.tn`.
+- The backend moves to another host or hosting setup.
+
+In both cases, do the 2-minute check above before relying on the limits.
+
+Related: [Rate limits](/concepts/rate-limits) lists every limit and what a `429` response looks like.

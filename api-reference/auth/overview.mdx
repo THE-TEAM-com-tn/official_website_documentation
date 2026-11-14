@@ -30,7 +30,9 @@ for the token lifecycle.
 | `GET` | [`/email/verify/{id}/{hash}`](/api-reference/auth/verify-email) | — | Verify an email address |
 | `POST` | [`/email/resend`](/api-reference/auth/resend-verification) | — | Resend the verification email |
 
-None of these endpoints is rate-limited. Changing the account's email address has its own flow: see
+Login and the password and verification endpoints are rate-limited: see
+[Rate limits](/concepts/rate-limits). The verification link is signed and expires after 60 minutes.
+Changing the account's email address has its own flow: see
 [Email change](/api-reference/email-change/overview).
 
 <Note>

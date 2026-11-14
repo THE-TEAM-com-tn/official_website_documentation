@@ -9,12 +9,25 @@ playground: "simple"
 The verification email links here. Login is refused with `403 Email not verified` until this succeeds.
 Accounts created from an invitation are already verified.
 
+The link is **signed** and valid for **60 minutes**: call it exactly as it appears in the email,
+including its `expires` and `signature` query parameters. A link that was changed, rebuilt by hand or
+has expired answers `403 Invalid signature.`; ask for a new one with
+[Resend the verification email](/api-reference/auth/resend-verification).
+
 <ParamField path="id" type="integer" required>
-  User id.
+  User id, from the link.
 </ParamField>
 
 <ParamField path="hash" type="string" required>
-  Hash segment of the emailed link, passed through unchanged.
+  Hash segment of the link, passed through unchanged.
+</ParamField>
+
+<ParamField query="expires" type="integer" required>
+  Expiry timestamp, from the link.
+</ParamField>
+
+<ParamField query="signature" type="string" required>
+  Signature, from the link.
 </ParamField>
 
 ## Response
@@ -26,12 +39,14 @@ Accounts created from an invitation are already verified.
 <RequestExample>
 
 ```bash cURL
-curl "https://admin.theteam.com.tn/api/email/verify/7/2f1d4f0c6c1a9e4b3d5e8f7a6b9c0d1e2f3a4b5c" \
+# Paste the whole link from the email, query string included.
+curl "$VERIFICATION_LINK" \
   -H "Accept: application/json"
 ```
 
 ```javascript JavaScript
-const res = await fetch(`https://admin.theteam.com.tn/api/email/verify/${id}/${hash}`, {
+// verificationLink = the full URL from the email, query string included.
+const res = await fetch(verificationLink, {
   headers: { Accept: "application/json" },
 });
 ```
@@ -54,13 +69,7 @@ const res = await fetch(`https://admin.theteam.com.tn/api/email/verify/${id}/${h
 
 ```json 403
 {
-  "message": "Invalid verification link."
-}
-```
-
-```json 404
-{
-  "message": "No query results for model [App\\Models\\User] 7"
+  "message": "Invalid signature."
 }
 ```
 

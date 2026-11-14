@@ -11,9 +11,10 @@ admin panel under **Inbox → Contact messages**), the address is added to the n
 `contact` (unless it is already there), every staff account gets a notification, and the team inbox
 receives an email.
 
+Rate limit: **6 requests per minute**.
+
 <Note>
-  This endpoint is **not rate-limited**. If the team email fails, the message is already stored but the
-  endpoint answers `500`.
+  If the team email fails, the message is already stored but the endpoint answers `500`.
 </Note>
 
 ## Body

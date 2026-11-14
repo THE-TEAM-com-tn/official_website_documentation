@@ -28,6 +28,7 @@ mint broken-links
 | `docs.json` | Theme, colours, logo, navigation tabs, API playground settings |
 | `index.mdx` | Introduction: first request, use-case diagram, running the backend locally |
 | `concepts/` | Authentication, localization, responses & errors, pagination, rate limits, publishing & caching |
+| `security/` | Runtime security notices — `php2shell.mdx` (CVE-2026-109618 / -109619: required PHP releases, upgrade steps) |
 | `api-reference/<group>/` | An `overview.mdx` per group plus one page per endpoint (tabs: Content, Forms, Authentication, System) |
 
 Writing rules and the backend-sync checklist are in [`CLAUDE.md`](CLAUDE.md).

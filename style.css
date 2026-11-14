@@ -1,0 +1,12 @@
+/*
+ * Loaded on every page automatically (any .css file in the docs root).
+ *
+ * The site is Private (Mintlify dashboard → Access → Authenticated), so Mintlify
+ * adds its own "Log out" link for signed-in readers, in the navbar and in the
+ * mobile sidebar. Hide it: readers stay signed in until their Mintlify session
+ * ends. `.logout-link` is Mintlify's documented hook for that link
+ * (https://www.mintlify.com/docs/customize/custom-scripts).
+ */
+.logout-link {
+  display: none !important;
+}
