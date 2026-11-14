@@ -18,8 +18,8 @@ Authorization: Bearer 3|EXAMPLE-TOKEN-NOT-A-REAL-VALUE
   Accounts are created in the admin panel, by invitation or under **Access → Users**.
 - An account needs a **verified email** and a **built-in role** (`admin` or `content_manager`). An account
   with no role is refused with `403 Account has no access`.
-- Accounts with **two-factor authentication** must send a TOTP code or a recovery code. See
-  [Log in](/api-reference/auth/login) for the current known issue with `2fa_code`.
+- Accounts with **two-factor authentication** must send a TOTP code (`2fa_code`) or a recovery code
+  (`2fa_recovery_code`). See [Log in](/api-reference/auth/login).
 
 ## Token lifecycle
 

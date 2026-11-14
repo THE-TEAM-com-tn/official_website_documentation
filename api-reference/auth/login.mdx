@@ -18,14 +18,6 @@ Tokens **do not expire**; revoke them with [Log out](/api-reference/auth/logout)
 
 Rate limit: **5 requests per minute**.
 
-<Warning>
-  **Known issue — 2FA accounts.** Sending `2fa_code` **alone** currently returns
-  `500 Server Error` (`Undefined array key "2fa_recovery_code"` in `AuthController@login`). Until the
-  guard is fixed, a TOTP login only succeeds when the body also carries a non-empty
-  `2fa_recovery_code` (it is ignored when `2fa_code` is present). Logging in with a recovery code
-  alone works.
-</Warning>
-
 ## Body
 
 <ParamField body="email" type="string" required>
@@ -37,8 +29,9 @@ Rate limit: **5 requests per minute**.
 </ParamField>
 
 <ParamField body="2fa_code" type="string">
-  Six-digit TOTP code from the authenticator app. Required (or `2fa_recovery_code`) when the account
-  has two-factor authentication enabled.
+  Six-digit TOTP code from the authenticator app. When the account has two-factor authentication
+  enabled, send either this field or `2fa_recovery_code`. If both are sent, only `2fa_code` is
+  checked.
 </ParamField>
 
 <ParamField body="2fa_recovery_code" type="string">
