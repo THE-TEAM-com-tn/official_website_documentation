@@ -15,8 +15,12 @@
   },
   "favicon": "/favicon.svg",
   "fonts": {
-    "heading": { "family": "Outfit" },
-    "body": { "family": "Inter" }
+    "heading": {
+      "family": "Outfit"
+    },
+    "body": {
+      "family": "Inter"
+    }
   },
   "appearance": {
     "default": "system"
@@ -42,7 +46,9 @@
         "groups": [
           {
             "group": "Get started",
-            "pages": ["index", "quickstart"]
+            "pages": [
+              "index"
+            ]
           },
           {
             "group": "Core concepts",
@@ -58,42 +64,12 @@
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Content",
         "groups": [
-          {
-            "group": "Overview",
-            "pages": ["api-reference/overview"]
-          },
-          {
-            "group": "Authentication",
-            "pages": [
-              "api-reference/auth/login",
-              "api-reference/auth/get-user",
-              "api-reference/auth/logout",
-              "api-reference/auth/list-devices",
-              "api-reference/auth/revoke-device",
-              "api-reference/auth/logout-all",
-              "api-reference/auth/update-password",
-              "api-reference/auth/forgot-password",
-              "api-reference/auth/reset-password",
-              "api-reference/auth/verify-email",
-              "api-reference/auth/resend-verification"
-            ]
-          },
-          {
-            "group": "Email change",
-            "pages": [
-              "api-reference/email-change/get-pending",
-              "api-reference/email-change/start",
-              "api-reference/email-change/resend",
-              "api-reference/email-change/discard",
-              "api-reference/email-change/confirm",
-              "api-reference/email-change/cancel"
-            ]
-          },
           {
             "group": "Trainings",
             "pages": [
+              "api-reference/trainings/overview",
               "api-reference/trainings/list",
               "api-reference/trainings/get",
               "api-reference/trainings/options",
@@ -103,6 +79,7 @@
           {
             "group": "Blog",
             "pages": [
+              "api-reference/blog/overview",
               "api-reference/blog/list-posts",
               "api-reference/blog/pinned-posts",
               "api-reference/blog/get-post",
@@ -112,6 +89,7 @@
           {
             "group": "Knowledge Corner",
             "pages": [
+              "api-reference/articles/overview",
               "api-reference/articles/list",
               "api-reference/articles/filters",
               "api-reference/articles/pinned",
@@ -121,6 +99,7 @@
           {
             "group": "Site content",
             "pages": [
+              "api-reference/content/overview",
               "api-reference/content/landing-page",
               "api-reference/content/list-testimonials",
               "api-reference/content/pinned-testimonials",
@@ -131,28 +110,102 @@
               "api-reference/content/list-menu",
               "api-reference/content/get-menu-item"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Forms",
+        "groups": [
+          {
+            "group": "Forms",
+            "pages": [
+              "api-reference/forms/overview"
+            ]
           },
           {
-            "group": "Forms & submissions",
+            "group": "Contact, enrollment and quotes",
             "pages": [
               "api-reference/forms/contact-us",
               "api-reference/forms/create-enrollment",
-              "api-reference/forms/create-devis",
+              "api-reference/forms/create-devis"
+            ]
+          },
+          {
+            "group": "Newsletter",
+            "pages": [
               "api-reference/forms/newsletter-subscribe",
-              "api-reference/forms/newsletter-unsubscribe",
+              "api-reference/forms/newsletter-unsubscribe"
+            ]
+          },
+          {
+            "group": "Réclamations",
+            "pages": [
               "api-reference/forms/create-reclamation",
-              "api-reference/forms/track-reclamation",
+              "api-reference/forms/track-reclamation"
+            ]
+          },
+          {
+            "group": "Reviews and testimonials",
+            "pages": [
               "api-reference/forms/create-review",
               "api-reference/forms/list-reviews",
               "api-reference/forms/submit-testimonial"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "Authentication",
+        "groups": [
+          {
+            "group": "Tokens and devices",
+            "pages": [
+              "api-reference/auth/overview",
+              "api-reference/auth/login",
+              "api-reference/auth/get-user",
+              "api-reference/auth/logout",
+              "api-reference/auth/list-devices",
+              "api-reference/auth/revoke-device",
+              "api-reference/auth/logout-all"
+            ]
           },
+          {
+            "group": "Password and verification",
+            "pages": [
+              "api-reference/auth/update-password",
+              "api-reference/auth/forgot-password",
+              "api-reference/auth/reset-password",
+              "api-reference/auth/verify-email",
+              "api-reference/auth/resend-verification"
+            ]
+          },
+          {
+            "group": "Email change",
+            "pages": [
+              "api-reference/email-change/overview",
+              "api-reference/email-change/get-pending",
+              "api-reference/email-change/start",
+              "api-reference/email-change/resend",
+              "api-reference/email-change/discard",
+              "api-reference/email-change/confirm",
+              "api-reference/email-change/cancel"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "System",
+        "groups": [
           {
             "group": "System",
-            "pages": ["api-reference/system/health", "api-reference/system/status-page"]
+            "pages": [
+              "api-reference/system/overview",
+              "api-reference/system/health",
+              "api-reference/system/status-page"
+            ]
           },
           {
-            "group": "Share pages & sitemaps",
+            "group": "Share pages and sitemaps",
             "pages": [
               "api-reference/web/share-blog",
               "api-reference/web/share-article",
@@ -166,8 +219,14 @@
   },
   "navbar": {
     "links": [
-      { "label": "Website", "href": "https://theteam.com.tn" },
-      { "label": "Admin panel", "href": "https://admin.theteam.com.tn/admin" }
+      {
+        "label": "Website",
+        "href": "https://theteam.com.tn"
+      },
+      {
+        "label": "Admin panel",
+        "href": "https://admin.theteam.com.tn/admin"
+      }
     ],
     "primary": {
       "type": "button",
@@ -176,7 +235,14 @@
     }
   },
   "contextual": {
-    "options": ["copy", "view", "chatgpt", "claude", "cursor", "vscode"]
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
@@ -190,9 +256,18 @@
       {
         "header": "Repositories",
         "items": [
-          { "label": "Backend", "href": "https://github.com/THE-TEAM-com-tn/official_website_backend" },
-          { "label": "Frontend", "href": "https://github.com/THE-TEAM-com-tn/official_website_frontend" },
-          { "label": "Coordination repo", "href": "https://github.com/THE-TEAM-com-tn/Official_website" }
+          {
+            "label": "Backend",
+            "href": "https://github.com/THE-TEAM-com-tn/official_website_backend"
+          },
+          {
+            "label": "Frontend",
+            "href": "https://github.com/THE-TEAM-com-tn/official_website_frontend"
+          },
+          {
+            "label": "Coordination repo",
+            "href": "https://github.com/THE-TEAM-com-tn/Official_website"
+          }
         ]
       }
     ]

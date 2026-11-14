@@ -1,0 +1,21 @@
+---
+title: "Blog API"
+sidebarTitle: "Overview"
+description: "Published blog posts for the site's /blogs page: list, pinned posts, single post and categories."
+---
+
+Blog posts appear on the Blogs tab of the site's resource hub (`/blogs`) and at `/blog/{slug}`. A post is
+visible once it has `status` on and a `published_at` date; unlike articles, a future date does **not**
+hide it.
+
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/blog-posts`](/api-reference/blog/list-posts) | Published posts, newest first, with search and a category filter |
+| `GET` | [`/blog-posts/is_pinned`](/api-reference/blog/pinned-posts) | The three most recently updated pinned posts |
+| `GET` | [`/blog-posts/{slug}`](/api-reference/blog/get-post) | One post with its full HTML content |
+| `GET` | [`/blog-categories`](/api-reference/blog/list-categories) | Categories that have at least one published post |
+
+- Lists return a plain-text preview of `content`; the single-post endpoint returns the full HTML.
+- Responses are Laravel API Resources (`data`, `links`, `meta`). See [Pagination](/concepts/pagination).
+- Share posts on social networks through [`/share/blog/{slug}`](/api-reference/web/share-blog), which serves
+  real Open Graph tags.

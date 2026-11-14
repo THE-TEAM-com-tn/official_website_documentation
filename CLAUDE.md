@@ -33,14 +33,18 @@ It lives next to the two app repos inside the `Official_website` coordination fo
 ## 2. Layout
 
 ```text
-docs.json                    # theme, colours, logo, navigation, API playground settings
-index.mdx                    # Introduction + global use-case diagram (Mermaid)
-quickstart.mdx
-concepts/*.mdx               # authentication, localization, responses & errors, pagination, rate limits, publishing & caching
-api-reference/overview.mdx   # endpoint summary table
-api-reference/<group>/*.mdx  # one page per endpoint (manual MDX API pages)
+docs.json                            # theme, colours, logo, navigation (tabs), API playground settings
+index.mdx                            # Introduction: first request, use-case diagram (Mermaid), running locally
+concepts/*.mdx                       # authentication, localization, responses & errors, pagination, rate limits, publishing & caching
+api-reference/<group>/overview.mdx   # one short overview per group: that group's endpoint table + notes
+api-reference/<group>/*.mdx          # one page per endpoint (manual MDX API pages)
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
+
+Navigation tabs: **Guides** · **Content** (trainings, blog, articles, site content) · **Forms** ·
+**Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps).
+There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
+template intro, `LICENSE`): keep it that way.
 
 ## 3. Writing rules
 
@@ -69,7 +73,7 @@ When a backend change touches `routes/api.php`, `app/Http/Controllers/Api/*`,
 `app/Http/Controllers/AuthController.php` or `app/Http/Resources/*`:
 
 1. `php artisan route:list --path=api` in the backend — diff against the navigation in `docs.json`.
-2. Update the endpoint page(s) and `api-reference/overview.mdx`.
+2. Update the endpoint page(s) and the table in that group's `overview.mdx`.
 3. The backend's own `api_documentation_v2.md` is updated in the backend repo, not here.
 
 ## 5. Commands

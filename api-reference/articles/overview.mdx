@@ -1,0 +1,24 @@
+---
+title: "Knowledge Corner API"
+sidebarTitle: "Overview"
+description: "Long-form articles served at the root of the public site: list, facets, pinned articles and single article."
+---
+
+Knowledge Corner articles are long-form SEO pages. The site serves each one **at its root**
+(`https://theteam.com.tn/{slug}`, English `/en/{slug}`) and lists them on the `/articles` tab of the
+resource hub. Article slugs can never equal a top-level route of the site: the backend refuses reserved
+slugs.
+
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/articles`](/api-reference/articles/list) | Published articles with search, category and type filters |
+| `GET` | [`/articles/filters`](/api-reference/articles/filters) | Categories and resource types with their counts |
+| `GET` | [`/articles/pinned`](/api-reference/articles/pinned) | Up to 10 pinned articles |
+| `GET` | [`/articles/{slug}`](/api-reference/articles/get) | One article with its HTML content and up to 3 related articles |
+
+- An article is visible once `status` is on and its `published_at` date is **reached**: a future date
+  schedules it.
+- Resource types: `article`, `guide`, `tutorial`, `case_study`, `glossary`, with labels in the request language.
+- Articles share their categories and tags with blog posts.
+- Crawlers use [`/share/article/{slug}`](/api-reference/web/share-article) and
+  [`/sitemap-articles.xml`](/api-reference/web/sitemap-articles).

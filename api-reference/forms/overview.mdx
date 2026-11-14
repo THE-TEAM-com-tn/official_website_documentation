@@ -1,0 +1,52 @@
+---
+title: "Forms API"
+sidebarTitle: "Overview"
+description: "Public form submissions: contact, enrollment, devis, newsletter, réclamations, reviews and testimonials."
+---
+
+Every public form of the site posts here. None needs authentication.
+
+<Warning>
+  These endpoints write to the **production** database, notify every staff account and send real emails.
+  Their pages show a copyable request instead of a live playground. Test them against a
+  [local backend](/#run-the-backend-locally).
+</Warning>
+
+## Contact, enrollment and quotes
+
+| Method | Path | Limit | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/contact-us`](/api-reference/forms/contact-us) | — | Contact message |
+| `POST` | [`/enrollments`](/api-reference/forms/create-enrollment) | — | Enroll in a published training |
+| `POST` | [`/devis`](/api-reference/forms/create-devis) | 6 / min | Quote request |
+
+## Newsletter
+
+| Method | Path | Limit | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/newsletter`](/api-reference/forms/newsletter-subscribe) | 5 / min | Subscribe (subscribing twice is not an error) |
+| `POST` | [`/newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | 5 / min | Unsubscribe (always `200`) |
+
+## Réclamations
+
+| Method | Path | Limit | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/reclamation-submissions`](/api-reference/forms/create-reclamation) | 6 / min | File a réclamation, get a tracking code |
+| `GET` | [`/reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | 20 / min | Track it with the code |
+
+## Reviews and testimonials
+
+| Method | Path | Limit | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/review-submissions/create`](/api-reference/forms/create-review) | 6 / min | Leave a rated review |
+| `GET` | [`/review-submissions`](/api-reference/forms/list-reviews) | — | Every review |
+| `POST` | [`/testimonials`](/api-reference/forms/submit-testimonial) | 6 / min | Submit a testimonial for approval |
+
+## Common behaviour
+
+- A stored submission answers **`201`**. Validation errors answer `422` in one of three shapes, listed in
+  [Responses and errors](/concepts/responses-and-errors#validation-errors-422).
+- Contact, devis and réclamation addresses are added to the newsletter list (first source wins).
+- Contact, devis, review and réclamation submissions email the team inbox; réclamations also email the
+  client. A failed email never loses a devis, réclamation or review.
+- Handle `429` with a "try again in a minute" message. See [Rate limits](/concepts/rate-limits).

@@ -122,6 +122,35 @@ Form controllers catch storage failures and return a French message, for example
 add `"success": false` and an `error` key that is `null` in production. Anything uncaught returns
 Laravel's generic `{"message": "Server Error"}`.
 
+## Handling responses in JavaScript
+
+The public site uses axios with a shared base URL and an `X-Locale` header. The same pattern works with
+`fetch`:
+
+```javascript
+const API_BASE = "https://admin.theteam.com.tn/api";
+
+async function api(path, { locale = "fr", ...init } = {}) {
+  const res = await fetch(`${API_BASE}${path}`, {
+    ...init,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-Locale": locale,
+      ...init.headers,
+    },
+  });
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw Object.assign(new Error(body?.message ?? res.statusText), { status: res.status, body });
+  return body;
+}
+
+const { data: posts } = await api("/blog-posts?per_page=6", { locale: "en" });
+```
+
+Handle `422` (show `errors` next to each field), `429` (ask the visitor to retry in a minute) and a
+generic fallback for everything else.
+
 ## Mail failures never fail a request
 
 Devis, réclamation and review submissions are saved before the email goes out. A failed email is logged

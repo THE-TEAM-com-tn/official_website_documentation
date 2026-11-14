@@ -1,0 +1,25 @@
+---
+title: "Site content API"
+sidebarTitle: "Overview"
+description: "Landing page, testimonials, webinars, FAQ, CMS pages and navigation menu."
+---
+
+The rest of the site's dynamic content. Every endpoint is public and read-only.
+
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/landing-page`](/api-reference/content/landing-page) | Site-wide settings and home-page content (staff, partners, slides…) |
+| `GET` | [`/testimonials`](/api-reference/content/list-testimonials) | Published testimonials |
+| `GET` | [`/testimonials/pinned`](/api-reference/content/pinned-testimonials) | Same result (legacy route) |
+| `GET` | [`/webinars`](/api-reference/content/list-webinars) | Published webinars with YouTube embed URLs |
+| `GET` | [`/faqs`](/api-reference/content/list-faqs) | Published FAQs |
+| `GET` | [`/pages`](/api-reference/content/list-pages) | CMS pages |
+| `GET` | [`/pages/{slug}`](/api-reference/content/get-page) | One CMS page |
+| `GET` | [`/menu`](/api-reference/content/list-menu) | Navigation menu |
+| `GET` | [`/menu/{id}`](/api-reference/content/get-menu-item) | One menu item |
+
+- The site fetches `/landing-page` **once per visit** and shares it between the home page, header, footer,
+  calendar and 404 page.
+- A testimonial is published when `is_pinned` is `true`; public submissions stay hidden until staff publish them.
+- CMS pages and the menu are no longer edited in the admin panel; the endpoints serve what is stored, and
+  pages are **not** filtered on publication by default.

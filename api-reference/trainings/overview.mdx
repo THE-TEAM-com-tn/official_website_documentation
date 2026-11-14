@@ -1,0 +1,26 @@
+---
+title: "Trainings API"
+sidebarTitle: "Overview"
+description: "The training catalogue: list, details by slug, picker options and categories."
+---
+
+Trainings power the site's catalogue (`/trainings`) and course pages (`/course/{slug}`). All four endpoints
+are public and served from a **5-minute cache** per language that an admin edit invalidates at once (see
+[Publishing and caching](/concepts/publishing-and-caching#training-catalogue-cache)).
+
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/trainings`](/api-reference/trainings/list) | Published catalogue, paginated, with search and a pinned filter |
+| `GET` | [`/trainings/{idOrSlug}`](/api-reference/trainings/get) | Full details: pricing, certification, modules and lessons |
+| `GET` | [`/trainings/options`](/api-reference/trainings/options) | Light `{ id, title }` list for pickers such as the devis form |
+| `GET` | [`/categories`](/api-reference/trainings/categories) | Training categories (name and position) |
+
+- Lists only include **published** trainings. The detail endpoint does not check publication: see its page.
+- `featured_image_url` is never `null`; trainings without an image get a shared placeholder.
+- Enrolling and requesting a quote are [form endpoints](/api-reference/forms/overview).
+- The XML sitemap of the catalogue is [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings).
+
+<Note>
+  JSON import and export of trainings were removed from the public API on 2026-10-02
+  (`/api/import`, `/api/export`, `/api/export/{id}` answer `404`). They are admin-panel features.
+</Note>

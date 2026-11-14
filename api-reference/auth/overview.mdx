@@ -1,0 +1,39 @@
+---
+title: "Authentication API"
+sidebarTitle: "Overview"
+description: "Staff-account endpoints: Sanctum tokens, connected devices, password changes and email verification."
+---
+
+These endpoints are for **staff accounts** only (the people who use the admin panel). There is no public
+sign-up: `POST /api/register` was removed on 2026-11-04 and answers `404`. Accounts come from the admin
+panel, and only accounts with a built-in role can get a token. See [Authentication](/concepts/authentication)
+for the token lifecycle.
+
+## Tokens and devices
+
+| Method | Path | Auth | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/login`](/api-reference/auth/login) | — | Exchange credentials (and a 2FA code) for a token |
+| `GET` | [`/user`](/api-reference/auth/get-user) | Bearer | Current account |
+| `POST` | [`/logout`](/api-reference/auth/logout) | Bearer | Revoke the current token |
+| `GET` | [`/devices`](/api-reference/auth/list-devices) | Bearer | Tokens issued to the account |
+| `DELETE` | [`/devices/{id}`](/api-reference/auth/revoke-device) | Bearer | Revoke one token |
+| `POST` | [`/logout-all`](/api-reference/auth/logout-all) | Bearer | Revoke every token |
+
+## Password and email verification
+
+| Method | Path | Auth | Description |
+| :-- | :-- | :-- | :-- |
+| `POST` | [`/password/update`](/api-reference/auth/update-password) | Bearer | Change the password |
+| `POST` | [`/password/forgot`](/api-reference/auth/forgot-password) | — | Email a reset link |
+| `POST` | [`/password/reset`](/api-reference/auth/reset-password) | — | Reset with the emailed token |
+| `GET` | [`/email/verify/{id}/{hash}`](/api-reference/auth/verify-email) | — | Verify an email address |
+| `POST` | [`/email/resend`](/api-reference/auth/resend-verification) | — | Resend the verification email |
+
+None of these endpoints is rate-limited. Changing the account's email address has its own flow: see
+[Email change](/api-reference/email-change/overview).
+
+<Note>
+  Messages from these endpoints (`Invalid credentials`, `Password updated.`…) are hard-coded in English;
+  validation errors follow the request language.
+</Note>

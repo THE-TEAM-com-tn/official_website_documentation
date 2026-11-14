@@ -1,0 +1,24 @@
+---
+title: "Email change API"
+sidebarTitle: "Overview"
+description: "Change a staff account's email address through a verified, two-sided flow."
+---
+
+A staff account never changes its email address directly. The flow re-checks the password (and the 2FA
+code when enabled), emails a confirmation link to the **new** address and a cancel link to the **old** one,
+and only swaps the address once the new address confirms. Links live 30 minutes.
+
+| Method | Path | Auth | Limit | Description |
+| :-- | :-- | :-- | :-- | :-- |
+| `GET` | [`/email/change`](/api-reference/email-change/get-pending) | Bearer | — | Pending change, if any |
+| `POST` | [`/email/change`](/api-reference/email-change/start) | Bearer | 6 / 10 min | Start a change |
+| `POST` | [`/email/change/resend`](/api-reference/email-change/resend) | Bearer | 3 / 10 min | Send fresh links |
+| `DELETE` | [`/email/change`](/api-reference/email-change/discard) | Bearer | — | Drop the pending change |
+| `POST` | [`/email/change/confirm`](/api-reference/email-change/confirm) | Token in body | 10 / min | Confirm from the new address |
+| `POST` | [`/email/change/cancel`](/api-reference/email-change/cancel) | Token in body | 10 / min | Cancel from the old address |
+
+Confirming, or cancelling from the old address, **revokes every token and browser session** of the
+account. Discarding your own pending change does not. The emailed links open pages hosted by the backend,
+so a client only needs the two token endpoints to host its own confirmation screens.
+
+The full sequence is drawn in [Authentication → Email change flow](/concepts/authentication#email-change-flow).

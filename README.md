@@ -25,10 +25,10 @@ mint broken-links
 
 | Path | Content |
 | :-- | :-- |
-| `docs.json` | Theme, colours, logo, navigation, API playground settings |
-| `index.mdx`, `quickstart.mdx` | Introduction (with the use-case diagram) and first requests |
+| `docs.json` | Theme, colours, logo, navigation tabs, API playground settings |
+| `index.mdx` | Introduction: first request, use-case diagram, running the backend locally |
 | `concepts/` | Authentication, localization, responses & errors, pagination, rate limits, publishing & caching |
-| `api-reference/` | One page per endpoint, grouped like the navigation |
+| `api-reference/<group>/` | An `overview.mdx` per group plus one page per endpoint (tabs: Content, Forms, Authentication, System) |
 
 Writing rules and the backend-sync checklist are in [`CLAUDE.md`](CLAUDE.md).
 

@@ -1,0 +1,27 @@
+---
+title: "System and web routes"
+sidebarTitle: "Overview"
+description: "Health check and status page, plus the public web routes for crawlers: share pages and sitemaps."
+---
+
+## System
+
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/api/health`](/api-reference/system/health) | JSON health check for uptime monitoring (also at `/health`) |
+| `GET` | [`/api/`](/api-reference/system/status-page) | HTML status page of the backend services |
+
+## Share pages and sitemaps
+
+These routes live **outside `/api`**, at `https://admin.theteam.com.tn`. They exist because the public site
+is a static SPA: crawlers cannot run its JavaScript, so the backend renders what they need.
+
+| Method | URL | Description |
+| :-- | :-- | :-- |
+| `GET` | [`/share/blog/{slug}`](/api-reference/web/share-blog) | Open Graph page for a blog post, redirects people to the post |
+| `GET` | [`/share/article/{slug}`](/api-reference/web/share-article) | Open Graph page for an article, in French or English |
+| `GET` | [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings) | Sitemap of published trainings |
+| `GET` | [`/sitemap-articles.xml`](/api-reference/web/sitemap-articles) | Sitemap of published articles |
+
+The two sitemaps are published under the public domain (`https://theteam.com.tn/sitemap-*.xml`) through an
+nginx proxy, and listed in the site's `robots.txt`.
