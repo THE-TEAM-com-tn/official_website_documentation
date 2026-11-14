@@ -65,7 +65,8 @@
             "group": "Security",
             "pages": [
               "security/php2shell",
-              "security/client-ip-and-rate-limits"
+              "security/client-ip-and-rate-limits",
+              "security/cloudflare-and-proxies"
             ]
           }
         ]

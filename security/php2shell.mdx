@@ -121,8 +121,8 @@ they do not help an attacker find an unpatched runtime.
    ```
    The point is to run Composer and Artisan with the **patched** PHP.
 6. **Hide the version** while at it: PHP Settings → `expose_php = Off` removes
-   the `X-Powered-By: PHP/8.x` header scanners use to pick targets (see
-   `official_website_backend/DEPLOY_PLESK.md`).
+   the `X-Powered-By: PHP/8.x` header scanners use to pick targets. Steps and
+   check: [Hide the PHP version](/security/cloudflare-and-proxies#hide-the-php-version).
 7. **Look for signs of compromise** if the server ran an unpatched PHP after
    the details leaked: unexpected `.php` files under `public/` and
    `storage/app/public/`, unknown cron jobs, new admin users

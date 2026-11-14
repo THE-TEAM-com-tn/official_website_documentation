@@ -41,7 +41,8 @@ its orange "proxied" cloud is on), a CDN or a load balancer. When one is in fron
 | What to do | Nothing | Tell Laravel which proxy to trust, so it reads the visitor's IP from the header the proxy adds |
 
 Telling Laravel to trust a proxy is the `trustProxies` setting in `bootstrap/app.php`. It is
-deliberately **not** set today.
+deliberately **not** set today. How to set it up for Cloudflare, step by step:
+[Cloudflare and proxies](/security/cloudflare-and-proxies).
 
 ## Why not simply turn that setting on?
 
@@ -66,7 +67,8 @@ So: trust a proxy only when one really exists, and only that proxy.
   <Step title="Compare the two IP addresses">
     - **Two different addresses** → the server sees each visitor's own IP. Everything is fine.
     - **The same address on both**, especially `127.0.0.1` or the server's own address → a proxy is in
-      front. Ask a developer to configure `trustProxies` for that proxy.
+      front. Ask a developer to configure `trustProxies` for that proxy (see
+      [Cloudflare and proxies](/security/cloudflare-and-proxies)).
   </Step>
 </Steps>
 
@@ -75,12 +77,73 @@ So: trust a proxy only when one really exists, and only that proxy.
 The backend's responses show no CDN or proxy service in front of the hosting server. That points to
 Laravel receiving each visitor's own IP, but only the 2-minute check above proves it.
 
+## Before and after deploying
+
+The limits only start working once the new backend code is deployed. Two checks, one before and one
+after.
+
+### Before: make sure the server sees real IPs
+
+Do the [2-minute check](#check-it-yourself-2-minutes) **before** deploying the rate limits, or any
+change to them.
+
+- **Two different addresses** → go ahead and deploy.
+- **The same address on both** → **don't deploy the limits yet.** With a shared address, five login
+  attempts by anyone would block the admin login for everyone until the end of that minute, and busy
+  moments could block the whole site. First have a developer
+  configure the proxy setting (see [Cloudflare and proxies](/security/cloudflare-and-proxies)), then
+  repeat the check.
+
+### After: make sure the new limits are live
+
+<Steps>
+  <Step title="Clear the old caches">
+    On the server, in the backend folder, with the domain's PHP (see [php2shell](/security/php2shell)
+    for the exact path):
+
+    ```bash
+    php artisan optimize:clear
+    php artisan config:cache && php artisan route:cache && php artisan view:cache
+    ```
+
+    Without this, Laravel can keep serving the **old** list of routes, with the old limits.
+  </Step>
+  <Step title="Ask the API twice">
+    Run this command **twice in a row**:
+
+    ```bash
+    curl -sI https://admin.theteam.com.tn/api/health | grep -i "x-ratelimit"
+    ```
+
+    The first run should print something like:
+
+    ```http
+    x-ratelimit-limit: 300
+    x-ratelimit-remaining: 299
+    ```
+
+    and the second run `x-ratelimit-remaining: 298`.
+  </Step>
+  <Step title="Read the result">
+    | You see | What it means |
+    | :-- | :-- |
+    | `limit: 300`, and `remaining` drops by one each time | The limits are live, and you have your own counter. Done. |
+    | No `x-ratelimit` lines at all | The new code is not live yet, or the old caches are still in use. Repeat step 1, then check that the deploy really happened. |
+    | `remaining` is already far below 299 on the first run, while nobody else on your network is using the site | You are sharing a counter with other visitors: the server is not seeing visitors' own IPs. Do the 2-minute check. |
+
+    `remaining` can drop by more than one if the site is open in your browser at the same time:
+    those requests come from your IP too.
+  </Step>
+</Steps>
+
 ## When to check again
 
 - You turn on Cloudflare's proxy (orange cloud), or any CDN or load balancer, for
-  `admin.theteam.com.tn`.
+  `admin.theteam.com.tn`. Follow [Cloudflare and proxies](/security/cloudflare-and-proxies).
 - The backend moves to another host or hosting setup.
 
 In both cases, do the 2-minute check above before relying on the limits.
 
 Related: [Rate limits](/concepts/rate-limits) lists every limit and what a `429` response looks like.
+[Cloudflare and proxies](/security/cloudflare-and-proxies) covers setting up a proxy and hiding the
+PHP version.

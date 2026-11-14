@@ -44,6 +44,7 @@ api-reference/<group>/overview.mdx   # one short overview per group: that group'
 api-reference/<group>/*.mdx          # one page per endpoint (manual MDX API pages)
 security/php2shell.mdx               # php2shell notice: patched PHP releases, backend guards, upgrade steps
 security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need the real client IP, how to check
+security/cloudflare-and-proxies.mdx     # Cloudflare/proxy setup (trustProxies with Cloudflare ranges only), hiding the PHP version
 style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
