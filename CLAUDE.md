@@ -26,7 +26,7 @@ It lives next to the two app repos inside the `Official_website` coordination fo
 
 | Folder | What it is |
 | :-- | :-- |
-| `../official_website_backend/` | Laravel 12 backend — **the source of truth for everything documented here** |
+| `../official_website_backend/` | Laravel 12 backend on PHP 8.4 (8.4.27+ / 8.5.12+, php2shell-patched) — **the source of truth for everything documented here** |
 | `../official_website_frontend/` | React site that consumes the API (logo/favicon come from its `public/`) |
 | `../DOCUMENTATION/` | Older internal `.mdx` notes (feature guides, admin panel). Useful background, but verify against the code before copying anything |
 
@@ -66,6 +66,18 @@ template intro, `LICENSE`): keep it that way.
 - MDX: outside code, `{`, `}` and `<` are JSX — keep them in backticks. Self-close HTML (`<br />`).
   Internal links are root-relative without extension: `[Pagination](/concepts/pagination)`.
 - Never put secrets, `.env` values, seeded credentials or the admin route table in a page.
+- Placeholders must look fake: tokens as `3|EXAMPLE-TOKEN-NOT-A-REAL-VALUE`, IPs only from the
+  documentation ranges (`192.0.2.x`, `198.51.100.x`, `203.0.113.x`), emails on `example.com`.
+- Document what exists (limits, responses), not what is absent: no lists of endpoints without a
+  feature, and no prose that interprets error responses beyond what a client needs to handle them.
+
+## 3b. Visibility (the site is not meant to be found)
+
+- `docs.json` → `seo.metatags.robots` = `noindex, nofollow, …` on every page. Keep it.
+- `robots.txt` disallows every crawler; `llms.txt` / `llms-full.txt` are deliberate one-line overrides
+  of Mintlify's generated files (they must start with an H1). Don't delete them or add page links.
+- No footer (no social icons, no links to the private app repositories) and no navbar link to the
+  admin login.
 
 ## 4. Keeping the docs in sync with the backend
 

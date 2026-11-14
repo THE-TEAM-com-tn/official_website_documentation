@@ -222,10 +222,6 @@
       {
         "label": "Website",
         "href": "https://theteam.com.tn"
-      },
-      {
-        "label": "Admin panel",
-        "href": "https://admin.theteam.com.tn/admin"
       }
     ],
     "primary": {
@@ -244,32 +240,10 @@
       "vscode"
     ]
   },
-  "footer": {
-    "socials": {
-      "website": "https://theteam.com.tn",
-      "linkedin": "https://tn.linkedin.com/company/the-team-tunisie",
-      "facebook": "https://www.facebook.com/TheteamTN/",
-      "instagram": "https://www.instagram.com/the_team_tn/",
-      "youtube": "https://www.youtube.com/channel/UCBPlXrGX_sbk82XfwQAEc5w"
-    },
-    "links": [
-      {
-        "header": "Repositories",
-        "items": [
-          {
-            "label": "Backend",
-            "href": "https://github.com/THE-TEAM-com-tn/official_website_backend"
-          },
-          {
-            "label": "Frontend",
-            "href": "https://github.com/THE-TEAM-com-tn/official_website_frontend"
-          },
-          {
-            "label": "Coordination repo",
-            "href": "https://github.com/THE-TEAM-com-tn/Official_website"
-          }
-        ]
-      }
-    ]
+  "seo": {
+    "indexing": "navigable",
+    "metatags": {
+      "robots": "noindex, nofollow, noarchive, nosnippet, noimageindex"
+    }
   }
 }

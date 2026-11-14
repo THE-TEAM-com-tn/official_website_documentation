@@ -1,0 +1,3 @@
+# TheTeam API
+
+This documentation is not published for AI crawling, indexing or training.

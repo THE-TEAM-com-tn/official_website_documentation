@@ -4,7 +4,7 @@ sidebarTitle: "Introduction"
 description: "The public HTTP API behind theteam.com.tn: trainings, blog, Knowledge Corner, site content, public forms and staff-account authentication."
 ---
 
-The **TheTeam API** is the JSON API of the TheTeam website backend, a Laravel 12 application served at
+The **TheTeam API** is the JSON API of the TheTeam website backend, a Laravel 12 application on PHP 8.4 served at
 `https://admin.theteam.com.tn`. The public website [theteam.com.tn](https://theteam.com.tn), a static
 React app, reads all of its dynamic content from this API and posts every public form to it.
 
@@ -31,7 +31,7 @@ React app, reads all of its dynamic content from this API and posts every public
 | **Format** | JSON in and out. Send `Accept: application/json` on every request. |
 | **Authentication** | None for content and public forms. Staff-account endpoints use a [Sanctum bearer token](/concepts/authentication). |
 | **Language** | French by default, English with `X-Locale: en` or `?lang=en`. See [Localization](/concepts/localization). |
-| **Rate limits** | Per IP, on the form and token endpoints only. See [Rate limits](/concepts/rate-limits). |
+| **Rate limits** | Per client IP, per route. See [Rate limits](/concepts/rate-limits). |
 | **CORS** | Every origin is allowed. |
 
 ## Your first request
@@ -138,6 +138,6 @@ Then call `http://127.0.0.1:8020/api` instead of the production base URL. Set `M
 local `.env` so form submissions write emails to the log instead of sending them.
 
 <Note>
-  The backend needs a PHP release patched against php2shell (8.2.35+, 8.3.36+, 8.4.27+ or 8.5.12+).
-  XAMPP's PHP 8.2.4 is refused by Composer; use Homebrew `php@8.2` or newer.
+  The backend runs Laravel 12 on **PHP 8.4** and needs a release patched against php2shell: 8.4.27+ (or 8.5.12+).
+  PHP 8.2 / 8.3 — including XAMPP's PHP 8.2.4 — are refused by Composer; use Homebrew `php@8.4`.
 </Note>

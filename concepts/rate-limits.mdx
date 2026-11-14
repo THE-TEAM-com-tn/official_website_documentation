@@ -4,8 +4,7 @@ sidebarTitle: "Rate limits"
 description: "Which endpoints are throttled, how the limits are counted, and what a 429 response looks like."
 ---
 
-The API has **no global rate limit**. Throttling is applied per route, on the endpoints that write data
-or protect a secret. Limits are counted **per client IP**, or per account on authenticated routes, over a
+Throttling is applied per route. Limits are counted **per client IP**, or per account on authenticated routes, over a
 fixed window.
 
 | Endpoint | Limit |
@@ -22,9 +21,7 @@ fixed window.
 | [`POST /email/change/confirm`](/api-reference/email-change/confirm) | 10 per minute |
 | [`POST /email/change/cancel`](/api-reference/email-change/cancel) | 10 per minute |
 
-<Note>
-  `POST /contact-us`, `POST /enrollments` and the login and password endpoints are **not throttled** today.
-</Note>
+Design every client to handle a `429` on any write endpoint, not only on the ones listed above.
 
 ## Headers
 

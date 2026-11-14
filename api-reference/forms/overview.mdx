@@ -14,33 +14,33 @@ Every public form of the site posts here. None needs authentication.
 
 ## Contact, enrollment and quotes
 
-| Method | Path | Limit | Description |
-| :-- | :-- | :-- | :-- |
-| `POST` | [`/contact-us`](/api-reference/forms/contact-us) | — | Contact message |
-| `POST` | [`/enrollments`](/api-reference/forms/create-enrollment) | — | Enroll in a published training |
-| `POST` | [`/devis`](/api-reference/forms/create-devis) | 6 / min | Quote request |
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `POST` | [`/contact-us`](/api-reference/forms/contact-us) | Contact message |
+| `POST` | [`/enrollments`](/api-reference/forms/create-enrollment) | Enroll in a published training |
+| `POST` | [`/devis`](/api-reference/forms/create-devis) | Quote request |
 
 ## Newsletter
 
-| Method | Path | Limit | Description |
-| :-- | :-- | :-- | :-- |
-| `POST` | [`/newsletter`](/api-reference/forms/newsletter-subscribe) | 5 / min | Subscribe (subscribing twice is not an error) |
-| `POST` | [`/newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | 5 / min | Unsubscribe (always `200`) |
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `POST` | [`/newsletter`](/api-reference/forms/newsletter-subscribe) | Subscribe (subscribing twice is not an error) |
+| `POST` | [`/newsletter/unsubscribe`](/api-reference/forms/newsletter-unsubscribe) | Unsubscribe (always `200`) |
 
 ## Réclamations
 
-| Method | Path | Limit | Description |
-| :-- | :-- | :-- | :-- |
-| `POST` | [`/reclamation-submissions`](/api-reference/forms/create-reclamation) | 6 / min | File a réclamation, get a tracking code |
-| `GET` | [`/reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | 20 / min | Track it with the code |
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `POST` | [`/reclamation-submissions`](/api-reference/forms/create-reclamation) | File a réclamation, get a tracking code |
+| `GET` | [`/reclamation-submissions/{tracking}`](/api-reference/forms/track-reclamation) | Track it with the code |
 
 ## Reviews and testimonials
 
-| Method | Path | Limit | Description |
-| :-- | :-- | :-- | :-- |
-| `POST` | [`/review-submissions/create`](/api-reference/forms/create-review) | 6 / min | Leave a rated review |
-| `GET` | [`/review-submissions`](/api-reference/forms/list-reviews) | — | Every review |
-| `POST` | [`/testimonials`](/api-reference/forms/submit-testimonial) | 6 / min | Submit a testimonial for approval |
+| Method | Path | Description |
+| :-- | :-- | :-- |
+| `POST` | [`/review-submissions/create`](/api-reference/forms/create-review) | Leave a rated review |
+| `GET` | [`/review-submissions`](/api-reference/forms/list-reviews) | Every review |
+| `POST` | [`/testimonials`](/api-reference/forms/submit-testimonial) | Submit a testimonial for approval |
 
 ## Common behaviour
 

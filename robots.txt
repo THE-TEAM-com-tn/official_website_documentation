@@ -1,0 +1,3 @@
+# TheTeam API documentation: not meant to be crawled or indexed.
+User-agent: *
+Disallow: /
