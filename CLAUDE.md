@@ -45,11 +45,13 @@ api-reference/<group>/*.mdx          # one page per endpoint (manual MDX API pag
 security/php2shell.mdx               # php2shell notice: patched PHP releases, backend guards, upgrade steps
 security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need the real client IP, how to check
 security/cloudflare-and-proxies.mdx     # Cloudflare/proxy setup (trustProxies with Cloudflare ranges only), hiding the PHP version
+troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS preflight breaks every public form; the nginx fix
+images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
 style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
-Navigation tabs: **Guides** (incl. the **Security** group) · **Content** (trainings, blog, articles, site content) · **Forms** ·
+Navigation tabs: **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings, blog, articles, site content) · **Forms** ·
 **Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps).
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.

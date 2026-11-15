@@ -32,7 +32,7 @@ React app, reads all of its dynamic content from this API and posts every public
 | **Authentication** | None for content and public forms. Staff-account endpoints use a [Sanctum bearer token](/concepts/authentication). |
 | **Language** | French by default, English with `X-Locale: en` or `?lang=en`. See [Localization](/concepts/localization). |
 | **Rate limits** | Per client IP: 300 requests per minute on every endpoint, stricter on forms and account endpoints. See [Rate limits](/concepts/rate-limits). |
-| **CORS** | Every origin is allowed. |
+| **CORS** | Every origin is allowed. Browsers send an `OPTIONS` preflight before the forms' JSON posts — see [Forms: CORS preflight 405](/troubleshooting/forms-cors-preflight). |
 
 ## Your first request
 

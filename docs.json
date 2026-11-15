@@ -68,6 +68,12 @@
               "security/client-ip-and-rate-limits",
               "security/cloudflare-and-proxies"
             ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/forms-cors-preflight"
+            ]
           }
         ]
       },
