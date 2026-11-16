@@ -48,7 +48,8 @@ security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need
 security/cloudflare-and-proxies.mdx     # Cloudflare/proxy setup (trustProxies with Cloudflare ranges only), hiding the PHP version
 troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS preflight breaks every public form; the nginx fix
 images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
-guide-utilisateur/*.mdx              # FRENCH user guide of the admin panel (admin / content manager), one page per area
+guide-utilisateur/*.mdx              # FRENCH user guide: Administrateur tab (full panel) + Côté visiteur pages (site-public, formulaire-*)
+guide-utilisateur/gestionnaire/*.mdx # Gestionnaire de contenu tab: self-contained guide written for that role, CM screenshots
 images/guide/<section>/*.webp        # its screenshots: scratch DB with fictional data (example.com), FR UI, 2x → WebP
                                      # images/guide/site-public/ = the PUBLIC site's forms (frontend on :4000 with BASE_URL
                                      # temporarily on the local backend; prod host blocked in the browser; never committed)
@@ -56,10 +57,15 @@ style.css                            # loaded on every page by Mintlify; hides t
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
-Navigation tabs: **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings, blog, articles, site content) · **Forms** ·
-**Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps) ·
-**Guide utilisateur** (French admin-panel guide: Bienvenue, Contenu du site, Boîte de réception, Le site côté visiteur,
-Administration, Aide).
+Navigation = **two products** (product switcher; the navbar also links "API" and "Guide utilisateur"):
+
+- **API** — tabs **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings,
+  blog, articles, site content) · **Forms** · **Authentication** (incl. email change) · **System** (health,
+  status page, share pages, sitemaps).
+- **Guide utilisateur** (French) — tabs **Administrateur** (the full guide) · **Gestionnaire de contenu**
+  (`guide-utilisateur/gestionnaire/`, written for that role only) · **Côté visiteur** (the public forms).
+  A change in the panel usually touches both role tabs: keep them consistent.
+
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.
 

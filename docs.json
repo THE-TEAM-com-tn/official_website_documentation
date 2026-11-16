@@ -1,8 +1,8 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "TheTeam API",
-  "description": "Public HTTP API of the TheTeam website backend (admin.theteam.com.tn): trainings, blog, Knowledge Corner, site content and public forms.",
+  "name": "TheTeam Docs",
+  "description": "TheTeam website documentation: the public HTTP API of admin.theteam.com.tn, and the French user guide of the admin panel (administrators, content managers, visitor-side forms).",
   "colors": {
     "primary": "#259D79",
     "light": "#3CC49A",
@@ -40,249 +40,303 @@
     }
   },
   "navigation": {
-    "tabs": [
+    "products": [
       {
-        "tab": "Guides",
-        "groups": [
+        "product": "API",
+        "icon": "code",
+        "description": "Documentation technique de l’API publique (en anglais)",
+        "tabs": [
           {
-            "group": "Get started",
-            "pages": [
-              "index"
+            "tab": "Guides",
+            "groups": [
+              {
+                "group": "Get started",
+                "pages": [
+                  "index"
+                ]
+              },
+              {
+                "group": "Core concepts",
+                "pages": [
+                  "concepts/authentication",
+                  "concepts/localization",
+                  "concepts/responses-and-errors",
+                  "concepts/pagination",
+                  "concepts/rate-limits",
+                  "concepts/publishing-and-caching"
+                ]
+              },
+              {
+                "group": "Security",
+                "pages": [
+                  "security/php2shell",
+                  "security/client-ip-and-rate-limits",
+                  "security/cloudflare-and-proxies"
+                ]
+              },
+              {
+                "group": "Troubleshooting",
+                "pages": [
+                  "troubleshooting/forms-cors-preflight"
+                ]
+              }
             ]
           },
           {
-            "group": "Core concepts",
-            "pages": [
-              "concepts/authentication",
-              "concepts/localization",
-              "concepts/responses-and-errors",
-              "concepts/pagination",
-              "concepts/rate-limits",
-              "concepts/publishing-and-caching"
+            "tab": "Content",
+            "groups": [
+              {
+                "group": "Trainings",
+                "pages": [
+                  "api-reference/trainings/overview",
+                  "api-reference/trainings/list",
+                  "api-reference/trainings/get",
+                  "api-reference/trainings/options",
+                  "api-reference/trainings/categories"
+                ]
+              },
+              {
+                "group": "Blog",
+                "pages": [
+                  "api-reference/blog/overview",
+                  "api-reference/blog/list-posts",
+                  "api-reference/blog/pinned-posts",
+                  "api-reference/blog/get-post",
+                  "api-reference/blog/list-categories"
+                ]
+              },
+              {
+                "group": "Knowledge Corner",
+                "pages": [
+                  "api-reference/articles/overview",
+                  "api-reference/articles/list",
+                  "api-reference/articles/filters",
+                  "api-reference/articles/pinned",
+                  "api-reference/articles/get"
+                ]
+              },
+              {
+                "group": "Site content",
+                "pages": [
+                  "api-reference/content/overview",
+                  "api-reference/content/landing-page",
+                  "api-reference/content/list-testimonials",
+                  "api-reference/content/pinned-testimonials",
+                  "api-reference/content/list-webinars",
+                  "api-reference/content/list-faqs",
+                  "api-reference/content/list-pages",
+                  "api-reference/content/get-page",
+                  "api-reference/content/list-menu",
+                  "api-reference/content/get-menu-item"
+                ]
+              }
             ]
           },
           {
-            "group": "Security",
-            "pages": [
-              "security/php2shell",
-              "security/client-ip-and-rate-limits",
-              "security/cloudflare-and-proxies"
+            "tab": "Forms",
+            "groups": [
+              {
+                "group": "Forms",
+                "pages": [
+                  "api-reference/forms/overview"
+                ]
+              },
+              {
+                "group": "Contact, enrollment and quotes",
+                "pages": [
+                  "api-reference/forms/contact-us",
+                  "api-reference/forms/create-enrollment",
+                  "api-reference/forms/create-devis"
+                ]
+              },
+              {
+                "group": "Newsletter",
+                "pages": [
+                  "api-reference/forms/newsletter-subscribe",
+                  "api-reference/forms/newsletter-unsubscribe"
+                ]
+              },
+              {
+                "group": "Réclamations",
+                "pages": [
+                  "api-reference/forms/create-reclamation",
+                  "api-reference/forms/track-reclamation"
+                ]
+              },
+              {
+                "group": "Reviews and testimonials",
+                "pages": [
+                  "api-reference/forms/create-review",
+                  "api-reference/forms/list-reviews",
+                  "api-reference/forms/submit-testimonial"
+                ]
+              }
             ]
           },
           {
-            "group": "Troubleshooting",
-            "pages": [
-              "troubleshooting/forms-cors-preflight"
+            "tab": "Authentication",
+            "groups": [
+              {
+                "group": "Tokens and devices",
+                "pages": [
+                  "api-reference/auth/overview",
+                  "api-reference/auth/login",
+                  "api-reference/auth/get-user",
+                  "api-reference/auth/logout",
+                  "api-reference/auth/list-devices",
+                  "api-reference/auth/revoke-device",
+                  "api-reference/auth/logout-all"
+                ]
+              },
+              {
+                "group": "Password and verification",
+                "pages": [
+                  "api-reference/auth/update-password",
+                  "api-reference/auth/forgot-password",
+                  "api-reference/auth/reset-password",
+                  "api-reference/auth/verify-email",
+                  "api-reference/auth/resend-verification"
+                ]
+              },
+              {
+                "group": "Email change",
+                "pages": [
+                  "api-reference/email-change/overview",
+                  "api-reference/email-change/get-pending",
+                  "api-reference/email-change/start",
+                  "api-reference/email-change/resend",
+                  "api-reference/email-change/discard",
+                  "api-reference/email-change/confirm",
+                  "api-reference/email-change/cancel"
+                ]
+              }
+            ]
+          },
+          {
+            "tab": "System",
+            "groups": [
+              {
+                "group": "System",
+                "pages": [
+                  "api-reference/system/overview",
+                  "api-reference/system/health",
+                  "api-reference/system/status-page"
+                ]
+              },
+              {
+                "group": "Share pages and sitemaps",
+                "pages": [
+                  "api-reference/web/share-blog",
+                  "api-reference/web/share-article",
+                  "api-reference/web/sitemap-trainings",
+                  "api-reference/web/sitemap-articles"
+                ]
+              }
             ]
           }
         ]
       },
       {
-        "tab": "Content",
-        "groups": [
+        "product": "Guide utilisateur",
+        "icon": "book-open",
+        "description": "Mode d’emploi du panneau d’administration (en français)",
+        "tabs": [
           {
-            "group": "Trainings",
-            "pages": [
-              "api-reference/trainings/overview",
-              "api-reference/trainings/list",
-              "api-reference/trainings/get",
-              "api-reference/trainings/options",
-              "api-reference/trainings/categories"
+            "tab": "Administrateur",
+            "icon": "user-shield",
+            "groups": [
+              {
+                "group": "Bienvenue",
+                "pages": [
+                  "guide-utilisateur/index",
+                  "guide-utilisateur/connexion",
+                  "guide-utilisateur/interface",
+                  "guide-utilisateur/notifications",
+                  "guide-utilisateur/mon-compte"
+                ]
+              },
+              {
+                "group": "Contenu du site",
+                "pages": [
+                  "guide-utilisateur/blog-et-articles",
+                  "guide-utilisateur/webinaires-et-faq",
+                  "guide-utilisateur/formations",
+                  "guide-utilisateur/page-accueil"
+                ]
+              },
+              {
+                "group": "Boîte de réception",
+                "pages": [
+                  "guide-utilisateur/devis",
+                  "guide-utilisateur/inscriptions",
+                  "guide-utilisateur/messages-et-reclamations",
+                  "guide-utilisateur/newsletter-et-avis"
+                ]
+              },
+              {
+                "group": "Administration",
+                "pages": [
+                  "guide-utilisateur/utilisateurs-et-roles",
+                  "guide-utilisateur/journal-et-parametres"
+                ]
+              },
+              {
+                "group": "Aide",
+                "pages": [
+                  "guide-utilisateur/questions-frequentes"
+                ]
+              }
             ]
           },
           {
-            "group": "Blog",
-            "pages": [
-              "api-reference/blog/overview",
-              "api-reference/blog/list-posts",
-              "api-reference/blog/pinned-posts",
-              "api-reference/blog/get-post",
-              "api-reference/blog/list-categories"
+            "tab": "Gestionnaire de contenu",
+            "icon": "pen",
+            "groups": [
+              {
+                "group": "Bienvenue",
+                "pages": [
+                  "guide-utilisateur/gestionnaire/index",
+                  "guide-utilisateur/gestionnaire/prise-en-main"
+                ]
+              },
+              {
+                "group": "Vos tâches",
+                "pages": [
+                  "guide-utilisateur/gestionnaire/contenu",
+                  "guide-utilisateur/gestionnaire/page-accueil",
+                  "guide-utilisateur/gestionnaire/boite-de-reception",
+                  "guide-utilisateur/gestionnaire/parametres"
+                ]
+              },
+              {
+                "group": "Aide",
+                "pages": [
+                  "guide-utilisateur/gestionnaire/questions-frequentes"
+                ]
+              }
             ]
           },
           {
-            "group": "Knowledge Corner",
-            "pages": [
-              "api-reference/articles/overview",
-              "api-reference/articles/list",
-              "api-reference/articles/filters",
-              "api-reference/articles/pinned",
-              "api-reference/articles/get"
-            ]
-          },
-          {
-            "group": "Site content",
-            "pages": [
-              "api-reference/content/overview",
-              "api-reference/content/landing-page",
-              "api-reference/content/list-testimonials",
-              "api-reference/content/pinned-testimonials",
-              "api-reference/content/list-webinars",
-              "api-reference/content/list-faqs",
-              "api-reference/content/list-pages",
-              "api-reference/content/get-page",
-              "api-reference/content/list-menu",
-              "api-reference/content/get-menu-item"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Forms",
-        "groups": [
-          {
-            "group": "Forms",
-            "pages": [
-              "api-reference/forms/overview"
-            ]
-          },
-          {
-            "group": "Contact, enrollment and quotes",
-            "pages": [
-              "api-reference/forms/contact-us",
-              "api-reference/forms/create-enrollment",
-              "api-reference/forms/create-devis"
-            ]
-          },
-          {
-            "group": "Newsletter",
-            "pages": [
-              "api-reference/forms/newsletter-subscribe",
-              "api-reference/forms/newsletter-unsubscribe"
-            ]
-          },
-          {
-            "group": "Réclamations",
-            "pages": [
-              "api-reference/forms/create-reclamation",
-              "api-reference/forms/track-reclamation"
-            ]
-          },
-          {
-            "group": "Reviews and testimonials",
-            "pages": [
-              "api-reference/forms/create-review",
-              "api-reference/forms/list-reviews",
-              "api-reference/forms/submit-testimonial"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Authentication",
-        "groups": [
-          {
-            "group": "Tokens and devices",
-            "pages": [
-              "api-reference/auth/overview",
-              "api-reference/auth/login",
-              "api-reference/auth/get-user",
-              "api-reference/auth/logout",
-              "api-reference/auth/list-devices",
-              "api-reference/auth/revoke-device",
-              "api-reference/auth/logout-all"
-            ]
-          },
-          {
-            "group": "Password and verification",
-            "pages": [
-              "api-reference/auth/update-password",
-              "api-reference/auth/forgot-password",
-              "api-reference/auth/reset-password",
-              "api-reference/auth/verify-email",
-              "api-reference/auth/resend-verification"
-            ]
-          },
-          {
-            "group": "Email change",
-            "pages": [
-              "api-reference/email-change/overview",
-              "api-reference/email-change/get-pending",
-              "api-reference/email-change/start",
-              "api-reference/email-change/resend",
-              "api-reference/email-change/discard",
-              "api-reference/email-change/confirm",
-              "api-reference/email-change/cancel"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "System",
-        "groups": [
-          {
-            "group": "System",
-            "pages": [
-              "api-reference/system/overview",
-              "api-reference/system/health",
-              "api-reference/system/status-page"
-            ]
-          },
-          {
-            "group": "Share pages and sitemaps",
-            "pages": [
-              "api-reference/web/share-blog",
-              "api-reference/web/share-article",
-              "api-reference/web/sitemap-trainings",
-              "api-reference/web/sitemap-articles"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Guide utilisateur",
-        "groups": [
-          {
-            "group": "Bienvenue",
-            "pages": [
-              "guide-utilisateur/index",
-              "guide-utilisateur/connexion",
-              "guide-utilisateur/interface",
-              "guide-utilisateur/notifications",
-              "guide-utilisateur/mon-compte"
-            ]
-          },
-          {
-            "group": "Contenu du site",
-            "pages": [
-              "guide-utilisateur/blog-et-articles",
-              "guide-utilisateur/webinaires-et-faq",
-              "guide-utilisateur/formations",
-              "guide-utilisateur/page-accueil"
-            ]
-          },
-          {
-            "group": "Boîte de réception",
-            "pages": [
-              "guide-utilisateur/devis",
-              "guide-utilisateur/inscriptions",
-              "guide-utilisateur/messages-et-reclamations",
-              "guide-utilisateur/newsletter-et-avis"
-            ]
-          },
-          {
-            "group": "Le site côté visiteur",
-            "pages": [
-              "guide-utilisateur/site-public",
-              "guide-utilisateur/formulaire-devis",
-              "guide-utilisateur/formulaire-inscription",
-              "guide-utilisateur/formulaire-contact",
-              "guide-utilisateur/formulaire-reclamation",
-              "guide-utilisateur/formulaire-avis-et-temoignage",
-              "guide-utilisateur/formulaire-newsletter"
-            ]
-          },
-          {
-            "group": "Administration",
-            "pages": [
-              "guide-utilisateur/utilisateurs-et-roles",
-              "guide-utilisateur/journal-et-parametres"
-            ]
-          },
-          {
-            "group": "Aide",
-            "pages": [
-              "guide-utilisateur/questions-frequentes"
+            "tab": "Côté visiteur",
+            "icon": "globe",
+            "groups": [
+              {
+                "group": "Vue d’ensemble",
+                "pages": [
+                  "guide-utilisateur/site-public"
+                ]
+              },
+              {
+                "group": "Les formulaires du site",
+                "pages": [
+                  "guide-utilisateur/formulaire-devis",
+                  "guide-utilisateur/formulaire-inscription",
+                  "guide-utilisateur/formulaire-contact",
+                  "guide-utilisateur/formulaire-reclamation",
+                  "guide-utilisateur/formulaire-avis-et-temoignage",
+                  "guide-utilisateur/formulaire-newsletter"
+                ]
+              }
             ]
           }
         ]
@@ -291,6 +345,14 @@
   },
   "navbar": {
     "links": [
+      {
+        "label": "API",
+        "href": "/"
+      },
+      {
+        "label": "Guide utilisateur",
+        "href": "/guide-utilisateur"
+      },
       {
         "label": "Website",
         "href": "https://theteam.com.tn"
