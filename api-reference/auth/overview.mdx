@@ -6,7 +6,8 @@ description: "Staff-account endpoints: Sanctum tokens, connected devices, passwo
 
 These endpoints are for **staff accounts** only (the people who use the admin panel). There is no public
 sign-up: `POST /api/register` was removed on 2026-11-04 and answers `404`. Accounts come from the admin
-panel, and only accounts with a built-in role can get a token. See [Authentication](/concepts/authentication)
+panel, and only accounts with a built-in role can get a token. Each account holds exactly one role
+(`admin` or `content_manager`). See [Authentication](/concepts/authentication)
 for the token lifecycle.
 
 ## Tokens and devices

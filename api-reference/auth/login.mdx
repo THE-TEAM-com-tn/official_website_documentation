@@ -8,7 +8,8 @@ playground: "simple"
 
 Issues a **Laravel Sanctum personal access token** for a staff account. There is no public sign-up:
 accounts are created by an admin in the admin panel (invitation or **Access → Users**), and only
-accounts holding a built-in role (`admin` or `content_manager`) can sign in.
+accounts holding a built-in role can sign in. Each account holds exactly one role, `admin` or
+`content_manager`, never both.
 
 Checks run in this order: credentials → verified email → blocked flag → role → two-factor code.
 Each token is named after the device that requested it (for example `Safari on macOS`) and stamped

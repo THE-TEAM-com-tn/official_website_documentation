@@ -16,8 +16,16 @@ Authorization: Bearer 3|EXAMPLE-TOKEN-NOT-A-REAL-VALUE
 
 - **There is no public sign-up.** `POST /api/register` was removed on 2026-11-04 and answers `404`.
   Accounts are created in the admin panel, by invitation or under **Access → Users**.
-- An account needs a **verified email** and a **built-in role** (`admin` or `content_manager`). An account
+- An account needs a **verified email** and a **built-in role**: `admin` or `content_manager`. An account
   with no role is refused with `403 Account has no access`.
+- An account holds **exactly one role**, never both. Changing it in the admin panel replaces the old
+  role and revokes every token of the account, so the next request needs a fresh login.
+
+<Note>
+  **One role per account (2026-11-16).** Until then an admin could give one account both roles. The
+  backend now refuses it, down to the database (one row per account in `role_user`). Accounts that
+  held both kept `admin`, which is the access they already had, and their tokens stayed valid.
+</Note>
 - Accounts with **two-factor authentication** must send a TOTP code (`2fa_code`) or a recovery code
   (`2fa_recovery_code`). See [Log in](/api-reference/auth/login).
 
@@ -36,7 +44,7 @@ Authorization: Bearer 3|EXAMPLE-TOKEN-NOT-A-REAL-VALUE
     [`DELETE /devices/{id}`](/api-reference/auth/revoke-device) one token, and
     [`POST /logout-all`](/api-reference/auth/logout-all) every token of the account. Confirming or
     cancelling an email change, resetting the password from the admin panel, and an admin changing your
-    roles also revoke every token.
+    role also revoke every token.
   </Step>
 </Steps>
 

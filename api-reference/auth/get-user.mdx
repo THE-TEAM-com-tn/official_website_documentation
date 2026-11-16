@@ -7,7 +7,8 @@ authMethod: "bearer"
 ---
 
 Returns the authenticated account as stored, minus hidden columns (`password`, `remember_token`,
-`two_factor_secret`, `two_factor_recovery_codes`). Roles are not included.
+`two_factor_secret`, `two_factor_recovery_codes`). The account's role (one per account, `admin` or
+`content_manager`) is not included.
 
 Send the token as `Authorization: Bearer <token>`.
 
