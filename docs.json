@@ -307,7 +307,8 @@
                   "guide-utilisateur/gestionnaire/contenu",
                   "guide-utilisateur/gestionnaire/page-accueil",
                   "guide-utilisateur/gestionnaire/boite-de-reception",
-                  "guide-utilisateur/gestionnaire/parametres"
+                  "guide-utilisateur/gestionnaire/parametres",
+                  "guide-utilisateur/gestionnaire/envoi-emails-smtp"
                 ]
               },
               {
