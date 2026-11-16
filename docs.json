@@ -277,7 +277,8 @@
                 "group": "Administration",
                 "pages": [
                   "guide-utilisateur/utilisateurs-et-roles",
-                  "guide-utilisateur/journal-et-parametres"
+                  "guide-utilisateur/journal-et-parametres",
+                  "guide-utilisateur/envoi-emails-smtp"
                 ]
               },
               {
