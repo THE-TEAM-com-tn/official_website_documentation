@@ -39,15 +39,20 @@ string** in the requested language:
 A missing English translation **falls back to the French text**. It is never empty and never returns
 both languages. Slugs are shared between languages.
 
-**Messages.** Only Laravel's own messages follow the locale: validation errors (`errors`), the
-pagination labels and the email-change re-authentication errors. The `message` strings written by
-hand in the controllers do **not** change with the locale:
+**Messages.** Laravel's own messages follow the locale: validation errors (`errors`), the pagination
+labels and the email-change re-authentication errors. So do the `message` strings and labels of the
+endpoints whose text the site shows as-is: contact, newsletter (subscribe and unsubscribe) and
+réclamations (`message`, `type_label`, `status_label`). Other hand-written `message` strings do **not**
+change with the locale:
 
-| Source | Language in both modes | Example |
+| Source | Language | Example |
 | :-- | :-- | :-- |
-| Form and email-change controllers | French | `Merci ! Votre inscription à la newsletter est confirmée.` |
+| Contact, newsletter and réclamation controllers | Request language | `Merci ! Votre inscription à la newsletter est confirmée.` / `Thank you! Your newsletter subscription is confirmed.` |
+| Devis, enrollment, review, testimonial and email-change controllers | French in both modes | `Votre demande de devis a bien été envoyée.` |
 | Login and account controller | English | `Invalid credentials`, `Password updated.` |
 | Validation `errors` | Request language | `Le champ adresse e-mail …` / `The email field must be a valid email address.` |
+
+A `422` from `POST /newsletter`, in both languages:
 
 <CodeGroup>
 
@@ -62,7 +67,7 @@ hand in the controllers do **not** change with the locale:
 
 ```json English (X-Locale: en)
 {
-  "message": "Certains champs sont invalides.",
+  "message": "Some fields are invalid.",
   "errors": {
     "email": ["The email field must be a valid email address."]
   }
@@ -79,8 +84,9 @@ hand in the controllers do **not** change with the locale:
   ones are humanised (`Le champ nom est obligatoire.`).
 
 <Tip>
-  Render validation `errors` **verbatim**: they are already in the page's language. Because hand-written
-  `message` strings are always French, an English client should show its own text for success and
+  Render validation `errors` **verbatim**: they are already in the page's language. The contact,
+  newsletter and réclamation `message` strings can be rendered verbatim too. For the other endpoints,
+  whose `message` strings stay French, an English client should show its own text for success and
   generic failures.
 </Tip>
 

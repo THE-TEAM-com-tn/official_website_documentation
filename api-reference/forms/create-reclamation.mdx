@@ -36,7 +36,7 @@ Rate limit: **6 requests per minute**.
 
 ## Response
 
-<ResponseField name="message" type="string" required>`Votre réclamation a bien été enregistrée.`</ResponseField>
+<ResponseField name="message" type="string" required>`Votre réclamation a bien été enregistrée.` (with `X-Locale: en`: `Your complaint has been recorded.`)</ResponseField>
 <ResponseField name="tracking" type="string" required>The tracking code, for example `9E9969EE97`.</ResponseField>
 <ResponseField name="email_sent" type="boolean" required />
 <ResponseField name="submission" type="object" required>
@@ -45,15 +45,17 @@ Rate limit: **6 requests per minute**.
 
 ## Labels
 
-`type_label` and `status_label` are French labels computed by the API. Do not hard-code them in the client.
+`type_label` and `status_label` are computed by the API in the request language (French by default,
+English with `X-Locale: en`). Do not hard-code them in the client. The confirmation email sent to the
+client is always French.
 
-| `type` | `type_label` |
-| :-- | :-- |
-| `refund` | Remboursement |
-| `complaint` | Réclamation |
-| `technical` | Problème technique |
-| `billing` | Facturation |
-| `other` | Autre |
+| `type` | `type_label` (French, default) | `type_label` (`X-Locale: en`) |
+| :-- | :-- | :-- |
+| `refund` | Remboursement | Refund |
+| `complaint` | Réclamation | Complaint |
+| `technical` | Problème technique | Technical issue |
+| `billing` | Facturation | Billing |
+| `other` | Autre | Other |
 
 <RequestExample>
 

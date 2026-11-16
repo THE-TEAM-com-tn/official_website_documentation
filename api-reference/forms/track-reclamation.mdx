@@ -20,21 +20,23 @@ Because the code is the only credential, the route is limited to **20 requests p
 
 <ResponseField name="tracking" type="string" required />
 <ResponseField name="type" type="string" required>`refund`, `complaint`, `technical`, `billing` or `other`.</ResponseField>
-<ResponseField name="type_label" type="string" required>French label.</ResponseField>
+<ResponseField name="type_label" type="string" required>Label in the request language (tables below).</ResponseField>
 <ResponseField name="subject" type="string" required />
 <ResponseField name="message" type="string" required />
 <ResponseField name="status" type="string" required>`unchecked`, `processing`, `resolved` or `closed`.</ResponseField>
-<ResponseField name="status_label" type="string" required>French label (table below).</ResponseField>
+<ResponseField name="status_label" type="string" required>Label in the request language (table below).</ResponseField>
 <ResponseField name="reply" type="string | null">The team's reply, once written.</ResponseField>
 <ResponseField name="replied_at" type="string | null">ISO 8601, set whenever the reply changes.</ResponseField>
 <ResponseField name="created_at" type="string" required>ISO 8601.</ResponseField>
 
-| `status` | `status_label` |
-| :-- | :-- |
-| `unchecked` | En attente de traitement |
-| `processing` | En cours de traitement |
-| `resolved` | Résolue |
-| `closed` | Clôturée |
+| `status` | `status_label` (French, default) | `status_label` (`X-Locale: en`) |
+| :-- | :-- | :-- |
+| `unchecked` | En attente de traitement | Pending review |
+| `processing` | En cours de traitement | In progress |
+| `resolved` | Résolue | Resolved |
+| `closed` | Clôturée | Closed |
+
+The `404` messages follow the request language too (`No complaint matches this tracking number.` in English).
 
 <RequestExample>
 

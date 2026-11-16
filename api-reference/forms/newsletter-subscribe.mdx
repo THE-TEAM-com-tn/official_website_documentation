@@ -21,7 +21,7 @@ Rate limit: **5 requests per minute**.
 
 ## Response
 
-<ResponseField name="message" type="string" required>French confirmation text.</ResponseField>
+<ResponseField name="message" type="string" required>Confirmation text in the request language (French by default, English with `X-Locale: en`: `Thank you! Your newsletter subscription is confirmed.`).</ResponseField>
 <ResponseField name="already_subscribed" type="boolean" required>`true` when the address was already on the list.</ResponseField>
 
 <RequestExample>
