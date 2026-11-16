@@ -50,6 +50,7 @@ troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS p
 images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
 guide-utilisateur/*.mdx              # FRENCH user guide: Administrateur tab (full panel) + Côté visiteur pages (site-public, formulaire-*)
 guide-utilisateur/gestionnaire/*.mdx # Gestionnaire de contenu tab: self-contained guide written for that role, CM screenshots
+en/guide-utilisateur/**              # ENGLISH twins of every guide page (same slugs); images in images/guide/en/
 images/guide/<section>/*.webp        # its screenshots: scratch DB with fictional data (example.com), FR UI, 2x → WebP
                                      # images/guide/site-public/ = the PUBLIC site's forms (frontend on :4000 with BASE_URL
                                      # temporarily on the local backend; prod host blocked in the browser; never committed)
@@ -57,14 +58,17 @@ style.css                            # loaded on every page by Mintlify; hides t
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
-Navigation = **two products** (product switcher; the navbar also links "API" and "Guide utilisateur"):
+Navigation = **two languages × two products** (`navigation.languages`; the language switcher and a
+per-language navbar come from Mintlify):
 
-- **API** — tabs **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings,
-  blog, articles, site content) · **Forms** · **Authentication** (incl. email change) · **System** (health,
-  status page, share pages, sitemaps).
-- **Guide utilisateur** (French) — tabs **Administrateur** (the full guide) · **Gestionnaire de contenu**
-  (`guide-utilisateur/gestionnaire/`, written for that role only) · **Côté visiteur** (the public forms).
-  A change in the panel usually touches both role tabs: keep them consistent.
+- **fr** (default) and **en**, each with the products **API** and the user guide.
+- **API** — the same English pages in both languages (tabs Guides · Content · Forms · Authentication · System).
+- **Guide utilisateur** (fr) / **User guide** (en) — tabs Administrateur / Administrator (full guide) ·
+  Gestionnaire de contenu / Content manager (`gestionnaire/`) · Côté visiteur / Visitor side (public forms).
+- **English twin of every guide page:** `guide-utilisateur/x.mdx` ⇄ `en/guide-utilisateur/x.mdx` (same slug —
+  the switcher maps pages by path). English screenshots live in `images/guide/en/` with the same file names,
+  taken from the English admin panel and the `/en/` public site. **Changing a guide page ⇒ change its twin.**
+  A change in the panel usually touches both role tabs too: keep them consistent.
 
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.
