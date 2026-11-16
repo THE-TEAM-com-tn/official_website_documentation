@@ -296,7 +296,8 @@
                 "group": "Bienvenue",
                 "pages": [
                   "guide-utilisateur/gestionnaire/index",
-                  "guide-utilisateur/gestionnaire/prise-en-main"
+                  "guide-utilisateur/gestionnaire/prise-en-main",
+                  "guide-utilisateur/gestionnaire/notifications"
                 ]
               },
               {
