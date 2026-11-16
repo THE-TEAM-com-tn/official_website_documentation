@@ -28,7 +28,7 @@ It lives next to the two app repos inside the `Official_website` coordination fo
 | Folder | What it is |
 | :-- | :-- |
 | `../official_website_backend/` | Laravel 12 backend on PHP 8.4 (8.4.27+ / 8.5.12+, php2shell-patched) — **the source of truth for everything documented here** |
-| `../official_website_frontend/` | React site that consumes the API (logo/favicon come from its `public/`) |
+| `../official_website_frontend/` | React site that consumes the API (the navbar logo comes from its `public/`) |
 
 The coordination repo's old `DOCUMENTATION/` folder (internal feature guides, admin panel) was
 removed on 2026-11-14; its php2shell page moved here as `security/php2shell.mdx`. Any other old page
@@ -55,7 +55,8 @@ images/guide/<section>/*.webp        # its screenshots: scratch DB with fictiona
                                      # images/guide/site-public/ = the PUBLIC site's forms (frontend on :4000 with BASE_URL
                                      # temporarily on the local backend; prod host blocked in the browser; never committed)
 style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link, sizes the navbar logo (22px / 20px mobile)
-logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
+logo/light.png, logo/dark.png               # copied from official_website_frontend/public/
+favicon.svg                          # docs-only icon (green page + white T) — never the website's favicon
 ```
 
 Navigation = **two languages × two products** (`navigation.languages`; the language switcher and a

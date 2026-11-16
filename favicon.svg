@@ -1,38 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The Team">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TheTeam Docs">
   <!--
-    Favicon for theteam.com.tn — the THE/TEAM wordmark, stacked so it stays
-    legible in a square, and two-tone like the real logo: "THE" in the dark
-    ink, "TEAM" in the brand green (#259D79).
+    Favicon for the documentation site only — deliberately NOT the website's
+    icon (white tile + THE/TEAM wordmark), so a docs tab is never mistaken for
+    theteam.com.tn.
 
-    The tile is painted explicitly rather than left transparent: a transparent
-    favicon shows the browser chrome through it, which made the icon look grey
-    on Chrome's tab strip.
+    A brand-green page with a folded top-right corner (= documentation) and a
+    white "T" (= TheTeam). The green tile is opaque, so the icon reads the same
+    on light and dark tab strips; no white background, no dark-mode variant.
 
-    ONE tile only — white, near-black "THE", brand green "TEAM" — in every
-    theme. A dark-mode variant (navy tile) used to be switched in here via
-    prefers-color-scheme; it was removed on purpose so the icon matches the PNG
-    set (all white) and never shows a dark tile. Don't add it back.
-
-    Sizing: both lines share one font-size, as they do in the real wordmark
-    (uniform cap height). The widest line, "TEAM", measures ~44 of the 64
-    viewBox units — about 69% — leaving ~10 units of margin each side.
-
-    No webfont: external resources don't load in a favicon, so this uses a
-    system stack approximating the logo's condensed grotesque.
+    The "T" is drawn with rectangles, not text (no webfonts in a favicon), on
+    a 4-unit grid so its strokes land on whole pixels at 16px and 32px.
   -->
-  <style>
-    .tile { fill: #ffffff; }
-    .wordmark {
-      font-family: "Helvetica Neue", Helvetica, Arial, "Liberation Sans", sans-serif;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-    .the  { fill: #0b0b12; }
-    .team { fill: #259d79; }
-  </style>
+  <defs>
+    <linearGradient id="page" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#28A982" />
+      <stop offset="1" stop-color="#1E7F62" />
+    </linearGradient>
+  </defs>
 
-  <rect class="tile" x="0" y="0" width="64" height="64" rx="13" ry="13" />
+  <!-- the page, top-right corner cut off for the fold -->
+  <path fill="url(#page)"
+        d="M12 0H46L64 18V52A12 12 0 0 1 52 64H12A12 12 0 0 1 0 52V12A12 12 0 0 1 12 0Z" />
 
-  <text class="wordmark the"  x="32" y="29"   font-size="16" text-anchor="middle">THE</text>
-  <text class="wordmark team" x="32" y="46.5" font-size="16" text-anchor="middle">TEAM</text>
+  <!-- the folded corner -->
+  <path fill="#3CC49A" d="M46 0V12A6 6 0 0 0 52 18H64Z" />
+
+  <!-- the T -->
+  <rect fill="#ffffff" x="16" y="22" width="32" height="8" rx="1.5" />
+  <rect fill="#ffffff" x="28" y="22" width="8" height="28" rx="1.5" />
 </svg>
