@@ -19,8 +19,9 @@ documentation site for the public HTTP API of the TheTeam website backend
 
 A Mintlify site (`docs.json` + `.mdx` pages). It documents the backend's **public JSON API**
 (`routes/api.php`, 50 routes) plus the few public web routes the API documentation depends on
-(share pages, sitemaps, health). It does **not** document the Inertia admin panel (session auth,
-HTML/Inertia responses, not a JSON API).
+(share pages, sitemaps, health). The admin panel is **not** documented as an API (session auth,
+HTML/Inertia responses); it has a separate **French user guide** for staff instead — tab
+**Guide utilisateur** (`guide-utilisateur/`), written for non-technical admins and content managers.
 
 It lives next to the two app repos inside the `Official_website` coordination folder:
 
@@ -47,12 +48,16 @@ security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need
 security/cloudflare-and-proxies.mdx     # Cloudflare/proxy setup (trustProxies with Cloudflare ranges only), hiding the PHP version
 troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS preflight breaks every public form; the nginx fix
 images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
+guide-utilisateur/*.mdx              # FRENCH user guide of the admin panel (admin / content manager), one page per area
+images/guide/<section>/*.webp        # its screenshots: scratch DB with fictional data (example.com), FR UI, 2x → WebP
 style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
 Navigation tabs: **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings, blog, articles, site content) · **Forms** ·
-**Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps).
+**Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps) ·
+**Guide utilisateur** (French admin-panel guide: Bienvenue, Contenu du site, Boîte de réception,
+Administration, Aide).
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.
 
@@ -80,6 +85,18 @@ template intro, `LICENSE`): keep it that way.
   documentation ranges (`192.0.2.x`, `198.51.100.x`, `203.0.113.x`), emails on `example.com`.
 - Document what exists (limits, responses), not what is absent: no lists of endpoints without a
   feature, and no prose that interprets error responses beyond what a client needs to handle them.
+
+## 3a. The French user guide (`guide-utilisateur/`)
+
+- Audience: staff who are **not** IT people. French only, plain words, one task per section,
+  `<Steps>` for procedures, a screenshot in `<Frame caption>` for each screen. No code, routes or `.env`.
+- Say which role may do what at the top of each page (`<Info>` / `<Warning>` for admin-only), from
+  `Role::DEFAULTS` in the backend — the panel hides what a role cannot do.
+- UI labels are quoted **exactly** as the French admin panel shows them (`resources/js/i18n/fr/*`,
+  `lang/fr.json`). When the panel changes, re-capture the affected screenshots.
+- Screenshots come from the backend on a scratch database with fictional people (`example.com`
+  emails) — never production data, never seeded credentials. Not blurred, since nothing is real.
+- Avoid heading anchors with accents in links (`#les-témoignages`); link to the page instead.
 
 ## 3b. Visibility (the site is not meant to be found)
 

@@ -228,6 +228,51 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Guide utilisateur",
+        "groups": [
+          {
+            "group": "Bienvenue",
+            "pages": [
+              "guide-utilisateur/index",
+              "guide-utilisateur/connexion",
+              "guide-utilisateur/interface",
+              "guide-utilisateur/mon-compte"
+            ]
+          },
+          {
+            "group": "Contenu du site",
+            "pages": [
+              "guide-utilisateur/blog-et-articles",
+              "guide-utilisateur/webinaires-et-faq",
+              "guide-utilisateur/formations",
+              "guide-utilisateur/page-accueil"
+            ]
+          },
+          {
+            "group": "Boîte de réception",
+            "pages": [
+              "guide-utilisateur/devis",
+              "guide-utilisateur/inscriptions",
+              "guide-utilisateur/messages-et-reclamations",
+              "guide-utilisateur/newsletter-et-avis"
+            ]
+          },
+          {
+            "group": "Administration",
+            "pages": [
+              "guide-utilisateur/utilisateurs-et-roles",
+              "guide-utilisateur/journal-et-parametres"
+            ]
+          },
+          {
+            "group": "Aide",
+            "pages": [
+              "guide-utilisateur/questions-frequentes"
+            ]
+          }
+        ]
       }
     ]
   },
