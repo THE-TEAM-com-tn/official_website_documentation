@@ -54,7 +54,7 @@ en/guide-utilisateur/**              # ENGLISH twins of every guide page (same s
 images/guide/<section>/*.webp        # its screenshots: scratch DB with fictional data (example.com), FR UI, 2x → WebP
                                      # images/guide/site-public/ = the PUBLIC site's forms (frontend on :4000 with BASE_URL
                                      # temporarily on the local backend; prod host blocked in the browser; never committed)
-style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
+style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link, sizes the navbar logo (22px / 20px mobile)
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
@@ -115,8 +115,10 @@ template intro, `LICENSE`): keep it that way.
 - `docs.json` → `seo.metatags.robots` = `noindex, nofollow, …` on every page. Keep it.
 - `robots.txt` disallows every crawler; `llms.txt` / `llms-full.txt` are deliberate one-line overrides
   of Mintlify's generated files (they must start with an H1). Don't delete them or add page links.
-- No footer (no social icons, no links to the private app repositories) and no navbar link to the
-  admin login.
+- Footer = three link columns per language (`footer` in each `navigation.languages[]` entry, plus a
+  top-level French fallback like the navbar): Documentation · Ressources/Resources · TheTeam (public
+  site pages). Keep FR and EN in sync. Still no social icons, no links to the private app
+  repositories, and no navbar or footer link to the admin login.
 - The site is **Private** (Mintlify dashboard → Access → Authenticated: readers sign in with a
   Mintlify account of the organization). Mintlify then adds a reader **"Log out"** link to the navbar
   and mobile sidebar; `style.css` hides it via the documented `.logout-link` hook. Keep that file.

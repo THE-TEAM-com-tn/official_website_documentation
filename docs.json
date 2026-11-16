@@ -65,6 +65,61 @@
             "href": "https://admin.theteam.com.tn/"
           }
         },
+        "footer": {
+          "links": [
+            {
+              "header": "Documentation",
+              "items": [
+                {
+                  "label": "API publique",
+                  "href": "/"
+                },
+                {
+                  "label": "Guide utilisateur",
+                  "href": "/guide-utilisateur"
+                },
+                {
+                  "label": "Côté visiteur",
+                  "href": "/guide-utilisateur/site-public"
+                }
+              ]
+            },
+            {
+              "header": "Ressources",
+              "items": [
+                {
+                  "label": "Statut de l’API",
+                  "href": "https://admin.theteam.com.tn/"
+                },
+                {
+                  "label": "Sécurité",
+                  "href": "/security/php2shell"
+                },
+                {
+                  "label": "Dépannage",
+                  "href": "/troubleshooting/forms-cors-preflight"
+                }
+              ]
+            },
+            {
+              "header": "TheTeam",
+              "items": [
+                {
+                  "label": "Site web",
+                  "href": "https://theteam.com.tn"
+                },
+                {
+                  "label": "À propos",
+                  "href": "https://theteam.com.tn/about-us"
+                },
+                {
+                  "label": "Nous contacter",
+                  "href": "https://theteam.com.tn/contact-us"
+                }
+              ]
+            }
+          ]
+        },
         "products": [
           {
             "product": "API",
@@ -394,6 +449,61 @@
             "href": "https://admin.theteam.com.tn/"
           }
         },
+        "footer": {
+          "links": [
+            {
+              "header": "Documentation",
+              "items": [
+                {
+                  "label": "Public API",
+                  "href": "/"
+                },
+                {
+                  "label": "User guide",
+                  "href": "/en/guide-utilisateur"
+                },
+                {
+                  "label": "Visitor side",
+                  "href": "/en/guide-utilisateur/site-public"
+                }
+              ]
+            },
+            {
+              "header": "Resources",
+              "items": [
+                {
+                  "label": "API status",
+                  "href": "https://admin.theteam.com.tn/"
+                },
+                {
+                  "label": "Security",
+                  "href": "/security/php2shell"
+                },
+                {
+                  "label": "Troubleshooting",
+                  "href": "/troubleshooting/forms-cors-preflight"
+                }
+              ]
+            },
+            {
+              "header": "TheTeam",
+              "items": [
+                {
+                  "label": "Website",
+                  "href": "https://theteam.com.tn/en"
+                },
+                {
+                  "label": "About us",
+                  "href": "https://theteam.com.tn/en/about-us"
+                },
+                {
+                  "label": "Contact us",
+                  "href": "https://theteam.com.tn/en/contact-us"
+                }
+              ]
+            }
+          ]
+        },
         "products": [
           {
             "product": "API",
@@ -722,6 +832,61 @@
       "label": "API status",
       "href": "https://admin.theteam.com.tn/"
     }
+  },
+  "footer": {
+    "links": [
+      {
+        "header": "Documentation",
+        "items": [
+          {
+            "label": "API publique",
+            "href": "/"
+          },
+          {
+            "label": "Guide utilisateur",
+            "href": "/guide-utilisateur"
+          },
+          {
+            "label": "Côté visiteur",
+            "href": "/guide-utilisateur/site-public"
+          }
+        ]
+      },
+      {
+        "header": "Ressources",
+        "items": [
+          {
+            "label": "Statut de l’API",
+            "href": "https://admin.theteam.com.tn/"
+          },
+          {
+            "label": "Sécurité",
+            "href": "/security/php2shell"
+          },
+          {
+            "label": "Dépannage",
+            "href": "/troubleshooting/forms-cors-preflight"
+          }
+        ]
+      },
+      {
+        "header": "TheTeam",
+        "items": [
+          {
+            "label": "Site web",
+            "href": "https://theteam.com.tn"
+          },
+          {
+            "label": "À propos",
+            "href": "https://theteam.com.tn/about-us"
+          },
+          {
+            "label": "Nous contacter",
+            "href": "https://theteam.com.tn/contact-us"
+          }
+        ]
+      }
+    ]
   },
   "contextual": {
     "options": [
