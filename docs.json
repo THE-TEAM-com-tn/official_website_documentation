@@ -261,6 +261,18 @@
             ]
           },
           {
+            "group": "Le site côté visiteur",
+            "pages": [
+              "guide-utilisateur/site-public",
+              "guide-utilisateur/formulaire-devis",
+              "guide-utilisateur/formulaire-inscription",
+              "guide-utilisateur/formulaire-contact",
+              "guide-utilisateur/formulaire-reclamation",
+              "guide-utilisateur/formulaire-avis-et-temoignage",
+              "guide-utilisateur/formulaire-newsletter"
+            ]
+          },
+          {
             "group": "Administration",
             "pages": [
               "guide-utilisateur/utilisateurs-et-roles",

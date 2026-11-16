@@ -50,13 +50,15 @@ troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS p
 images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
 guide-utilisateur/*.mdx              # FRENCH user guide of the admin panel (admin / content manager), one page per area
 images/guide/<section>/*.webp        # its screenshots: scratch DB with fictional data (example.com), FR UI, 2x → WebP
+                                     # images/guide/site-public/ = the PUBLIC site's forms (frontend on :4000 with BASE_URL
+                                     # temporarily on the local backend; prod host blocked in the browser; never committed)
 style.css                            # loaded on every page by Mintlify; hides the reader "Log out" link
 logo/light.png, logo/dark.png, favicon.svg   # copied from official_website_frontend/public/
 ```
 
 Navigation tabs: **Guides** (incl. the **Security** and **Troubleshooting** groups) · **Content** (trainings, blog, articles, site content) · **Forms** ·
 **Authentication** (incl. email change) · **System** (health, status page, share pages, sitemaps) ·
-**Guide utilisateur** (French admin-panel guide: Bienvenue, Contenu du site, Boîte de réception,
+**Guide utilisateur** (French admin-panel guide: Bienvenue, Contenu du site, Boîte de réception, Le site côté visiteur,
 Administration, Aide).
 There is deliberately **no single all-endpoints page** and no Mintlify starter page (quickstart,
 template intro, `LICENSE`): keep it that way.
