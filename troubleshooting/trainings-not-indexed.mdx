@@ -5,9 +5,8 @@ description: "Why the /course/{slug} pages of theteam.com.tn (PMP, Scrum, ITIL�
 ---
 
 <Warning>
-  **Status: fixed in the code on 2026-11-17, not deployed yet.** Deploy the backend and the site, set up
-  the sitemap proxy, then [verify](#verify). Once the checks pass, change this line to "Fixed on
-  `YYYY-MM-DD`".
+  **Status: fixed in the code on 2026-11-17, not deployed yet.** Deploy the backend and the site, then
+  [verify](#verify). Once the checks pass, change this line to "Fixed on `YYYY-MM-DD`".
 </Warning>
 
 ## What happens
@@ -30,15 +29,18 @@ description: "Why the /course/{slug} pages of theteam.com.tn (PMP, Scrum, ITIL�
 3. **No links led to the courses.** The training cards on `/trainings` and on the home page opened a
    course with a click handler, not a link. Crawlers follow `href`s only, so the course pages were
    reachable through the static `sitemap.xml` alone.
-4. **The live trainings sitemap is not published.** The nginx proxy that serves
-   [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings) under `theteam.com.tn` was never
-   added in Plesk, so that URL is a 404. The same is true of `/sitemap-articles.xml`.
+4. **The live sitemaps could not be read.** The site's `robots.txt` pointed at
+   `https://theteam.com.tn/sitemap-trainings.xml` and `/sitemap-articles.xml`, which needed an nginx
+   proxy that was never added in Plesk: both answered 404. Their real home,
+   [`admin.theteam.com.tn/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings), was disallowed
+   by that host's `robots.txt`.
 
 ## What changed
 
 | Where | Change |
 | :-- | :-- |
-| Backend `public/robots.txt` | Allows `/api/`, `/storage/` and `/images/` besides `/share/`. Every API response still carries `X-Robots-Tag: noindex, nofollow, noarchive`, so the JSON itself never gets indexed. See [Crawlers](/api-reference/system/overview#crawlers). |
+| Backend `public/robots.txt` | Allows `/api/`, `/storage/`, `/images/` and the two sitemaps besides `/share/`. Every API response still carries `X-Robots-Tag: noindex, nofollow, noarchive`, so the JSON itself never gets indexed; the sitemaps carry a plain `noindex`, so their URLs are followed. See [Crawlers](/api-reference/system/overview#crawlers). |
+| Site `robots.txt` | Lists the live sitemaps by their `admin.theteam.com.tn` URL. A sitemap may live on another host when the site's own `robots.txt` points at it, so no nginx proxy is needed. |
 | Site build (`npm run build`) | Pre-renders `/trainings`, every `/course/{slug}` and their `/en/` versions from the API into full HTML pages: the page's own title, description, canonical, `hreflang`, Open Graph tags, `Course` structured data and the whole content. See [Pre-rendered pages](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site). |
 | Site `.htaccess` | Serves that pre-rendered page when one exists, the normal app otherwise. |
 | Site pages | Training cards, the home page's pinned trainings and the course page's previous / next buttons are real links. `/trainings` has its own title and description. Unknown or unpublished trainings answer with `noindex`. |
@@ -54,10 +56,11 @@ description: "Why the /course/{slug} pages of theteam.com.tn (PMP, Scrum, ITIL�
     `_ssr/` folder and `.htaccess`. The build reads the production API: it fails if the API can't be
     reached.
   </Step>
-  <Step title="Sitemap proxy (Plesk)">
-    Add the two `location =` blocks from the site's `DEPLOYMENT_README.md` → "Live sitemaps" under
-    **Plesk → theteam.com.tn → Apache & nginx Settings → Additional nginx directives**, then resubmit
-    both sitemaps in Search Console.
+  <Step title="Search Console">
+    Nothing to add in Plesk or nginx. Google reads the sitemaps from the site's `robots.txt`. To submit
+    them by hand, use a **Domain** property for `theteam.com.tn` (it covers `admin.`) and add
+    `https://admin.theteam.com.tn/sitemap-trainings.xml` and `…/sitemap-articles.xml`; remove any
+    `theteam.com.tn/sitemap-*.xml` entry submitted earlier.
   </Step>
 </Steps>
 
@@ -79,12 +82,13 @@ curl -s https://theteam.com.tn/course/formation-pmp | grep -o '<title[^>]*>[^<]*
 # 3. The snapshot folder is not a public URL (404)
 curl -sI https://theteam.com.tn/_ssr/trainings.html | head -1
 
-# 4. Crawlers may fetch the API, and it stays out of the index
+# 4. Crawlers may fetch the API and the sitemaps (6 Allow lines), and the API stays out of the index
 curl -s https://admin.theteam.com.tn/robots.txt | grep Allow
 curl -sI https://admin.theteam.com.tn/api/trainings | grep -i x-robots-tag
 
-# 5. The sitemap is published under the public domain (200, application/xml)
-curl -sI https://theteam.com.tn/sitemap-trainings.xml | head -1
+# 5. The site's robots.txt points at the admin. sitemaps, which answer 200 with a plain noindex
+curl -s https://theteam.com.tn/robots.txt | grep Sitemap
+curl -sI https://admin.theteam.com.tn/sitemap-trainings.xml | grep -iE "^HTTP|x-robots-tag"
 ```
 
 Then in **Google Search Console → URL Inspection**, test `https://theteam.com.tn/course/formation-pmp`

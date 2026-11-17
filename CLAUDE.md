@@ -48,6 +48,7 @@ security/client-ip-and-rate-limits.mdx  # plain-language: why per-IP limits need
 security/cloudflare-and-proxies.mdx     # Cloudflare/proxy setup (trustProxies with Cloudflare ranges only), hiding the PHP version
 troubleshooting/forms-cors-preflight.mdx  # incident: nginx 405 on the OPTIONS preflight breaks every public form; the nginx fix
 troubleshooting/trainings-not-indexed.mdx # incident: course pages invisible to Google (robots.txt blocked /api/, no links, sitemap proxy 404); pre-render fix + verify
+seo/plan-seo.mdx                     # FRENCH, internal: SEO plan (1 month + 6 months), tools, code changes — Guides tab, group "SEO", in both languages
 images/troubleshooting/*.png         # screenshots for troubleshooting pages (personal details blurred)
 guide-utilisateur/*.mdx              # FRENCH user guide: Administrateur tab (full panel) + Côté visiteur pages (site-public, formulaire-*)
 guide-utilisateur/gestionnaire/*.mdx # Gestionnaire de contenu tab: self-contained guide written for that role, CM screenshots

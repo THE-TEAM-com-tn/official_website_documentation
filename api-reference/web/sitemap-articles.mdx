@@ -10,8 +10,8 @@ Lists every **published** Knowledge Corner article at `https://theteam.com.tn/{s
 `/en/{slug}` URL **only when the article is translated**, with `hreflang` pairs (`fr`, `en`, `x-default`),
 `lastmod` and the cover in `image:image`. Pinned articles get priority `1.0`, others `0.8`.
 
-Like the trainings sitemap, it is published under the public domain through the nginx proxy:
-`https://theteam.com.tn/sitemap-articles.xml`.
+Like the [trainings sitemap](/api-reference/web/sitemap-trainings), the site's `robots.txt` lists it by this
+URL, this host's `robots.txt` allows it, and it is sent with `X-Robots-Tag: noindex` without `nofollow`.
 
 The XML is cached for **10 minutes** and the cache is cleared on every article write. Served with
 `Cache-Control: public, max-age=600`.
@@ -19,7 +19,7 @@ The XML is cached for **10 minutes** and the cache is cleared on every article w
 <RequestExample>
 
 ```bash cURL
-curl "https://theteam.com.tn/sitemap-articles.xml"
+curl "https://admin.theteam.com.tn/sitemap-articles.xml"
 ```
 
 </RequestExample>

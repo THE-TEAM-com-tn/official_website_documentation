@@ -160,6 +160,12 @@
                       "troubleshooting/forms-cors-preflight",
                       "troubleshooting/trainings-not-indexed"
                     ]
+                  },
+                  {
+                    "group": "SEO",
+                    "pages": [
+                      "seo/plan-seo"
+                    ]
                   }
                 ]
               },
@@ -544,6 +550,12 @@
                     "pages": [
                       "troubleshooting/forms-cors-preflight",
                       "troubleshooting/trainings-not-indexed"
+                    ]
+                  },
+                  {
+                    "group": "SEO",
+                    "pages": [
+                      "seo/plan-seo"
                     ]
                   }
                 ]

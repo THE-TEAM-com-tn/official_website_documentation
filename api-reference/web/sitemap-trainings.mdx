@@ -10,22 +10,24 @@ A [sitemaps.org](https://www.sitemaps.org/protocol.html) `urlset` with one entry
 training, pointing at the site's course page `https://theteam.com.tn/course/{slug}`, with `hreflang`
 alternates for the `/en/` URL. `lastmod` is the training's last update.
 
-The static site cannot list the catalogue itself, so the backend generates this file. Publish it under the
-**public domain**: nginx on `theteam.com.tn` proxies `https://theteam.com.tn/sitemap-trainings.xml` to this
-route, and the site's `robots.txt` lists that URL. Do not submit the `admin.` URL: that host's `robots.txt`
-disallows it (see [Crawlers](/api-reference/system/overview#crawlers)).
+The static site cannot list the catalogue itself, so the backend generates this file and serves it from this
+host. The site's `robots.txt` lists it **by this URL**: search engines accept a sitemap on another host when
+the site's own `robots.txt` points at it, so no proxy is needed. This host's `robots.txt` allows the file,
+and the response carries `X-Robots-Tag: noindex` without `nofollow`: the XML stays out of search results
+while the URLs it lists are followed (see [Crawlers](/api-reference/system/overview#crawlers)).
 
 The same published trainings are pre-rendered as full HTML pages when the site is built, so every URL of
 this sitemap also has a page crawlers can read without JavaScript (see
 [Pre-rendered pages](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site)).
 
-Served as `application/xml; charset=UTF-8` with `Cache-Control: public, max-age=300`, and cached by the
+Served as `application/xml; charset=UTF-8` with `Cache-Control: public, max-age=300` and
+`X-Robots-Tag: noindex`, and cached by the
 [training catalogue cache](/concepts/publishing-and-caching#training-catalogue-cache).
 
 <RequestExample>
 
 ```bash cURL
-curl "https://theteam.com.tn/sitemap-trainings.xml"
+curl "https://admin.theteam.com.tn/sitemap-trainings.xml"
 ```
 
 </RequestExample>

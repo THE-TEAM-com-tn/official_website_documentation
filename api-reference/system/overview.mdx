@@ -25,14 +25,9 @@ they need. (The site's training pages are also pre-rendered when the site is bui
 | `GET` | [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings) | Sitemap of published trainings |
 | `GET` | [`/sitemap-articles.xml`](/api-reference/web/sitemap-articles) | Sitemap of published articles |
 
-The two sitemaps are published under the public domain (`https://theteam.com.tn/sitemap-*.xml`) through an
-nginx proxy, and listed in the site's `robots.txt`.
-
-<Warning>
-  **Checked on 2026-11-17: the proxy is not set up.** `https://theteam.com.tn/sitemap-trainings.xml` and
-  `/sitemap-articles.xml` answer `404`. See
-  [Training pages not visible on Google](/troubleshooting/trainings-not-indexed#deploy).
-</Warning>
+The site's `robots.txt` lists the two sitemaps **by their URL on this host**
+(`https://admin.theteam.com.tn/sitemap-*.xml`). A sitemap may live on another host when the site's own
+`robots.txt` points at it, so no proxy is configured on `theteam.com.tn`, where those paths answer `404`.
 
 ## Crawlers
 
@@ -45,6 +40,8 @@ Allow: /share/
 Allow: /api/
 Allow: /storage/
 Allow: /images/
+Allow: /sitemap-trainings.xml
+Allow: /sitemap-articles.xml
 Disallow: /
 ```
 
@@ -53,7 +50,9 @@ Disallow: /
 | `/share/` | Share pages: social networks read their preview tags. |
 | `/api/` | The site renders its pages from the API. Search engines that run JavaScript (Googlebot) only call URLs that `robots.txt` allows, so without this line every API-driven page renders empty for them. |
 | `/storage/`, `/images/` | Uploaded images and the training placeholder, used in pages, Open Graph tags and structured data. |
+| `/sitemap-trainings.xml`, `/sitemap-articles.xml` | The site's live sitemaps, which its `robots.txt` references by this host's URL. |
 
-Allowing a fetch is not allowing indexing: every response of this host except `/share/*` carries
-`X-Robots-Tag: noindex, nofollow, noarchive`, so API URLs never appear in search results. The
-sitemaps stay disallowed here on purpose: submit their `theteam.com.tn` URLs.
+Allowing a fetch is not allowing indexing: every response of this host carries
+`X-Robots-Tag: noindex, nofollow, noarchive`, so API URLs never appear in search results. Two exceptions:
+`/share/*` has no such header, and the sitemaps send a plain `noindex`, so the URLs they list are
+followed.
