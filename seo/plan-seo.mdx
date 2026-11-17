@@ -73,9 +73,10 @@ Ce que ces chiffres ajoutent au plan :
 - **L’ancien site traîne encore dans Google.** Des adresses de l’ancien site (`/pp`,
   `/the-team-homepage/`, `/elearning/courses/…`, `/en/2022/12/`) reçoivent des affichages. Elles
   répondent aujourd’hui avec la coquille de l’accueil au lieu de rediriger.
-- **Une fiche Google existe très probablement.** Une soixantaine d’adresses
-  `/contact-us/?rwg_token=…` apparaissent dans l’export. Ce paramètre est ajouté par Google aux liens
-  de prise de rendez-vous des fiches Google Business Profile.
+- **Une fiche existe déjà sur Google Maps.** La page contact y renvoie, et une soixantaine d’adresses
+  `/contact-us/?rwg_token=…` apparaissent dans l’export : ce paramètre est ajouté par Google aux liens
+  de prise de rendez-vous des fiches Google Business Profile. Reste à confirmer qui en est
+  propriétaire.
 
 <Info>
   Six affichages sur « formation PMP Tunisie » ne veulent pas dire six recherches. En page 2, presque
@@ -298,6 +299,35 @@ ordre de facilité :
 4. **Clients et partenaires** : page « ils nous font confiance », études de cas communes.
 5. **Presse économique et sites emploi tunisiens** : tribunes, interviews, fiches formation.
 
+### Avis Google Maps
+
+Les avis se déposent sur la fiche Google Business Profile, celle qui apparaît dans Google Maps.
+
+| Question | Réponse |
+| :-- | :-- |
+| Font-ils monter THE TEAM sur la carte ? | **Oui.** Pour une recherche locale comme « formation PMP Tunis », Google affiche une carte et trois fiches. Le nombre d’avis, la note, leur régularité et les réponses de l’entreprise comptent dans ce classement. |
+| Font-ils monter les pages du site dans les résultats classiques ? | **Pas directement.** Ils aident indirectement : la note s’affiche à côté du nom de l’entreprise, ce qui inspire confiance et amène plus de clics. |
+| Faut-il les afficher sur le site ? | **Oui, pour convaincre le visiteur**, pas pour le classement. Google n’affiche pas d’étoiles dans ses résultats pour les avis qu’une entreprise publie sur elle-même. |
+
+**Comment les obtenir**
+
+- Demandez un avis à **tous** les participants, pas seulement aux plus satisfaits : Google interdit
+  de trier. Jamais de cadeau en échange, jamais d’achat d’avis.
+- Choisissez le bon moment : la fin de la session (un QR code vers le lien d’avis), un e-mail le
+  lendemain, puis le jour où le participant annonce sa réussite à la certification.
+- Suggérez de citer la formation suivie. Un avis qui parle de « formation PMP » aide la fiche à
+  sortir sur cette recherche.
+- Répondez à chaque avis sous 48 heures, y compris aux avis négatifs.
+- Visez la régularité : 5 avis par mois valent mieux que 30 d’un coup.
+
+**Comment les montrer sur le site**
+
+- Saisissez les meilleurs avis comme **témoignages** dans le panneau d’administration, avec l’accord
+  de leur auteur et le lien vers l’avis d’origine. Ils apparaissent alors sur l’accueil et sur la
+  page des témoignages, en texte lisible par les moteurs.
+- Évitez les modules externes qui chargent les avis depuis Google à chaque visite : ils ralentissent
+  le site, aujourd’hui noté 98 sur 100, et leur contenu n’est pas lu par les moteurs.
+
 ### LinkedIn
 
 LinkedIn ne fait pas monter le site dans Google directement. Il sert à faire lire les nouveaux
@@ -334,7 +364,7 @@ Ce sont des cibles de travail, pas des garanties.
 | Outil | À quoi il sert | État |
 | :-- | :-- | :-- |
 | [Google Search Console](https://search.google.com/search-console) | Positions réelles, recherches tapées, pages indexées, plans de site. **L’outil le plus important.** | Actif, données depuis le 6 sept. 2026 |
-| [Google Business Profile](https://business.google.com) | Fiche Google Maps, avis, appels. | Existe probablement, accès à retrouver |
+| [Google Business Profile](https://business.google.com) | Fiche Google Maps, avis, appels. | Fiche existante, propriétaire à confirmer |
 | [Google Analytics 4](https://analytics.google.com) | Visites et demandes de devis par source. | À installer |
 | [Bing Webmaster Tools](https://www.bing.com/webmasters) | Même rôle que Search Console pour Bing et les assistants IA qui s’en servent. | À créer |
 | [PageSpeed Insights](https://pagespeed.web.dev) | Vitesse sur mobile. | Fait le 17 nov. : 98 sur 100 |
@@ -406,6 +436,7 @@ Section technique. Chaque ligne a été vérifiée dans le code ou sur le site e
 | Rediriger en 301 les adresses avec une barre finale (`/elearning/`, `/consulting/`, `/contact-us/`, `/en/`) et `www.theteam.com.tn` vers la version sans. Rediriger `/strived` vers `/elearning`. | Frontend : `public/.htaccess` ; Plesk pour `www`. | Search Console compte `/elearning` et `/elearning/` comme deux pages (874 et 201 affichages). |
 | Ajouter un plan de site des articles de blog. | Backend : `SitemapController`, `routes/web.php`, `public/robots.txt`. Frontend : `public/robots.txt`. | Les 11 articles ne sont dans aucun plan de site. La limite est de 50 000 adresses ou 50 Mo par fichier ; `sitemap.xml` pèse 23 Ko, et un site peut déclarer plusieurs plans. Modèle à suivre : [Trainings sitemap](/api-reference/web/sitemap-trainings). |
 | Compléter le bloc `Organization` : adresse complète, `telephone`, `email`, `geo`, `sameAs` (LinkedIn, Facebook, YouTube), `areaServed`, et `alternateName` avec « The Team Tunisie » et « The Tunisian Establishment for Agile Management ». Type `EducationalOrganization`. | Frontend : `index.html`. Mettre aussi les vraies coordonnées dans `geo.position`, aujourd’hui au centre de Tunis. | Mêmes informations que la fiche Google. Le site n’est qu’en position 5 sur « the team ». |
+| Après l’envoi d’un avis sur `/review`, proposer à **tous** les visiteurs de le publier aussi sur Google, avec un bouton vers le lien d’avis de la fiche. Ajouter un bouton « Voir nos avis sur Google » près des témoignages. | Backend : champ `google_review_url` sur `LandingPage`, à côté de `footer_gmaps_url` (`AdminRegistry`, API de la page d’accueil). Frontend : état de succès de `src/pages/review.tsx`, `Section_Testimonial2.tsx`, `testimonials.tsx`. | Les avis du formulaire du site restent dans le panneau d’administration : aucun n’arrive sur Google. Les témoignages ont déjà un champ de lien (`redirection_url`), utilisable pour pointer vers l’avis Google d’origine. |
 | Installer GA4, chargé en différé comme Clarity, avec un événement par envoi réussi de formulaire et par clic sur un numéro de téléphone. | Frontend : `index.html`, pages `devis.tsx`, `enrollment.tsx`, `ContactUs.tsx`, `newsletter.tsx`. | Mesurer les demandes venant de Google. Mettre à jour la page RGPD en conséquence. |
 
 ### Priorité 2 : mois 2 et 3
