@@ -157,7 +157,8 @@
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "troubleshooting/forms-cors-preflight"
+                      "troubleshooting/forms-cors-preflight",
+                      "troubleshooting/trainings-not-indexed"
                     ]
                   }
                 ]
@@ -541,7 +542,8 @@
                   {
                     "group": "Troubleshooting",
                     "pages": [
-                      "troubleshooting/forms-cors-preflight"
+                      "troubleshooting/forms-cors-preflight",
+                      "troubleshooting/trainings-not-indexed"
                     ]
                   }
                 ]

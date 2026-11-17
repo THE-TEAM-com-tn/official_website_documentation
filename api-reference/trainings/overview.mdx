@@ -19,6 +19,10 @@ are public and served from a **5-minute cache** per language that an admin edit 
 - `featured_image_url` is never `null`; trainings without an image get a shared placeholder.
 - Enrolling and requesting a quote are [form endpoints](/api-reference/forms/overview).
 - The XML sitemap of the catalogue is [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings).
+- The site's build reads `GET /trainings`, `GET /trainings/{slug}` and `GET /categories` in both
+  languages to **pre-render** the catalogue and every course page for search engines: a change to these
+  payloads must keep the fields listed in
+  [Pre-rendered pages](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site).
 
 <Note>
   JSON import and export of trainings were removed from the public API on 2026-10-02

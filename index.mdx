@@ -118,7 +118,9 @@ flowchart LR
 - **Public JSON API (`/api/*`).** Documented here. Read endpoints serve only published content.
   Form endpoints validate, store and notify.
 - **Public web routes.** Open Graph share pages and XML sitemaps for crawlers, plus a health check, in
-  the [System](/api-reference/system/overview) tab.
+  the [System](/api-reference/system/overview) tab. Crawlers may also fetch `/api/*`, because search
+  engines render the site's pages from it, and the site pre-renders its training pages from the API when
+  it is built ([Publishing and caching](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site)).
 - **Admin panel (`/admin`).** Staff manage every resource there, over session authentication with
   HTML and Inertia responses. **It is not a JSON API** and is not covered by these docs.
 

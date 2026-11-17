@@ -14,7 +14,9 @@ description: "Health check and status page, plus the public web routes for crawl
 ## Share pages and sitemaps
 
 These routes live **outside `/api`**, at `https://admin.theteam.com.tn`. They exist because the public site
-is a static SPA: crawlers cannot run its JavaScript, so the backend renders what they need.
+is a static SPA: crawlers that don't run JavaScript would see an empty page, so the backend renders what
+they need. (The site's training pages are also pre-rendered when the site is built: see
+[Publishing and caching](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site).)
 
 | Method | URL | Description |
 | :-- | :-- | :-- |
@@ -25,3 +27,33 @@ is a static SPA: crawlers cannot run its JavaScript, so the backend renders what
 
 The two sitemaps are published under the public domain (`https://theteam.com.tn/sitemap-*.xml`) through an
 nginx proxy, and listed in the site's `robots.txt`.
+
+<Warning>
+  **Checked on 2026-11-17: the proxy is not set up.** `https://theteam.com.tn/sitemap-trainings.xml` and
+  `/sitemap-articles.xml` answer `404`. See
+  [Training pages not visible on Google](/troubleshooting/trainings-not-indexed#deploy).
+</Warning>
+
+## Crawlers
+
+`https://admin.theteam.com.tn/robots.txt` keeps this host out of search engines but lets them **fetch**
+what the public site needs:
+
+```text
+User-agent: *
+Allow: /share/
+Allow: /api/
+Allow: /storage/
+Allow: /images/
+Disallow: /
+```
+
+| Path | Why crawlers may fetch it |
+| :-- | :-- |
+| `/share/` | Share pages: social networks read their preview tags. |
+| `/api/` | The site renders its pages from the API. Search engines that run JavaScript (Googlebot) only call URLs that `robots.txt` allows, so without this line every API-driven page renders empty for them. |
+| `/storage/`, `/images/` | Uploaded images and the training placeholder, used in pages, Open Graph tags and structured data. |
+
+Allowing a fetch is not allowing indexing: every response of this host except `/share/*` carries
+`X-Robots-Tag: noindex, nofollow, noarchive`, so API URLs never appear in search results. The
+sitemaps stay disallowed here on purpose: submit their `theteam.com.tn` URLs.

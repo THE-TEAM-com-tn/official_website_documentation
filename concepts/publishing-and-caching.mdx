@@ -45,8 +45,37 @@ database edit.
 
 <Tip>
   "The backend is right but the site is stale" is usually this cache, or the visitor's own browser cache,
-  not a bug. Wait five minutes or save the training again in the admin panel.
+  not a bug. Wait five minutes or save the training again in the admin panel. If only **search engines**
+  see the old version, it is the pre-rendered page below: redeploy the site.
 </Tip>
+
+## Pre-rendered pages on the public site
+
+When the site is built (`npm run build` in the frontend), it reads the published catalogue from this API
+and writes one complete HTML page per URL:
+
+| Site URL | Built from |
+| :-- | :-- |
+| `/trainings`, `/en/trainings` | [`GET /trainings`](/api-reference/trainings/list) (every page) and [`GET /categories`](/api-reference/trainings/categories), with `?lang=fr` / `?lang=en` |
+| `/course/{slug}`, `/en/course/{slug}` | [`GET /trainings/{slug}`](/api-reference/trainings/get) for each published training, same languages |
+
+Each page carries the training's own title, description, canonical URL, `hreflang` alternates, Open Graph
+tags and `Course` / `ItemList` structured data, plus the full content, so crawlers read it without running
+JavaScript. In the browser the site then refreshes the content from the API.
+
+- **Pre-rendered pages are as fresh as the last site deploy.** A training published, renamed or
+  unpublished in the admin panel shows up at once for visitors, but its pre-rendered page changes only
+  when the site is deployed again. A training published since the last deploy is served as a normal app
+  page until then.
+- The build **fails** when it cannot read these endpoints, so keep them reachable from the machine that
+  deploys, and keep their payload shapes stable: the build reads `id`, `slug`, `title`, `intro`,
+  `overview`, `duration_label`, `price`, `certification`, `prerequisites`, `learning_objectives`,
+  `quizzes_count`, `elearning_unlocked`, `modules`, `categories`, `featured_image_url`,
+  `visibility_status` and `updated_at`.
+- The site's training titles get a location suffix ("Formation PMP **en Tunisie**", "PMP Training
+  **in Tunisia**") unless the title already names Tunisia.
+
+Background and verification: [Training pages not visible on Google](/troubleshooting/trainings-not-indexed).
 
 ## Other caches
 
@@ -62,3 +91,6 @@ Image fields are absolute URLs. Uploaded files are served from `https://admin.th
 images inserted in rich text and some seeded content point to external hosts. Training images fall back
 to `https://admin.theteam.com.tn/images/training-placeholder.jpg`, and articles without a cover return a
 shared placeholder with `has_image: false`.
+
+`/storage/` and `/images/` are allowed in this host's `robots.txt`, so search engines can fetch these
+images for the site's pages, previews and structured data (see [Crawlers](/api-reference/system/overview#crawlers)).

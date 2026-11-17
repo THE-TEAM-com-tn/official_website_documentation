@@ -1,0 +1,103 @@
+---
+title: "Training pages not visible on Google"
+sidebarTitle: "Trainings not on Google"
+description: "Why the /course/{slug} pages of theteam.com.tn (PMP, Scrum, ITIL…) were invisible or empty for search engines, what was changed in the backend and the site, and how to deploy and verify it."
+---
+
+<Warning>
+  **Status: fixed in the code on 2026-11-17, not deployed yet.** Deploy the backend and the site, set up
+  the sitemap proxy, then [verify](#verify). Once the checks pass, change this line to "Fixed on
+  `YYYY-MM-DD`".
+</Warning>
+
+## What happens
+
+- Searching Google for a training the site offers (for example "formation PMP Tunisie") does not bring
+  up its page, `https://theteam.com.tn/course/formation-pmp`.
+- In Google Search Console, the course pages are missing from the index, or indexed with the home
+  page's title "Accueil | The Team" and no content.
+- `https://theteam.com.tn/sitemap-trainings.xml`, listed in the site's `robots.txt`, answers **404**.
+
+## Why it happens
+
+1. **Googlebot was not allowed to read the API.** The site is a JavaScript app: a course page has no
+   content until it calls [`GET /trainings/{slug}`](/api-reference/trainings/get). Google runs that
+   JavaScript, but never fetches a URL that `robots.txt` disallows, and
+   `admin.theteam.com.tn/robots.txt` was `Disallow: /` for everything except `/share/`. Google
+   therefore saw the loading state of every API-driven page, trainings included.
+2. **Crawlers that don't run JavaScript saw nothing at all.** Bing, social networks and AI crawlers read
+   only the HTML, which was the same generic home-page shell for every URL.
+3. **No links led to the courses.** The training cards on `/trainings` and on the home page opened a
+   course with a click handler, not a link. Crawlers follow `href`s only, so the course pages were
+   reachable through the static `sitemap.xml` alone.
+4. **The live trainings sitemap is not published.** The nginx proxy that serves
+   [`/sitemap-trainings.xml`](/api-reference/web/sitemap-trainings) under `theteam.com.tn` was never
+   added in Plesk, so that URL is a 404. The same is true of `/sitemap-articles.xml`.
+
+## What changed
+
+| Where | Change |
+| :-- | :-- |
+| Backend `public/robots.txt` | Allows `/api/`, `/storage/` and `/images/` besides `/share/`. Every API response still carries `X-Robots-Tag: noindex, nofollow, noarchive`, so the JSON itself never gets indexed. See [Crawlers](/api-reference/system/overview#crawlers). |
+| Site build (`npm run build`) | Pre-renders `/trainings`, every `/course/{slug}` and their `/en/` versions from the API into full HTML pages: the page's own title, description, canonical, `hreflang`, Open Graph tags, `Course` structured data and the whole content. See [Pre-rendered pages](/concepts/publishing-and-caching#pre-rendered-pages-on-the-public-site). |
+| Site `.htaccess` | Serves that pre-rendered page when one exists, the normal app otherwise. |
+| Site pages | Training cards, the home page's pinned trainings and the course page's previous / next buttons are real links. `/trainings` has its own title and description. Unknown or unpublished trainings answer with `noindex`. |
+
+## Deploy
+
+<Steps>
+  <Step title="Backend">
+    Deploy the backend as usual: the new `public/robots.txt` is a static file, nothing else to run.
+  </Step>
+  <Step title="Site">
+    Run a full `npm run build` (the deploy scripts do) and upload **all** of `dist/`, including the
+    `_ssr/` folder and `.htaccess`. The build reads the production API: it fails if the API can't be
+    reached.
+  </Step>
+  <Step title="Sitemap proxy (Plesk)">
+    Add the two `location =` blocks from the site's `DEPLOYMENT_README.md` → "Live sitemaps" under
+    **Plesk → theteam.com.tn → Apache & nginx Settings → Additional nginx directives**, then resubmit
+    both sitemaps in Search Console.
+  </Step>
+</Steps>
+
+<Warning>
+  Never add a bare `try_files $uri $uri/ /index.html` for `theteam.com.tn` in nginx: nginx would answer
+  the course pages with the empty app shell before Apache can serve the pre-rendered page. The site's
+  `DEPLOYMENT_README.md` has the version that keeps them.
+</Warning>
+
+## Verify
+
+```bash
+# 1. The pre-rendered page is served (prints 1)
+curl -s https://theteam.com.tn/course/formation-pmp | grep -c 'id="ssr-data"'
+
+# 2. …with its own title
+curl -s https://theteam.com.tn/course/formation-pmp | grep -o '<title[^>]*>[^<]*'
+
+# 3. The snapshot folder is not a public URL (404)
+curl -sI https://theteam.com.tn/_ssr/trainings.html | head -1
+
+# 4. Crawlers may fetch the API, and it stays out of the index
+curl -s https://admin.theteam.com.tn/robots.txt | grep Allow
+curl -sI https://admin.theteam.com.tn/api/trainings | grep -i x-robots-tag
+
+# 5. The sitemap is published under the public domain (200, application/xml)
+curl -sI https://theteam.com.tn/sitemap-trainings.xml | head -1
+```
+
+Then in **Google Search Console → URL Inspection**, test `https://theteam.com.tn/course/formation-pmp`
+live: the rendered HTML must show the training's content, and **Page resources** must not list any
+`admin.theteam.com.tn/api/…` request as blocked. Use **Request indexing** on the most important
+courses.
+
+## Keeping it working
+
+- **Redeploy the site after publishing, renaming or unpublishing a training.** The pre-rendered pages
+  are built from the catalogue at deploy time. Visitors always see the live data; search engines see
+  the version of the last deploy. A training published since then is still served, as a normal app page.
+- **Avoid changing the slug of a published training**: its address changes, and links already shared
+  or ranked on Google point to the old one.
+- **Never disallow `/api/` again** in the backend's `robots.txt`. Indexing is prevented by the
+  `X-Robots-Tag` header, not by `robots.txt`.
