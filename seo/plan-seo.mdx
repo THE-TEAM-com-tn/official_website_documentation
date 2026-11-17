@@ -20,12 +20,14 @@ description: "Plan d’action pour faire monter theteam.com.tn sur Google en Tun
 - **L’objectif.** Top 3 sur les mots-clés commerciaux en français d’ici mi-mai 2027, puis la première
   place. Personne ne peut garantir une position : ce plan fixe des cibles et la façon de les mesurer
   chaque semaine.
-- **Ce qui bloque.** Le site est rapide (98 sur 100 sur mobile) et les pages formation sont lisibles
-  par Google depuis le 17 novembre. Les freins sont ailleurs : toutes les grandes pages s’affichent
-  dans Google sous le titre « Accueil », certains mots-clés n’ont aucune page (PECB, Business
-  Analysis), les pages formation sont courtes, et il y a peu d’avis et de liens depuis d’autres sites.
-- **Mois 1 (17 nov. → 17 déc. 2026).** Corriger les titres, enrichir les pages qui vendent, compléter
-  la fiche Google, lancer les avis, LinkedIn et la newsletter. Budget outils : 0.
+- **Ce qui bloque.** Le site est rapide (98 sur 100 sur mobile) et les 78 pages formation sont
+  pré-rendues, donc lisibles par tous les moteurs. Les freins sont ailleurs : Google n’affiche presque
+  aucune page formation dans ses résultats, toutes les grandes pages y portent le titre « Accueil »,
+  certains mots-clés n’ont aucune page (PECB, Business Analysis), les pages formation sont courtes,
+  et il y a peu d’avis et de liens depuis d’autres sites.
+- **Mois 1 (17 nov. → 17 déc. 2026).** Faire indexer les pages formation, corriger les titres,
+  enrichir les pages qui vendent, compléter la fiche Google, lancer les avis, LinkedIn et la
+  newsletter. Budget outils : 0.
 - **Mois 2 à 6 (→ mi-mai 2027).** Contenu régulier, liens, avis, webinaires, suivi hebdomadaire.
   Budget outils : un seul abonnement, environ 100 à 140 USD par mois.
 
@@ -48,11 +50,15 @@ Période : 6 septembre → 15 novembre 2026. Search Console n’a pas de donnée
 | Recherche « the team » | 101 clics, position 5,2 | Même sur son propre nom, le site n’est pas premier : le nom est un mot courant. « the team tunisie » est bien en position 1. |
 | Recherche « team » | 1 292 affichages, 2 clics | Près d’un tiers des affichages est du bruit sans valeur. |
 | Ordinateur / mobile | 172 clics (taux de clic 7,7 %) / 86 clics (4,0 %) | Autant d’affichages sur mobile, deux fois moins de clics. |
-| Pages formation vues dans Google | 6 adresses sur 78, 39 affichages au total | Les formations étaient presque invisibles. `/course/formation-pmp` n’a **aucun** affichage. |
+| Pages formation vues dans Google | 6 adresses sur 78, 39 affichages au total | Les pages sont prêtes, mais Google ne les montre presque pas. `/course/formation-pmp` n’a **aucun** affichage. |
 | Encarts enrichis dans les résultats | Aucun | Le rapport « Apparence dans les résultats » est vide. |
 
 Ce que ces chiffres ajoutent au plan :
 
+- **La première action est de faire indexer les pages formation.** Elles sont servies en HTML
+  complet, avec leur titre et leurs données structurées, mais Search Console n’en montre que 6 sur 78.
+  Tant que Google ne les a pas explorées dans cet état, aucun mot-clé de formation ne peut monter.
+  La marche à suivre est en semaine 1 du plan à 1 mois.
 - **Le titre « Accueil » coûte des clics.** Search Console affiche « Accueil | The Team » comme titre
   de l’accueil, de `/elearning`, `/about-us`, `/consulting`, `/calendar` et `/jobs`. Résultat :
   `/about-us` est vue 467 fois pour 3 clics, `/consulting` 340 fois pour 3 clics.
@@ -106,7 +112,7 @@ Un mot-clé ne peut monter que s’il a **une page précise** qui lui répond.
 | Formation PECB Tunisie | Absent | Aucune | **Aucune formation PECB dans le catalogue.** Sans page, aucun classement possible. |
 | Formation Business Analysis Tunisie | Absent | Aucune page d’ensemble | Cinq formations séparées, pas de page « Business Analysis ». |
 | Formation management de projet Tunisie, formation gestion de projet Tunis | 3,9 sur « formation management tunisie » | `/course/management-de-projet-par-la-pratique` et une page d’ensemble | Le meilleur point de départ. Il manque la page d’ensemble de la filière. |
-| Formation certifiante Tunisie | `/trainings` est en position 4,3, sans clic | `/trainings` | Bon titre depuis le 17 novembre. |
+| Formation certifiante Tunisie | `/trainings` est en position 4,3, sans clic | `/trainings` | Bon titre : « Formations certifiantes PMP, Scrum, ITIL en Tunisie ». |
 | Cabinet de conseil et formation Tunisie | 17,6 sur « cabinet de formation tunisie », 18,7 sur « cabinet de conseil en gestion… » | Accueil et `/consulting` | Les deux pages s’appellent « Accueil » pour Google. À corriger en premier. |
 
 Complétez cette liste jusqu’à **15 mots-clés** avec ceux qui apparaissent déjà dans Search Console :
@@ -118,10 +124,12 @@ Microsoft et Odoo, calendrier de formation. Ce sont ces 15 lignes que l’on sui
 ### Ce qui est déjà en place
 
 - **Un site React avec des pages formation pré-rendues**, comme le font les grands sites de
-  certification. `/trainings` et les 39 formations (en français et en anglais) sont servies en HTML
-  complet, avec leur titre, leur description, leur adresse canonique, leurs liens `hreflang` et leurs
-  données structurées `Course`. Vérifié en production le 17 novembre.
-  Détails : [Trainings not on Google](/troubleshooting/trainings-not-indexed).
+  certification. `/trainings` et les 39 formations (en français et en anglais, soit 80 adresses)
+  sont servies en HTML complet avant toute exécution de JavaScript, avec leur titre, leur
+  description, leur adresse canonique, leurs liens `hreflang` et leurs données structurées `Course`.
+  Une fois le JavaScript chargé, React prend le relais sans écran de chargement. Les liens
+  « précédent » et « suivant » entre formations sont de vrais liens, que les moteurs suivent.
+  Vérifié en production. Détails : [Trainings not on Google](/troubleshooting/trainings-not-indexed).
 - **Un site rapide et accessible** : 98 et 99 sur 100 à PageSpeed Insights.
 - **Plans de site à jour automatiquement** pour les formations et les articles Knowledge Corner.
 - **HTTPS partout**, site bilingue (français, anglais sous `/en/`), fichier `llms.txt` pour les
@@ -165,7 +173,8 @@ dans [Modifications du code](#modifications-du-code).
 | Volet | Action | Livrable | Indicateur |
 | :-- | :-- | :-- | :-- |
 | Mesure | Fixer les 15 mots-clés et noter leur position dans Search Console (Performances → Requêtes, pays Tunisie). | Tableur de suivi, colonne « 17 nov. » | 15 lignes remplies |
-| Mesure | Demander l’indexation de `/trainings` et des 6 pages formation prioritaires (Inspection de l’URL). Créer le compte Bing Webmaster Tools en important Search Console. | 7 demandes envoyées, compte Bing actif | Pages formation avec au moins un affichage |
+| Mesure | Dans Search Console, ouvrir « Inspection de l’URL », saisir `https://theteam.com.tn/course/formation-pmp` et cliquer sur « Tester l’URL en ligne ». La capture doit montrer la formation, et aucune requête vers `admin.theteam.com.tn/api` ne doit être signalée comme bloquée. Cliquer ensuite sur « Demander une indexation ». Refaire la même chose pour `/trainings` et les formations prioritaires (PMP, PSPO 1, PSM 1, PMI-ACP, ITIL 4, CAPM, ECBA/CCBA/CBAP, Management de projet par la pratique). | 9 pages testées et demandées | Pages formation avec au moins un affichage |
+| Mesure | Ajouter une propriété de type **Domaine** pour `theteam.com.tn` (la propriété actuelle est un préfixe d’URL) et y envoyer `https://admin.theteam.com.tn/sitemap-trainings.xml` et `https://admin.theteam.com.tn/sitemap-articles.xml`. Google les trouve aussi par `robots.txt`, mais l’envoi permet de suivre leur lecture. Créer le compte Bing Webmaster Tools en important Search Console. | 2 plans de site « Opération effectuée », compte Bing actif | Adresses découvertes par plan de site |
 | Site web | Donner un titre et une description propres aux onze pages qui s’appellent « Accueil ». | Titres en ligne | Le titre « Accueil » disparaît de Search Console |
 | Contenu | Valider le tableau « un mot-clé, une page ». Décider pour PECB (créer les pages ou retirer le mot-clé) et pour l’affichage des prix. | Tableau validé | — |
 | Fiche Google | Retrouver l’accès à la fiche. Contrôler nom, adresse, téléphone, horaires et catégories ; ils doivent être **identiques au site** : Impasse 1, 12 Cité des médecins, avenue Tahar Sfar, 2092 El Manar II — +216 98 378 579. | Fiche complète | Vues de la fiche, appels |
@@ -212,6 +221,7 @@ dans [Modifications du code](#modifications-du-code).
 
 ### Ce qui doit être fait au 17 décembre
 
+<Check>Les pages formation prioritaires sont indexées et les deux plans de site sont lus sans erreur.</Check>
 <Check>Plus aucune page ne s’appelle « Accueil » dans Search Console, sauf l’accueil lui-même, renommé.</Check>
 <Check>Chaque mot-clé de la direction a une page précise, ou a été retiré de la liste.</Check>
 <Check>6 pages formation enrichies et 3 pages d’ensemble publiées.</Check>
@@ -220,8 +230,8 @@ dans [Modifications du code](#modifications-du-code).
 <Check>8 publications LinkedIn et une newsletter envoyées.</Check>
 
 <Info>
-  **À quoi s’attendre en un mois.** Google met de quelques jours à plusieurs semaines pour réévaluer
-  une page. En 30 jours, on voit surtout : les bons titres dans les résultats, un meilleur taux de
+  **À quoi s’attendre en un mois.** Google met de quelques jours à quelques semaines pour explorer
+  une page et mettre ses résultats à jour. En 30 jours, on voit surtout : les bons titres dans les résultats, un meilleur taux de
   clic, les pages formation qui commencent à s’afficher, et « formation management Tunisie » qui peut
   passer du rang 4 au top 3. Les recherches les plus disputées, comme « formation PMP Tunisie », se
   gagnent sur le plan à 6 mois.
